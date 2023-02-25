@@ -11,7 +11,9 @@ import MobileCoreServices
 
 /// Controller to show Home page
 final class VCHomeViewController: UIViewController {
-
+    /**
+      This method is called after the view controller has loaded its view hierarchy into memory.
+     */
     override func viewDidLoad() {
         super.viewDidLoad()
 
