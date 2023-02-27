@@ -9,6 +9,7 @@ import UIKit
 import Contacts
 import ContactsUI
 import SwiftUI
+import CoreData
 
 struct Contact: Identifiable {
     let name: String
@@ -17,6 +18,8 @@ struct Contact: Identifiable {
 }
 /// Controller to add and show Emergency Contacts
 class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate {
+    
+    var contactsContainer: NSPersistentContainer!
     /**
          Creates a table to store the emergency contacts
 
@@ -45,6 +48,9 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             barButtonSystemItem: .add,
             target: self,
             action: #selector(didTapAdd))
+        guard contactsContainer != nil else {
+            fatalError("This view needs a persistent container.")
+        }
     }
     
     /// Opens the default contact application once user clicks on the add button
@@ -87,7 +93,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
     
     /**
-         Checks if row can be editted
+         Checks if row can be edited
 
          - Parameters:
             - UITableView: The table view
