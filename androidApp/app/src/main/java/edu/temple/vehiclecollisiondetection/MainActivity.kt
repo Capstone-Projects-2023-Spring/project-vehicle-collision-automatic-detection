@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity() {
 
        val addContactButton: View = findViewById(R.id.fab)
         addContactButton.setOnClickListener{
-            helloWorldText.setText("Hello World!")//added for hello world
-            helloWorldText.setTextColor(Color.parseColor("green"))//added for hello world
+            contactObjects.add(ContactObject("2152223456", "Tom"))
+            recyclerView.adapter = ContactAdapter(contactObjects)
         }
     }
 }
