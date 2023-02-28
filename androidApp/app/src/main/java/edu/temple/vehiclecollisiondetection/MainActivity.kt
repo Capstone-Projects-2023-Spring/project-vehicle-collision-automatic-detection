@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
-    lateinit var helloWorldText: TextView //added for hello world
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
@@ -31,7 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
-        helloWorldText = findViewById(R.id.HelloWorldView)
 
         connectionText.setTextColor(Color.parseColor("red"))
 
@@ -79,10 +77,12 @@ class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): Re
 
     inner class ViewHolder (itemView: View):  RecyclerView.ViewHolder(itemView) {
         var textView: TextView
+        var textView2: TextView
         lateinit var contactObject: MainActivity.ContactObject
 
         init {
             textView = itemView.findViewById(R.id.listItem)
+            textView2 = itemView.findViewById(R.id.listItem2)
         }
     }
 
@@ -97,6 +97,7 @@ class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): Re
 
         //Sets contents of recycler view as the drawable provided in imageObject List
         holder.textView.text = contactObjects[position].name //Add phone numbers later
+        holder.textView2.text = contactObjects[position].phoneNumber
     }
 
     override fun getItemCount(): Int {
