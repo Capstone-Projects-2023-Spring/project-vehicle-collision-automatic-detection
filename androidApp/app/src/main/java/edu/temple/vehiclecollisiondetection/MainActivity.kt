@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
@@ -17,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
-    lateinit var helloWorldText: TextView //added for hello world
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
@@ -29,7 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
-        helloWorldText = findViewById(R.id.HelloWorldView)
 
         connectionText.setTextColor(Color.parseColor("red"))
 
@@ -40,11 +40,34 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.adapter = ContactAdapter(contactObjects)
 
+        //Add Contact Button Functionality
        val addContactButton: View = findViewById(R.id.fab)
         addContactButton.setOnClickListener{
-            contactObjects.add(ContactObject("2152223456", "Tom"))
-            recyclerView.adapter = ContactAdapter(contactObjects)
+            //setting up 'add contact' pop-up menu
+            val contactDialogView = LayoutInflater.from(this).inflate(R.layout.layout_dialog, null)
+            val contactDialogBuilder = AlertDialog.Builder(this)
+                .setView(contactDialogView)
+                .setTitle("Add Contact")
+            //show dialog
+            val contactAlertDialog = contactDialogBuilder.show()
+            //save/confirm button
+            val saveButton = contactDialogView.findViewById<Button>(R.id.save_button)
+            saveButton.setOnClickListener {
+                contactAlertDialog.dismiss()
+                //gets the input information
+                val contactName = contactDialogView.findViewById<EditText>(R.id.contact_name).text.toString()
+                val contactNumber = contactDialogView.findViewById<EditText>(R.id.contact_number).text.toString()
+                //adds contact to the list of contactObjects
+                contactObjects.add(ContactObject(contactNumber, contactName))
+                recyclerView.adapter = ContactAdapter(contactObjects)
+            }
+            //cancel button
+            val cancelButton = contactDialogView.findViewById<Button>(R.id.cancel_button)
+            cancelButton.setOnClickListener {
+                contactAlertDialog.dismiss()
+            }
         }
+
     }
 }
 
@@ -54,10 +77,12 @@ class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): Re
 
     inner class ViewHolder (itemView: View):  RecyclerView.ViewHolder(itemView) {
         var textView: TextView
+        var textView2: TextView
         lateinit var contactObject: MainActivity.ContactObject
 
         init {
             textView = itemView.findViewById(R.id.listItem)
+            textView2 = itemView.findViewById(R.id.listItem2)
         }
     }
 
@@ -72,6 +97,7 @@ class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): Re
 
         //Sets contents of recycler view as the drawable provided in imageObject List
         holder.textView.text = contactObjects[position].name //Add phone numbers later
+        holder.textView2.text = contactObjects[position].phoneNumber
     }
 
     override fun getItemCount(): Int {
