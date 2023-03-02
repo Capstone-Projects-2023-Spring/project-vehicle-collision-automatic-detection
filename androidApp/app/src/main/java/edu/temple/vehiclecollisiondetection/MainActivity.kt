@@ -50,7 +50,12 @@ class MainActivity : AppCompatActivity() {
         Log.d("list on start", serializedList.toString())
 
         val myType = object : TypeToken<ArrayList<ContactObject>>() {}.type
-        val contactObjects = gson.fromJson<ArrayList<ContactObject>>(serializedList, myType)
+        var contactObjects = gson.fromJson<ArrayList<ContactObject>>(serializedList, myType)
+        if(contactObjects == null){
+             contactObjects = arrayListOf(
+                ContactObject("1234567890", "Placeholder")
+            )
+        }
         Log.d("ContactListFromMem", contactObjects.toString())
 
         recyclerView.adapter = ContactAdapter(contactObjects)
