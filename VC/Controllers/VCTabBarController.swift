@@ -16,7 +16,7 @@ final class VCTabBarController : UITabBarController {
      */
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpTabs()
+        self.setUpTabs()
     }
     
     /**

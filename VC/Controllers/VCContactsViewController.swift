@@ -6,20 +6,13 @@
 //
 
 import UIKit
-import Contacts
 import ContactsUI
 import SwiftUI
 import CoreData
 
-struct Contact: Identifiable {
-    let name: String
-    let id: String
-    let source: CNContact
-}
 /// Controller to add and show Emergency Contacts
 class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate {
     
-    var contactsContainer: NSPersistentContainer!
     /**
          Creates a table to store the emergency contacts
 
@@ -48,9 +41,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             barButtonSystemItem: .add,
             target: self,
             action: #selector(didTapAdd))
-        guard contactsContainer != nil else {
-            fatalError("This view needs a persistent container.")
-        }
+        self.getContacts()
     }
     
     /// Opens the default contact application once user clicks on the add button
@@ -71,12 +62,17 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
         let name = contact.givenName + " " + contact.familyName
         let identifier = contact.identifier
-        let person = Contact(name: name,
-                           id: identifier,
-                           source: contact
-        )
-        EmergencyContantList.append(person)
-        table.reloadData()
+        let managedContext = AppDelegate.sharedAppDelegate.CoreDataStack.managedContext
+        let newContact = Contact(context: managedContext)
+        newContact.setValue(name, forKey: #keyPath(Contact.contactName))
+        newContact.setValue(identifier, forKey: #keyPath(Contact.contactId))
+        newContact.setValue(contact, forKey: #keyPath(Contact.contactSource))
+        self.EmergencyContantList.insert(newContact, at: 0)
+        AppDelegate.sharedAppDelegate.CoreDataStack.saveContext() // Save changes in CoreData
+        DispatchQueue.main.async {
+            self.table.reloadData()
+        }
+    
     }
     
     /**
@@ -115,7 +111,12 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
          */
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            // Remove the contact from the CoreData
+            AppDelegate.sharedAppDelegate.CoreDataStack.managedContext.delete(EmergencyContantList[indexPath.row])
             EmergencyContantList.remove(at: indexPath.row)
+            // Save Changes
+            AppDelegate.sharedAppDelegate.CoreDataStack.saveContext()
+            // Remove row from TableView
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             
@@ -130,11 +131,11 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             - IndexPath: The indexPath of the row
             - UITableViewCell: The UITableViewCell
 
-         - Returns: A cell for a given row
+        - Returns: A cell for a given row
          */
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = EmergencyContantList[indexPath.row].name
+        cell.textLabel?.text = EmergencyContantList[indexPath.row].contactName
         return cell
     }
     
@@ -148,8 +149,27 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let contact = EmergencyContantList[indexPath.row].source
+        guard let contact = EmergencyContantList[indexPath.row].contactSource else { return }
         let viewController = CNContactViewController(for: contact)
         present(UINavigationController(rootViewController: viewController), animated: true)
+    }
+    /**
+         Fetches data. This method gets the list of Contacts from the CoreData using NSFetchRequest. Called everytime we open the app
+
+         - Parameters:
+
+        - Returns: Contacts Data from CoreData
+         */
+    private func getContacts() {
+        let contactFetch: NSFetchRequest<Contact> = Contact.fetchRequest()
+        let sortByName = NSSortDescriptor(key: #keyPath(Contact.contactName), ascending: false)
+        contactFetch.sortDescriptors = [sortByName]
+        do {
+            let managedContext = AppDelegate.sharedAppDelegate.CoreDataStack.managedContext
+            let results = try managedContext.fetch(contactFetch)
+            EmergencyContantList = results
+        } catch let error as NSError {
+            print("Fetch error: \(error) description: \(error.userInfo)")
+        }
     }
 }
