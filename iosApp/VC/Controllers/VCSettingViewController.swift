@@ -9,7 +9,7 @@ import UIKit
 import SwiftUI
 import MobileCoreServices
 
-/// Controller to view and change app Settings
+/// Controller to view and change the application's settings
 final class VCSettingViewController: UIViewController {
 
     override func viewDidLoad() {
