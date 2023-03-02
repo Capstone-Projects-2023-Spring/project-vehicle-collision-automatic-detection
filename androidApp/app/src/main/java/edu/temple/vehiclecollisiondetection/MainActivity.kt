@@ -92,7 +92,42 @@ class MainActivity : AppCompatActivity() {
                 contactAlertDialog.dismiss()
             }
         }
+        //delete contact button functionality
+        val deleteButton: View = findViewById(R.id.deleteContactFab)
+        deleteButton.setOnClickListener{
+            val deleteContactView = LayoutInflater.from(this).inflate(R.layout.deletecontact_dialog, null)
+            val deleteContactDialogBuilder = AlertDialog.Builder(this)
+                .setView(deleteContactView)
+                .setTitle("Delete Contact")
+            //show dialog
+            val deleteContactAlertDialog = deleteContactDialogBuilder.show()
 
+            //delete/confirm button
+            val confirmButton = deleteContactView.findViewById<Button>(R.id.delete_button)
+            confirmButton.setOnClickListener {
+                deleteContactAlertDialog.dismiss()
+                //get input information
+                val contactName = deleteContactView.findViewById<EditText>(R.id.contact_name).text.toString()
+                //create new list using for loop, and put in contacts that DO NOT match the given name
+                var tempList = arrayListOf<ContactObject>()
+                for (item in contactObjects){
+                    if(contactName.equals(item.name)){
+                        //don't add to new list
+                    }else{
+                        tempList.add(item)
+                    }
+                }
+                //save new list (w/o deleted contacts)
+                contactObjects = tempList
+                //save contactObjects to shared preferences here
+                saveContactList(contactObjects)
+                recyclerView.adapter = ContactAdapter(contactObjects)
+            }
+            val cancelButton = deleteContactView.findViewById<Button>(R.id.cancel_button)
+            cancelButton.setOnClickListener {
+                deleteContactAlertDialog.dismiss()
+            }
+        }
     }
 
     private fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){

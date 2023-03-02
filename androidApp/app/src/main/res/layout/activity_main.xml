@@ -110,11 +110,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_marginStart="32dp"
-        android:textColor="#373737"
+        android:layout_marginStart="20dp"
         android:layout_marginBottom="48dp"
         android:contentDescription="@string/add_contact"
         android:src="@drawable/ic_baseline_person_add_24"
+        android:textColor="#373737"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -122,11 +122,11 @@
         android:id="@+id/addContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="60dp"
-        app:fontFamily="@font/aldrich"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="56dp"
         android:text="@string/add_contact"
         android:textColor="#373737"
+        app:fontFamily="@font/aldrich"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fab" />
 
@@ -141,6 +141,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.727" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/deleteContactFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.58"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="?attr/actionModeCutDrawable" />
+
+    <TextView
+        android:id="@+id/deleteContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Contact"
+        android:textColor="#373737"
+        app:fontFamily="@font/aldrich"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.23"
+        app:layout_constraintStart_toEndOf="@+id/deleteContactFab"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.916" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
