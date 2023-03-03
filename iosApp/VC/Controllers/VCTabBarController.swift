@@ -9,15 +9,24 @@ import UIKit
 import SwiftUI
 import MobileCoreServices
 
-/// Controller to house tabs and root controllers
-final class VCTabBarController
-: UITabBarController {
-
+/// Tab controller class
+final class VCTabBarController : UITabBarController {
+    /**
+      This method is called after the view controller has loaded its view hierarchy into memory.
+     */
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpTabs()
+        self.setUpTabs()
     }
     
+    /**
+        Sets up the tabs
+
+        Calling this method sets the three tabs: Home,
+        Contacts, and Settings and sets the view controllers to the respective nav bar.
+
+        - Precondition: ``VCHomeViewController``, ``VCContactsViewController``, ``VCSettingViewController`` ,
+        */
     private func setUpTabs() {
         let HomeViewController = VCHomeViewController()
         let ContactsViewController = VCContactsViewController()

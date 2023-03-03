@@ -1,11 +1,9 @@
 package edu.temple.vehiclecollisiondetection
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,18 +13,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-
-private const val SAVE_KEY = "save_key"
 
 class MainActivity : AppCompatActivity() {
 
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
-    private lateinit var preferences: SharedPreferences
-
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
@@ -36,18 +28,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
+
         connectionText.setTextColor(Color.parseColor("red"))
-
-        //ability to access shared preferences
-        preferences = getPreferences(MODE_PRIVATE)
-
-        //Gets list from storage
-        val gson = Gson()
-        val serializedList = preferences.getString(SAVE_KEY, null)
-        Log.d("list on start", serializedList.toString())
 
         val myType = object : TypeToken<ArrayList<ContactObject>>() {}.type
         var contactObjects = gson.fromJson<ArrayList<ContactObject>>(serializedList, myType)
@@ -58,8 +42,8 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d("ContactListFromMem", contactObjects.toString())
 
-        recyclerView.adapter = ContactAdapter(contactObjects)
 
+        recyclerView.adapter = ContactAdapter(contactObjects)
 
         //Add Contact Button Functionality
        val addContactButton: View = findViewById(R.id.fab)
@@ -80,10 +64,6 @@ class MainActivity : AppCompatActivity() {
                 val contactNumber = contactDialogView.findViewById<EditText>(R.id.contact_number).text.toString()
                 //adds contact to the list of contactObjects
                 contactObjects.add(ContactObject(contactNumber, contactName))
-
-                //save contactObjects to shared preferences here
-                saveContactList(contactObjects)
-
                 recyclerView.adapter = ContactAdapter(contactObjects)
             }
             //cancel button
@@ -128,19 +108,6 @@ class MainActivity : AppCompatActivity() {
                 deleteContactAlertDialog.dismiss()
             }
         }
-    }
-
-    private fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
-        val prefEditor = preferences.edit()
-        val gson = Gson() //library used to serialize and deserialize objects
-
-        val contactsString = gson.toJson(contactList)
-
-        Log.d("list", contactsString)
-
-        //saves the arrayList as a string in memory
-        prefEditor.putString(SAVE_KEY, contactsString)
-        prefEditor.apply()
     }
 }
 

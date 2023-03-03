@@ -10,11 +10,23 @@ import CoreData
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    // Initialize the CoreDataStack by adding the name of the Core Data Model
+    lazy var CoreDataStack: CoreDataStack = .init(modelName: "Model")
 
-
+    // Create the constant sharedAppDelegate to access the AppDelegate from the View
+    // Controllers.
+    static let sharedAppDelegate: AppDelegate = {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("Unexpected app delegate type, did it change? \(String(describing: UIApplication.shared.delegate))")
+        }
+        return delegate
+    }()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        //if let rootVC = window?.rootViewController as? ViewController {
+        //    rootVC.container = persistentContainer
+        //}
         return true
     }
 
@@ -63,19 +75,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Core Data Saving support
 
-    func saveContext () {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-            }
-        }
-    }
+//    func saveContext () {
+//        let context = persistentContainer.viewContext
+//        if context.hasChanges {
+//            do {
+//                try context.save()
+//            } catch {
+//                // Replace this implementation with code to handle the error appropriately.
+//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+//                let nserror = error as NSError
+//                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+//            }
+//        }
+//    }
 
 }
 
