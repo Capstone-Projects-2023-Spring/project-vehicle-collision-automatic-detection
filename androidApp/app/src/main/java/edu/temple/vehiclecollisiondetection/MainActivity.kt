@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 val contactName = contactDialogView.findViewById<EditText>(R.id.contact_name).text.toString()
                 val contactNumber = contactDialogView.findViewById<EditText>(R.id.contact_number).text.toString()
                 //adds contact to the list of contactObjects
-                contactObjects.add(ContactObject(contactNumber, contactName))
+                addContact(contactObjects, contactName, contactNumber)
 
                 //save contactObjects to shared preferences here
                 saveContactList(contactObjects)
@@ -109,16 +109,10 @@ class MainActivity : AppCompatActivity() {
                 //get input information
                 val contactName = deleteContactView.findViewById<EditText>(R.id.contact_name).text.toString()
                 //create new list using for loop, and put in contacts that DO NOT match the given name
-                var tempList = arrayListOf<ContactObject>()
-                for (item in contactObjects){
-                    if(contactName.equals(item.name)){
-                        //don't add to new list
-                    }else{
-                        tempList.add(item)
-                    }
-                }
+                var newList = arrayListOf<ContactObject>()
+                newList = deleteContact(contactObjects, contactName)
                 //save new list (w/o deleted contacts)
-                contactObjects = tempList
+                contactObjects = newList
                 //save contactObjects to shared preferences here
                 saveContactList(contactObjects)
                 recyclerView.adapter = ContactAdapter(contactObjects)
@@ -128,6 +122,21 @@ class MainActivity : AppCompatActivity() {
                 deleteContactAlertDialog.dismiss()
             }
         }
+    }
+
+    private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
+        contactList.add(ContactObject(contactNum, contactName))
+    }
+    private fun deleteContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String): ArrayList<MainActivity.ContactObject>{//returns a new arraylist w/o the specified contact
+        var tempList = arrayListOf<ContactObject>()
+        for (item in contactList){
+            if(contactName.equals(item.name)){
+                //don't add to new list
+            }else{
+                tempList.add(item)
+            }
+        }
+        return tempList
     }
 
     private fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
