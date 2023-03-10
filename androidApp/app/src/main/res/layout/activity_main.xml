@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/bluetoothTextBackground"
         android:layout_width="375dp"
         android:layout_height="145dp"
         android:background="@drawable/box"
@@ -83,8 +83,8 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:textColor="#373737"
-        app:fontFamily="@font/aldrich"
         android:textSize="16sp"
+        app:fontFamily="@font/aldrich"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

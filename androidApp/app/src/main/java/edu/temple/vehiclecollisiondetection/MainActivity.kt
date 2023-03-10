@@ -3,20 +3,23 @@ package edu.temple.vehiclecollisiondetection
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
 
 private const val SAVE_KEY = "save_key"
 
@@ -27,7 +30,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var connectionText: TextView
     private lateinit var preferences: SharedPreferences
 
-
+    private val bluetoothThread: HandlerThread = HandlerThread("MainActivity")
+    private var threadHandler: Handler? = null
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
 
@@ -36,6 +40,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //start bluetooth thread
+        bluetoothThread.start()
+        threadHandler = Handler(bluetoothThread.getLooper())
 
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
@@ -122,6 +129,9 @@ class MainActivity : AppCompatActivity() {
                 deleteContactAlertDialog.dismiss()
             }
         }
+        //start bluetooth routine after app initializes
+        threadHandler!!.post(bluetoothRunnable())
+
     }
 
     private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
@@ -184,5 +194,15 @@ class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): Re
 
     override fun getItemCount(): Int {
         return contactObjects.size
+    }
+}
+
+internal class bluetoothRunnable : Runnable {
+    override fun run() {
+        for (i in 0..3) {
+            //do something
+            Log.d("HIIIIIIIIII", "hi")
+            SystemClock.sleep(1000)
+        }
     }
 }
