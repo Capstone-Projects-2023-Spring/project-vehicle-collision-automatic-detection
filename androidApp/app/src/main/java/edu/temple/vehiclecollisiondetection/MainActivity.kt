@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken
 
 private const val SAVE_KEY = "save_key"
 
+
 class MainActivity : AppCompatActivity() {
 
     //recycler view to hold contact list
@@ -30,10 +31,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var connectionText: TextView
     private lateinit var preferences: SharedPreferences
 
-    private val bluetoothThread: HandlerThread = HandlerThread("MainActivity")
-    private var threadHandler: Handler? = null
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
+
+
 
     @SuppressLint("SetTextI18n")//added for hello world
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +42,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //start bluetooth thread
-        bluetoothThread.start()
-        threadHandler = Handler(bluetoothThread.getLooper())
+        var btRunnable = BluetoothRunnable()
+        var btThread = Thread(btRunnable)
+        btThread.start()
 
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
@@ -129,8 +131,6 @@ class MainActivity : AppCompatActivity() {
                 deleteContactAlertDialog.dismiss()
             }
         }
-        //start bluetooth routine after app initializes
-        threadHandler!!.post(bluetoothRunnable())
 
     }
 
@@ -160,6 +160,21 @@ class MainActivity : AppCompatActivity() {
         //saves the arrayList as a string in memory
         prefEditor.putString(SAVE_KEY, contactsString)
         prefEditor.apply()
+    }
+
+    inner class BluetoothRunnable: Runnable{
+        override fun run() {
+            //test code
+            runOnUiThread(Runnable() {
+                connectionText.setTextColor(Color.parseColor("yellow"))
+                connectionText.setText("Almost Connected!")
+            })
+            for (i in 0..3) {
+                //do something
+                Log.d("HIIIIIIIIII", "hi")
+                SystemClock.sleep(1000)
+            }
+        }
     }
 }
 
@@ -197,12 +212,3 @@ class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): Re
     }
 }
 
-internal class bluetoothRunnable : Runnable {
-    override fun run() {
-        for (i in 0..3) {
-            //do something
-            Log.d("HIIIIIIIIII", "hi")
-            SystemClock.sleep(1000)
-        }
-    }
-}
