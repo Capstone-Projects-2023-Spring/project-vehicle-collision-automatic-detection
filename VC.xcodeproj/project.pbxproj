@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92D9C11C29BD4F8E00D0404D /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9C11B29BD4F8E00D0404D /* BluetoothManager.swift */; };
 		D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */; };
 		D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */; };
 		D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		92D9C11B29BD4F8E00D0404D /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		D88E9AA7298AFE0A00EB1305 /* VC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
 				D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */,
+				92D9C11B29BD4F8E00D0404D /* BluetoothManager.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -314,6 +317,7 @@
 				D8EEC47529B024D3006FE065 /* Contact+CoreDataClass.swift in Sources */,
 				D8EEC46429B011CA006FE065 /* Model.xcdatamodeld in Sources */,
 				D8EEC47629B024D3006FE065 /* Contact+CoreDataProperties.swift in Sources */,
+				92D9C11C29BD4F8E00D0404D /* BluetoothManager.swift in Sources */,
 				D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */,
 				D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */,
 				D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */,
