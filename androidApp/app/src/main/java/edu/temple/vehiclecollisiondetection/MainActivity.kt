@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -183,36 +182,38 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
                 //return
             }
-            //SOMETHING WRONG WITH BELOW CODE
+
             var btAdapter: BluetoothAdapter? = null
             val bluetoothManager =
                 this@MainActivity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
 
-            btAdapter = bluetoothManager!!.adapter
-            val btDevice = btAdapter.getRemoteDevice("E6:EC:C4:09:52:F0")
-            val mUUID = btDevice.getUuids().get(0).getUuid()
-            var btSocket: BluetoothSocket? = null
-            var tmp: BluetoothSocket? = null
-            try{
-                tmp = btDevice.createRfcommSocketToServiceRecord(mUUID)
-            } catch (e: IOException) {
-                //???? socket error
-            }
-            btSocket = tmp
-            btAdapter?.cancelDiscovery()
-            do {
-                try {
-                    btSocket?.connect()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            } while (!btSocket?.isConnected()!!)
+           btAdapter = bluetoothManager!!.adapter
+           val btDevice = btAdapter.getRemoteDevice("E6:EC:C4:09:52:F0")
+            val mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")//acts like a 'password' for the bluetooth connection
+          var btSocket: BluetoothSocket? = null
+          var tmp: BluetoothSocket? = null
 
+          try{
+              tmp = btDevice.createRfcommSocketToServiceRecord(mUUID)
+          } catch (e: IOException) {
+              //???? socket error
+          }
+          btSocket = tmp
+          //btAdapter?.cancelDiscovery()//SOMETHING WRONG WITH THIS (purpose: doing this makes the bt connection speed faster & better quality
+
+          while (btSocket?.isConnected == false) {
+              Log.d("hiii", "IT WORKS")
+              try {
+                  btSocket.connect()
+              } catch (e: IOException) {
+                  e.printStackTrace()
+              }
+          }
             runOnUiThread(Runnable() {
                 connectionText.setTextColor(Color.parseColor("green"))
                 connectionText.setText("Connected!")
             })
-            //SOMETHING WRONG WITH ABOVE CODE
+
         }
     }
 }
