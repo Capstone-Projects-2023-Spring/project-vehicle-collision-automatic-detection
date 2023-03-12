@@ -1,12 +1,17 @@
 package edu.temple.vehiclecollisiondetection
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothSocket
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +19,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.IOException
+import java.util.*
 
 
 private const val SAVE_KEY = "save_key"
@@ -163,17 +172,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     inner class BluetoothRunnable: Runnable{
+
+        @RequiresApi(Build.VERSION_CODES.S)
         override fun run() {
-            //test code
-            runOnUiThread(Runnable() {
-                connectionText.setTextColor(Color.parseColor("yellow"))
-                connectionText.setText("Almost Connected!")
-            })
-            for (i in 0..3) {
-                //do something
-                Log.d("HIIIIIIIIII", "hi")
-                SystemClock.sleep(1000)
+            if (ActivityCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
+                //return
             }
+            //SOMETHING WRONG WITH BELOW CODE
+            var btAdapter: BluetoothAdapter? = null
+            val bluetoothManager =
+                this@MainActivity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
+
+            btAdapter = bluetoothManager!!.adapter
+            val btDevice = btAdapter.getRemoteDevice("E6:EC:C4:09:52:F0")
+            val mUUID = btDevice.getUuids().get(0).getUuid()
+            var btSocket: BluetoothSocket? = null
+            var tmp: BluetoothSocket? = null
+            try{
+                tmp = btDevice.createRfcommSocketToServiceRecord(mUUID)
+            } catch (e: IOException) {
+                //???? socket error
+            }
+            btSocket = tmp
+            btAdapter?.cancelDiscovery()
+            do {
+                try {
+                    btSocket?.connect()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            } while (!btSocket?.isConnected()!!)
+
+            runOnUiThread(Runnable() {
+                connectionText.setTextColor(Color.parseColor("green"))
+                connectionText.setText("Connected!")
+            })
+            //SOMETHING WRONG WITH ABOVE CODE
         }
     }
 }
