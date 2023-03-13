@@ -19,6 +19,18 @@ final class VCHomeViewController: UIViewController{
         view.backgroundColor = .systemBackground
         title = "Home"
         
+        /*
+        // Use label as Text Example
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 21))
+        label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.textColor = .red
+        label.center = CGPoint(x: 200, y: 284)
+        label.textAlignment = .center
+        label.text = "TESTING LABEL"
+        
+        self.view.addSubview(label)
+        */
+
         // Do any additional setup after loading the view.
     }
 }
