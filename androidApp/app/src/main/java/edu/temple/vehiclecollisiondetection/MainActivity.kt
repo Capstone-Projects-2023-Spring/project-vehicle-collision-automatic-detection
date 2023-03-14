@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
+import java.lang.Thread.sleep
 import java.util.*
 
 
@@ -182,29 +183,41 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
                 //return
             }
+            if (ActivityCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), 10)
+                //return
+            }
 
             var btAdapter: BluetoothAdapter? = null
             val bluetoothManager =
                 this@MainActivity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
 
-           btAdapter = bluetoothManager!!.adapter
-           val btDevice = btAdapter.getRemoteDevice("E6:EC:C4:09:52:F0")
+           btAdapter = bluetoothManager?.adapter
+           val btDevice = btAdapter?.getRemoteDevice("E6:EC:C4:09:52:F0")
+
             val mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")//acts like a 'password' for the bluetooth connection
           var btSocket: BluetoothSocket? = null
           var tmp: BluetoothSocket? = null
 
           try{
-              tmp = btDevice.createRfcommSocketToServiceRecord(mUUID)
+              tmp = btDevice?.createRfcommSocketToServiceRecord(mUUID)
           } catch (e: IOException) {
               //???? socket error
           }
           btSocket = tmp
-          //btAdapter?.cancelDiscovery()//SOMETHING WRONG WITH THIS (purpose: doing this makes the bt connection speed faster & better quality
+          btAdapter?.cancelDiscovery()//doing this makes the bt connection speed faster & better quality
 
           while (btSocket?.isConnected == false) {
               Log.d("hiii", "IT WORKS")
+              System.out.println(btSocket)
+              System.out.println(btSocket.isConnected)
               try {
                   btSocket.connect()
+                  sleep(5000)//wait 5 seconds to attempt reconnection
               } catch (e: IOException) {
                   e.printStackTrace()
               }
