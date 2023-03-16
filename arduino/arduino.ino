@@ -1,18 +1,19 @@
+#include <LowPower.h>
+#include <Adafruit_ATParser.h>
+#include <Adafruit_BLE.h>
+#include <Adafruit_BLEBattery.h>
+#include <Adafruit_BLEEddystone.h>
+#include <Adafruit_BLEGatt.h>
+#include <Adafruit_BLEMIDI.h>
+#include <Adafruit_BluefruitLE_SPI.h>
+#include <Adafruit_BluefruitLE_UART.h>
 #include <Arduino.h>
 #include <SPI.h>
-#include "Adafruit_BLE.h"
-#include "Adafruit_BluefruitLE_SPI.h"
-#include "Adafruit_BluefruitLE_UART.h"
-#include "LowPower.h"
+#include "BluefruitConfig.h"
 
 #define FACTORYRESET_ENABLE         1
 #define MINIMUM_FIRMWARE_VERSION    "0.6.6"
 #define MODE_LED_BEHAVIOUR          "MODE"
-#define VERBOSE_MODE                true
-
-#define BLUEFRUIT_SPI_CS               8
-#define BLUEFRUIT_SPI_IRQ              7
-#define BLUEFRUIT_SPI_RST              4
 
 String data = " ";
 int flag = 0;
@@ -22,7 +23,7 @@ const unsigned long interval = 60000;
 unsigned long previousMillis = 0;
 
 Adafruit_BluefruitLE_SPI Bluetooth(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
-
+Adafruit_BLEGatt gatt(Bluetooth);
 /**
  * @brief Initialize input, output pins and values
  * 
@@ -30,11 +31,14 @@ Adafruit_BluefruitLE_SPI Bluetooth(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUI
  * 
  * @return void returns nothing
  */
+//service information
+int32_t VCDServiceId;
+int32_t VCDMeasureCharId;
 
 void setup() {
+
   // put your setup code here, to run once:
   Serial.begin(115200);
-
   /* Initialise the module */
   Serial.print(F("Initialising the Bluefruit LE module: "));
 
@@ -56,24 +60,26 @@ void setup() {
 
   Bluetooth.verbose(false);
 
-  /* Wait for connection */
+  Serial.println(F("Setting service + characteristic!"));
+
+  VCDServiceId = gatt.addService(0x181a);
+  VCDMeasureCharId = gatt.addCharacteristic(0x2901, GATT_CHARS_PROPERTIES_INDICATE, 1, 20, 1, "VCC Device Data");
+  uint8_t advdata[] { 0x02, 0x01, 0x06, 0x05, 0x02, 0x09, 0x18, 0x0a, 0x18};
+  Bluetooth.setAdvData( advdata, sizeof(advdata) );
+  
+  Bluetooth.reset();
+
   Serial.println("Looking for Bluetooth Device...");
   while (!Bluetooth.isConnected()){
     delay(500);    
   }
 
-  // Change Mode LED Activity
-  if (Bluetooth.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION)){
-    Bluetooth.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
-  }
-
   // Set Bluefruit to DATA mode
   Bluetooth.setMode(BLUEFRUIT_MODE_DATA);
 
-  Serial.println(F("******************************"));
-  Serial.println(F("Bluetooth Device Connected!"));
-  Serial.println(F("******************************"));
   start++;
+
+  Bluetooth.begin();
 }
 
 /**
@@ -86,7 +92,14 @@ void setup() {
  */
 
 void loop() {
+   Serial.println(F("******************************"));
+  Serial.println(F("Bluetooth Device Connected!"));
+  Serial.println(F("******************************"));
   // put your main code here, to run repeatedly:
+  // Change Mode LED Activity
+  if (Bluetooth.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION)){
+    Bluetooth.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
+  }
 
   //check if bluetooth device is connected to hardware
   while(Bluetooth.isConnected()){
@@ -124,7 +137,7 @@ void loop() {
       LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
 
-    //check for incoming data from hardware
+    //check for incoming data from bluetooth device
     if(Bluetooth.available() > 0){
       if(sleep == 1){
         Serial.println("Woke Up!");
@@ -135,7 +148,7 @@ void loop() {
       previousMillis = currentMillis;
     }
 
-    //check for incoming data from bluetooth device
+    //check for incoming data from hardware
     if(Serial.available() > 0){
       if(sleep == 1){
         Serial.println("Woke Up!");
