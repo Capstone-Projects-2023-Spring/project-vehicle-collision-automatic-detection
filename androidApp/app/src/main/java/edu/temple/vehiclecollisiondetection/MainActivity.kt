@@ -208,8 +208,8 @@ class MainActivity : AppCompatActivity() {
 
         @RequiresApi(Build.VERSION_CODES.S)
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            val serviceUuid = UUID.fromString("19B10010-E8F2-537E-4F6C-D104768A1214")//acts like a 'password' for the bluetooth connection
-            val characteristicUuid = UUID.fromString("19B10011-E8F2-537E-4F6C-D104768A1214")//acts like a 'password' for the bluetooth connection
+            val serviceUuid = UUID.fromString("0000181a-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
+            val characteristicUuid = UUID.fromString("00002901-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
             if (ActivityCompat.checkSelfPermission(
                     this@MainActivity,
                     Manifest.permission.BLUETOOTH_CONNECT
@@ -219,9 +219,17 @@ class MainActivity : AppCompatActivity() {
                 //return
             }
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                val characteristic = gatt.getService(serviceUuid)//service uuid here
-                    .getCharacteristic(characteristicUuid)//characteristic uuid here
-                gatt.setCharacteristicNotification(characteristic, true)
+                val service1 = gatt.getService(serviceUuid)
+                val characteristic1 = service1.getCharacteristic(characteristicUuid)//characteristic uuid here
+                if(service1 == null){
+                    Log.d("Invalid service:", "service is null!")
+                    Log.d("Service UUid:", serviceUuid.toString())
+                }
+                if(characteristic1 == null){
+                    Log.d("Invalid characteristic:", "characteristic is null!")
+                    Log.d("Characteristic UUid:", characteristicUuid.toString())
+                }
+                gatt.setCharacteristicNotification(characteristic1, true)
             }
         }
 
