@@ -9,11 +9,16 @@ import CoreBluetooth
 import UIKit
 
 // Bluetooth LE
-class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
-    
+protocol BluetoothManagerDelegate: AnyObject {
+    func didConnectPeripheral()
+    func didDisconnectPeripheral()
+}
+
+class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
+    weak var delegate: BluetoothManagerDelegate?
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,6 +28,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
             // Bluetooth is ready to use
+            central.scanForPeripherals(withServices: nil, options: nil)
         } else {
             // Bluetooth is not available
         }
@@ -32,12 +38,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func startScanning() {
         centralManager.scanForPeripherals(withServices: [BLEServiceUUID], options: nil)
     }
-
-    let BLEServiceUUID = CBUUID(string: "YOUR_SERVICE_UUID")
+    
+    let BLEServiceUUID = CBUUID(string: "6FB1FDA5-C272-43A5-9C1B-A38E2BBDDF2F")
     
     // Connect to the desired peripheral device using the CBCentralManager.
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if peripheral.name == "YOUR_DEVICE_NAME" {
+        if peripheral.name == "Adafruit Bluefruit LE" {
             centralManager.stopScan()
             self.peripheral = peripheral
             self.peripheral.delegate = self
@@ -45,18 +51,23 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
     }
     
-    // Once the connection is established.
+    // When connect to the Peripheral
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        peripheral.discoverServices([BLEServiceUUID])
+        delegate?.didConnectPeripheral()
     }
-
+    
+    // When disconnect from the Peripheral
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        delegate?.didDisconnectPeripheral()
+    }
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
         for service in services {
             peripheral.discoverCharacteristics(nil, for: service)
         }
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else { return }
         for characteristic in characteristics {
@@ -68,9 +79,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     // Read/Write/Handle the data
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         /*//When ready to handle data uncomment this
-        guard let data = characteristic.value else { return }
-        // Handle the received data as needed
-        */
+         guard let data = characteristic.value else { return }
+         // Handle the received data as needed
+         */
         
         // This is boolean statement, just a placeholder
         guard characteristic.value != nil else { return }
@@ -81,63 +92,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         guard let characteristic = self.characteristic else { return }
         peripheral.writeValue(data, for: characteristic, type: .withResponse)
     }
-    */
+     */
 
 }
-
-/*
-// Normal Bluetooth
-class BluetoothManager: NSObject, CBCentralManagerDelegate {
-    var centralManager: CBCentralManager?
-    var peripheral: CBPeripheral?
-    let SERVICE_UUID = CBUUID(string: "SERVICE_UUID")
-    let CHARACTERISTIC_UUID = CBUUID(string: "CHARACTERISTIC_UUID")
-    
-    func start() {
-        centralManager = CBCentralManager(delegate: self, queue: nil)
-    }
-    
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOn {
-            central.scanForPeripherals(withServices: [SERVICE_UUID], options: nil)
-        } else {
-            print("Bluetooth not available.")
-        }
-    }
-    
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        self.peripheral = peripheral
-        central.connect(peripheral, options: nil)
-    }
-    
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        peripheral.delegate = self
-        peripheral.discoverServices([SERVICE_UUID])
-    }
-}
-
-extension BluetoothManager: CBPeripheralDelegate {
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        guard let services = peripheral.services else { return }
-        for service in services {
-            peripheral.discoverCharacteristics([CHARACTERISTIC_UUID], for: service)
-        }
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        guard let characteristics = service.characteristics else { return }
-        for characteristic in characteristics {
-            if characteristic.uuid == CHARACTERISTIC_UUID {
-                peripheral.readValue(for: characteristic)
-            }
-        }
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        if let value = characteristic.value {
-            // Handle the retrieved value
-        }
-    }
-}
-*/
-

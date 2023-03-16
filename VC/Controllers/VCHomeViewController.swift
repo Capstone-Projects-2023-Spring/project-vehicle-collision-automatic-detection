@@ -7,30 +7,41 @@
 
 import UIKit
 import SwiftUI
-import MobileCoreServices
+import CoreBluetooth
 
 /// Controller to show Home page
-final class VCHomeViewController: UIViewController{
+final class VCHomeViewController: UIViewController, BluetoothManagerDelegate{
+    let bluetoothManager = BluetoothManager()
+    private var peripheralStatusLabel: UILabel!
+    
     /**
-      This method is called after the view controller has loaded its view hierarchy into memory.
+     This method is called after the view controller has loaded its view hierarchy into memory.
      */
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "Home"
+        bluetoothManager.delegate = self
         
-        /*
-        // Use label as Text Example
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 21))
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
-        label.textColor = .red
-        label.center = CGPoint(x: 200, y: 284)
-        label.textAlignment = .center
-        label.text = "TESTING LABEL"
+        // Add a label to display the status of the peripheral
+        peripheralStatusLabel = UILabel()
+        peripheralStatusLabel.translatesAutoresizingMaskIntoConstraints = false
+        peripheralStatusLabel.text = "Device disconnected"
+        peripheralStatusLabel.textColor = UIColor.red
+        view.addSubview(peripheralStatusLabel)
         
-        self.view.addSubview(label)
-        */
-
-        // Do any additional setup after loading the view.
+        NSLayoutConstraint.activate([
+            peripheralStatusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            peripheralStatusLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    func didConnectPeripheral() {
+        peripheralStatusLabel.text = "Device connected"
+        peripheralStatusLabel.textColor = UIColor.red
+    }
+    
+    func didDisconnectPeripheral() {
+        peripheralStatusLabel.text = "Device disconnected"
+        peripheralStatusLabel.textColor = UIColor.green
     }
 }
