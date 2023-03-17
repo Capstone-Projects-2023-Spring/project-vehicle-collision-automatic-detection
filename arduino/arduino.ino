@@ -1,18 +1,19 @@
+#include <LowPower.h>
+#include <Adafruit_ATParser.h>
+#include <Adafruit_BLE.h>
+#include <Adafruit_BLEBattery.h>
+#include <Adafruit_BLEEddystone.h>
+#include <Adafruit_BLEGatt.h>
+#include <Adafruit_BLEMIDI.h>
+#include <Adafruit_BluefruitLE_SPI.h>
+#include <Adafruit_BluefruitLE_UART.h>
 #include <Arduino.h>
 #include <SPI.h>
-#include "Adafruit_BLE.h"
-#include "Adafruit_BluefruitLE_SPI.h"
-#include "Adafruit_BluefruitLE_UART.h"
-#include "LowPower.h"
+#include "BluefruitConfig.h"
 
 #define FACTORYRESET_ENABLE         1
 #define MINIMUM_FIRMWARE_VERSION    "0.6.6"
 #define MODE_LED_BEHAVIOUR          "MODE"
-#define VERBOSE_MODE                true
-
-#define BLUEFRUIT_SPI_CS               8
-#define BLUEFRUIT_SPI_IRQ              7
-#define BLUEFRUIT_SPI_RST              4
 
 String data = " ";
 int flag = 0;
@@ -124,7 +125,7 @@ void loop() {
       LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
 
-    //check for incoming data from hardware
+    //check for incoming data from bluetooth device
     if(Bluetooth.available() > 0){
       if(sleep == 1){
         Serial.println("Woke Up!");
@@ -135,7 +136,7 @@ void loop() {
       previousMillis = currentMillis;
     }
 
-    //check for incoming data from bluetooth device
+    //check for incoming data from hardware
     if(Serial.available() > 0){
       if(sleep == 1){
         Serial.println("Woke Up!");
