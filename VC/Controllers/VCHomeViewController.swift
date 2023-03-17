@@ -20,7 +20,7 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        title = "Home"
+        title = "Connection Status"
         bluetoothManager.delegate = self
         
         // Add a label to display the status of the peripheral
@@ -37,11 +37,11 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate{
     }
     func didConnectPeripheral() {
         peripheralStatusLabel.text = "Device connected"
-        peripheralStatusLabel.textColor = UIColor.red
+        peripheralStatusLabel.textColor = UIColor.green
     }
     
     func didDisconnectPeripheral() {
         peripheralStatusLabel.text = "Device disconnected"
-        peripheralStatusLabel.textColor = UIColor.green
+        peripheralStatusLabel.textColor = UIColor.red
     }
 }

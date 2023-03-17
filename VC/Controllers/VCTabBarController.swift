@@ -40,7 +40,7 @@ final class VCTabBarController : UITabBarController {
         let nav2 = UINavigationController(rootViewController: ContactsViewController)
         let nav3 = UINavigationController(rootViewController: SettingViewController)
         
-        nav1.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 1)
+        nav1.tabBarItem = UITabBarItem(title: "Status", image: UIImage(systemName: "house"), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "Contacts", image: UIImage(systemName: "person.circle.fill"), tag: 2)
         nav3.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag: 3)
         
