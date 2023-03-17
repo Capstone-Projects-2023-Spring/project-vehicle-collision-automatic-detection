@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
+    lateinit var characteristicData: TextView
     private lateinit var preferences: SharedPreferences
 
     //contact data class
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
+        characteristicData = findViewById(R.id.characteristicDataText)
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
@@ -209,7 +211,7 @@ class MainActivity : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.S)
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             val serviceUuid = UUID.fromString("0000181a-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
-            val characteristicUuid = UUID.fromString("00002901-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
+            val characteristicUuid = UUID.fromString("00002A6D-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
             if (ActivityCompat.checkSelfPermission(
                     this@MainActivity,
                     Manifest.permission.BLUETOOTH_CONNECT
@@ -224,10 +226,14 @@ class MainActivity : AppCompatActivity() {
                 if(service1 == null){
                     Log.d("Invalid service:", "service is null!")
                     Log.d("Service UUid:", serviceUuid.toString())
+                }else{
+                    Log.d("Service Found:", serviceUuid.toString())
                 }
                 if(characteristic1 == null){
                     Log.d("Invalid characteristic:", "characteristic is null!")
                     Log.d("Characteristic UUid:", characteristicUuid.toString())
+                }else{
+                    Log.d("Characteristic Found:", characteristicUuid.toString())
                 }
                 gatt.setCharacteristicNotification(characteristic1, true)
             }
@@ -235,10 +241,16 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray
         ) {
-            val data = characteristic.value
             // handle received data
+            Log.d("Characteristic Data", "Data Changed!")
+            val data = value
+            runOnUiThread(){
+                characteristicData.text=data.toString()
+            }
+
         }
 
     }
