@@ -18,6 +18,21 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     weak var delegate: BluetoothManagerDelegate?
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
+    let BLEServiceUUID = CBUUID(string: "0000181A-0000-1000-8000-00805F9B34FB")
+    
+    // Singleton instance
+    static let shared = BluetoothManager()
+    
+    // Private initializer
+    private override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    
+    // Required initializer
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,8 +53,6 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     func startScanning() {
         centralManager.scanForPeripherals(withServices: [BLEServiceUUID], options: nil)
     }
-    
-    let BLEServiceUUID = CBUUID(string: "6FB1FDA5-C272-43A5-9C1B-A38E2BBDDF2F")
     
     // Connect to the desired peripheral device using the CBCentralManager.
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -88,10 +101,10 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     }
     
     /*
-    func writeToCharacteristic(data: Data) {
-        guard let characteristic = self.characteristic else { return }
-        peripheral.writeValue(data, for: characteristic, type: .withResponse)
-    }
+     func writeToCharacteristic(data: Data) {
+     guard let characteristic = self.characteristic else { return }
+     peripheral.writeValue(data, for: characteristic, type: .withResponse)
+     }
      */
-
+    
 }

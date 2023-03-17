@@ -10,9 +10,10 @@ import SwiftUI
 import CoreBluetooth
 
 /// Controller to show Home page
-final class VCHomeViewController: UIViewController, BluetoothManagerDelegate{
-    let bluetoothManager = BluetoothManager()
+final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
+    
     private var peripheralStatusLabel: UILabel!
+    private let bluetoothManager = BluetoothManager()
     
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
@@ -21,7 +22,6 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate{
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "Connection Status"
-        bluetoothManager.delegate = self
         
         // Add a label to display the status of the peripheral
         peripheralStatusLabel = UILabel()
@@ -34,7 +34,12 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate{
             peripheralStatusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             peripheralStatusLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+        
+        // Start scanning for the peripheral device
+        BluetoothManager.shared.delegate = self
+        BluetoothManager.shared.startScanning()
     }
+    
     func didConnectPeripheral() {
         peripheralStatusLabel.text = "Device connected"
         peripheralStatusLabel.textColor = UIColor.green
