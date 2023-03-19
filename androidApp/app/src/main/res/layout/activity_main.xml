@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/bluetoothTextBackground"
         android:layout_width="375dp"
         android:layout_height="145dp"
         android:background="@drawable/box"
@@ -83,8 +83,8 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:textColor="#373737"
-        app:fontFamily="@font/aldrich"
         android:textSize="16sp"
+        app:fontFamily="@font/aldrich"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -167,6 +167,20 @@
         app:layout_constraintStart_toEndOf="@+id/deleteContactFab"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.916" />
+
+    <TextView
+        android:id="@+id/characteristicDataText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fontFamily="@font/aldrich"
+        android:text=""
+        android:textColor="#8A8A8A"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.738" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
