@@ -7,6 +7,7 @@
 
 import CoreBluetooth
 import UIKit
+import CallKit
 
 // Bluetooth LE
 protocol BluetoothManagerDelegate: AnyObject {
@@ -14,11 +15,12 @@ protocol BluetoothManagerDelegate: AnyObject {
     func didDisconnectPeripheral()
 }
 
-class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
+class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, CXCallObserverDelegate {
     weak var delegate: BluetoothManagerDelegate?
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
     let BLEServiceUUID = CBUUID(string: "0000181A-0000-1000-8000-00805F9B34FB")
+    var callObserver = CXCallObserver()
     
     // Singleton instance
     static let shared = BluetoothManager()
@@ -36,8 +38,8 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        let callObserver = CXCallObserver()
+        callObserver.setDelegate(self, queue: nil)
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -89,15 +91,30 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
+    func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
+        if call.hasConnected {
+            print("Call connected")
+        } else if call.hasEnded {
+            print("Call ended")
+        }
+    }
+    
     // Read/Write/Handle the data
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        /*//When ready to handle data uncomment this
-         guard let data = characteristic.value else { return }
-         // Handle the received data as needed
-         */
-        
-        // This is boolean statement, just a placeholder
-        guard characteristic.value != nil else { return }
+        guard let value = characteristic.value else { return }
+        let stringValue = String(data: value, encoding: .utf8)
+        if stringValue == "signal" { // replace "signal" with actual signal that Adafruit sends
+            let callController = CXCallController()
+            let callHandle = CXHandle(type: .phoneNumber, value: "1234567890")
+            let startCallAction = CXStartCallAction(call: UUID(), handle: callHandle)
+            callController.requestTransaction(with: startCallAction, completion: { error in
+                if let error = error {
+                    print("Error starting call: \(error.localizedDescription)")
+                } else {
+                    print("Call initiated")
+                }
+            })
+        }
     }
     
     /*
