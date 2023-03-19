@@ -38,7 +38,6 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let callObserver = CXCallObserver()
         callObserver.setDelegate(self, queue: nil)
     }
     
