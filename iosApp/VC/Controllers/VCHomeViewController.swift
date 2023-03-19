@@ -40,11 +40,13 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         BluetoothManager.shared.startScanning()
     }
     
+    // When the Adafruit Bluefruit LE connects -> Change the connection status text & color to green
     func didConnectPeripheral() {
         peripheralStatusLabel.text = "Device connected"
         peripheralStatusLabel.textColor = UIColor.green
     }
     
+    // When the Adafruit Bluefruit LE disconnects -> Change the connection status text & color back to red
     func didDisconnectPeripheral() {
         peripheralStatusLabel.text = "Device disconnected"
         peripheralStatusLabel.textColor = UIColor.red
