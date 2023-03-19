@@ -12,27 +12,32 @@
 
 ## Keywords
 
-Section #, as well as any words that quickly give your peers insights into the application like programming language, development platform, type of application, etc.
+Section 3, Kotlin, Swift, Android, iOS, Arduino, Bluetooth, App, Accelerometer, Android Studio, Xcode, 
 
 ## Project Abstract
 
-This document proposes a novel application of a text message (SMS or Email) read-out and hands-free call interacted between an Android Smartphone and an infotainment platform (headunit) in a car environment. When a phone receives an SMS or Email, the text message is transferred from the phone to the headunit through a Bluetooth connection. On the headunit, user can control which and when the received SMS or E-mail to be read out through the in-vehicle audio system. The user may press one button on the headunit to activate the hands-free feature to call back the SMS sender.
+This  document  proposes  a  device  with  a  companion  smartphone  app,  which  in  combination,  will  alert emergency services or other individuals in the event of a vehicle collision. The device is attached to the user’s vehicle and connects to their phone via Bluetooth when in range. When the device detects a severe collision (indicated by rapid acceleration/deceleration), the device communicates with the app on the user’s phone, and the app initiates calls or text messages with a brief notification that an car accident has occurred at the user’s location. The user’s location is determined from the GPS coordinates of the user’s smartphone, and the contact numbers can be set by the user through the app. Unlike existing smartphone apps which send alerts based on acceleration of the phone itself, the accelerometer in this product is securely fixed to the vehicle. This will lead to fewer of the false positives that the smartphone apps are prone to.
 
 ## High Level Requirement
 
-Describe the requirements – i.e., what the product does and how it does it from a user point of view – at a high level.
+The product consists of two parts: a physical device and a smartphone app. The device is attached to the user’s vehicle and connects to the user’s phone via Bluetooth. When the device detects a vehicle collision, the app on the user’s phone calls or texts predetermined phone numbers with a brief message explaining that an accident has occurred along with GPS coordinates of the user’s phone.
 
 ## Conceptual Design
 
-Describe the initial design concept: Hardware/software architecture, programming language, operating system, etc.
+The hardware will consist of a microcontroller with Bluetooth and accelerometer modules attached. The smartphone app will simply run in the background, and when it receives a signal from the device it initiates calls or text messages. In the event that a call is placed, text-to-speech technology can be utilized to create an audible message. The software for the microcontroller will likely be programmed in C or C++ as these are the languages commonly used for embedded systems. The programming language(s) used for the smartphone app will depend on the target operating system; an app for Android would be programmed in Kotlin or Java, and an app for iOS would be programmed in Swift.
 
 ## Background
 
-The background will contain a more detailed description of the product and a comparison to existing similar projects/products. A literature search should be conducted and the results listed. Proper citation of sources is required. If there are similar open-source products, you should state whether existing source will be used and to what extent. If there are similar closed-source/proprietary products, you should state how the proposed product will be similar and different.
+Several similar products already exist. One example of these existing products are smartphone apps or built-in features (such as on the iPhone 14) that work by detecting rapid acceleration or deceleration. The drawback to this is that smartphones are occasionally subjected to these forces outside of car crashes, such as by being dropped or by the user riding a rollercoaster, which can cause false positives and waste emergency resources (Roth). With a device securely attached to a vehicle, many of these false positives would no longer occur. Another example was OnStar, a service in some GM vehicles that would contact emergency services when sensors in the vehicle detected a collision. However, OnStar was discontinued due to the sunsetting of 2G by cellular service providers (LaChance).
 
 ## Required Resources
 
-Discuss what you need to develop this project. This includes background information you will need to acquire, hardware resources, and software resources. If these are not part of the standard Computer Science Department lab resources, these must be identified early and discussed with the instructor.
+The required hardware will likely include a microcontroller as well as Bluetooth and accelerometer modules. Required software will include IDEs for programming the microcontroller and smartphone app. Specific software may vary depending on the microcontroller model as well as smartphone operating system. An Android app could be developed with Android Studio, and an iOS app could be developed with Xcode. Required background information will be a reasonable threshold for acceleration at which it can be assumed that a car collision has occurred, rather than the user simply driving over a bumpy road or braking sharply. 
+
+## References
+Roth, Emma. “The IPhone 14 Keeps Calling 911 on Rollercoasters.” The Verge, The Verge, 9 Oct. 2022, https://www.theverge.com/2022/10/9/23395222/iphone-14-calling-911-rollercoasters-apple-crash-detection.
+LaChance, Dave. “Older GM Vehicles to Lose Connection to Onstar with Sunset of 2G Network.” Repairer Driven News, 30 Nov. 2022, https://www.repairerdrivennews.com/2022/11/30/130475/.
+
 
 ## Collaborators
 
@@ -40,19 +45,48 @@ Discuss what you need to develop this project. This includes background informat
 <table>
 <tr>
     <td align="center">
-        <a href="https://github.com/ApplebaumIan">
-            <img src="https://avatars.githubusercontent.com/u/9451941?v=4" width="100;" alt="ApplebaumIan"/>
+        <a href="https://github.com/Capstone-Projects-2023-Spring/project-vehicle-collision-automatic-detection">
             <br />
-            <sub><b>Ian Tyler Applebaum</b></sub>
+            <sub><b>Evan Noyes</b></sub>
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/leighflagg">
-            <img src="https://avatars.githubusercontent.com/u/77810293?v=4" width="100;" alt="leighflagg"/>
+        <a href="https://github.com/AFoster414">
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>Austin Foster</b></sub>
         </a>
-    </td></tr>
+    </td>
+    <td align="center">
+        <a href="https://github.com/thanhnguyen46">
+            <br />
+            <sub><b>Thanh Nguyen</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Braddinger13">
+            <br />
+            <sub><b>Bradley Dinger</b></sub>
+        </a>
+    </td>
+     <td align="center">
+        <a href="https://github.com/ayarcia1">
+            <br />
+            <sub><b>Arif Ayarci</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/NathanAdiam">
+            <br />
+            <sub><b>Nathan Adiam</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Capstone-Projects-2023-Spring/project-vehicle-collision-automatic-detection">
+            <br />
+            <sub><b>Justice Chang</b></sub>
+        </a>
+    </td>    
+    </tr>
 </table>
 
 [//]: # ( readme: collaborators -end )
