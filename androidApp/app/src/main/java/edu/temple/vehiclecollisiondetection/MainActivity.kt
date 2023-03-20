@@ -246,9 +246,9 @@ class MainActivity : AppCompatActivity() {
         ) {
             // handle received data
             Log.d("Characteristic Data", "Data Changed!")
-            val data = value
+            val data = String(value)
             runOnUiThread(){
-                characteristicData.text=data.toString()
+                characteristicData.text=data
             }
 
         }
