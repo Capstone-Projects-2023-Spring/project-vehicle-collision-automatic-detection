@@ -29,6 +29,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
+import android.bluetooth.BluetoothGattDescriptor
+
+
+
 
 
 private const val SAVE_KEY = "save_key"
@@ -208,10 +212,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        @RequiresApi(Build.VERSION_CODES.S)
+        @RequiresApi(33)
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            val serviceUuid = UUID.fromString("0000181a-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
-            val characteristicUuid = UUID.fromString("00002A6D-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
+            val serviceUuid = UUID.fromString("00110011-4455-6677-8899-aabbccddeeff")//acts like a 'password' for the bluetooth connection
+            val characteristicUuid = UUID.fromString("00112233-4455-6677-8899-abbccddeefff")//acts like a 'password' for the bluetooth connection
             if (ActivityCompat.checkSelfPermission(
                     this@MainActivity,
                     Manifest.permission.BLUETOOTH_CONNECT
@@ -236,6 +240,10 @@ class MainActivity : AppCompatActivity() {
                     Log.d("Characteristic Found:", characteristicUuid.toString())
                 }
                 gatt.setCharacteristicNotification(characteristic1, true)
+
+                val desc: BluetoothGattDescriptor = characteristic1.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+                Log.d("Descriptor Found:", "00002902-0000-1000-8000-00805f9b34fb")
+                gatt.writeDescriptor(desc, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
             }
         }
 
