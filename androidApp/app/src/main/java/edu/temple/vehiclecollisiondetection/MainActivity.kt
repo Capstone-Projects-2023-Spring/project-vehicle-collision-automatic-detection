@@ -29,14 +29,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
+import kotlin.collections.ArrayList
 import android.bluetooth.BluetoothGattDescriptor
-
-
-
-
+import android.content.Intent
+import android.net.Uri
+import android.telephony.SmsManager
 
 private const val SAVE_KEY = "save_key"
-
+val REQUEST_PHONE_CALL = 1
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,10 +45,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var connectionText: TextView
     lateinit var characteristicData: TextView
     private lateinit var preferences: SharedPreferences
+    private lateinit var callButton: Button
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
-
 
 
     @SuppressLint("SetTextI18n")//added for hello world
@@ -61,8 +61,23 @@ class MainActivity : AppCompatActivity() {
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
 
+        //********
+        // Testing the calling function!
+        callButton = findViewById(R.id.callTest)
+        callButton.setOnClickListener{
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), REQUEST_PHONE_CALL)
+            }else{
+                makeCall("4846391351")
+            }
+        }
+        //********
+
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
+
+        //Testing sending texts
+        sendText("+14846391351", "Hello from android!")
 
         //Gets list from storage
         val gson = Gson()
@@ -151,6 +166,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PHONE_CALL)makeCall("+14846391351")
+    }
+
     private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
         contactList.add(ContactObject(contactNum, contactName))
     }
@@ -177,6 +201,49 @@ class MainActivity : AppCompatActivity() {
         //saves the arrayList as a string in memory
         prefEditor.putString(SAVE_KEY, contactsString)
         prefEditor.apply()
+    }
+
+    private fun sendText(phoneNumber: String, message: String){
+        var smsManager: SmsManager? = null
+        //var id = SmsManager.getDefaultSmsSubscriptionId()
+
+        try {
+            if (Build.VERSION.SDK_INT>=23) {
+                smsManager = this.getSystemService(SmsManager::class.java)
+            }
+            else{
+                smsManager = SmsManager.getDefault()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        smsManager?.sendTextMessage(phoneNumber, null, message, null, null)
+        Log.d("sendText", "$message sent to $phoneNumber")
+    }
+
+    private fun sendTextsToContacts(contactObjects: ArrayList<MainActivity.ContactObject>){
+
+        for(obj in contactObjects) {
+            //This is for American numbers only!
+            val numWithCountryCode = "+1" + obj.phoneNumber
+
+            //Add user variable rather than "someone", add location variable
+            sendText(
+                numWithCountryCode, "Hello ${obj.name}, I'm sorry to inform you that " +
+                        "someone has been in a serious crash. Here is their location: "
+            )
+        }
+    }
+
+    private fun makeCall(phoneNumber: String){
+
+        Log.d("Call output", "App is calling $phoneNumber")
+
+        val callIntent = Intent(Intent.ACTION_CALL)
+        //start calling intent
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(callIntent)
     }
 
     inner class MyBluetoothGattCallback : BluetoothGattCallback() {
