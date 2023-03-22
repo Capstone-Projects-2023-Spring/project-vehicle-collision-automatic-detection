@@ -15,7 +15,7 @@ protocol BluetoothManagerDelegate: AnyObject {
     func didDisconnectPeripheral()
 }
 
-class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, CXCallObserverDelegate {
+class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     weak var delegate: BluetoothManagerDelegate?
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
@@ -38,7 +38,6 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        callObserver.setDelegate(self, queue: nil)
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -90,6 +89,7 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
+    /*
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         if call.hasConnected {
             print("Call connected")
@@ -97,10 +97,12 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
             print("Call ended")
         }
     }
+     */
     
     // Read/Write/Handle the data
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        guard let value = characteristic.value else { return }
+        guard characteristic.value != nil else { return }
+        /*
         let stringValue = String(data: value, encoding: .utf8)
         if stringValue == "signal" { // replace "signal" with actual signal that Adafruit sends
             let callController = CXCallController()
@@ -114,6 +116,7 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 }
             })
         }
+        */
     }
     
     /*
