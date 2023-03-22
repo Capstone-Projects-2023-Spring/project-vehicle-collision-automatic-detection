@@ -19,7 +19,7 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     weak var delegate: BluetoothManagerDelegate?
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
-    let BLEServiceUUID = CBUUID(string: "0000181A-0000-1000-8000-00805F9B34FB")
+    let BLEServiceUUID = CBUUID(string: "00110011-4455-6677-8899-aabbccddeeff")
     var callObserver = CXCallObserver()
     
     // Singleton instance
