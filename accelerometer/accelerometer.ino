@@ -110,4 +110,8 @@ void test() {
     }
   }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> accelerometer
