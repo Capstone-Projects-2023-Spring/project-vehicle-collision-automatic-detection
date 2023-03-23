@@ -37,6 +37,7 @@ import android.telephony.SmsManager
 
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
+val REQUEST_SEND_SMS = 2
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,21 +64,28 @@ class MainActivity : AppCompatActivity() {
 
         //********
         // Testing the calling function!
+
         callButton = findViewById(R.id.callTest)
         callButton.setOnClickListener{
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
+            }else{
+                //Testing sending texts
+                sendText("+14846391351", "Hello from android!")
+                Log.d("Text Check: ", "Text Sent!")
+            }
             if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), REQUEST_PHONE_CALL)
             }else{
-                makeCall("4846391351")
+                //Testing call
+                makeCall("+14846391351")
+                Log.d("Call Check: ", "Call Done!")
             }
         }
         //********
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
-
-        //Testing sending texts
-        sendText("+14846391351", "Hello from android!")
 
         //Gets list from storage
         val gson = Gson()
@@ -173,6 +181,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PHONE_CALL)makeCall("+14846391351")
+        if (requestCode == REQUEST_SEND_SMS)sendText("+14846391351", "Hello from android!")
     }
 
     private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
@@ -206,17 +215,7 @@ class MainActivity : AppCompatActivity() {
     private fun sendText(phoneNumber: String, message: String){
         var smsManager: SmsManager? = null
         //var id = SmsManager.getDefaultSmsSubscriptionId()
-
-        try {
-            if (Build.VERSION.SDK_INT>=23) {
-                smsManager = this.getSystemService(SmsManager::class.java)
-            }
-            else{
-                smsManager = SmsManager.getDefault()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        smsManager = this.getSystemService(SmsManager::class.java)
 
         smsManager?.sendTextMessage(phoneNumber, null, message, null, null)
         Log.d("sendText", "$message sent to $phoneNumber")
