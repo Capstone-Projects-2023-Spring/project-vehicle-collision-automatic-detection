@@ -3,7 +3,7 @@
 
 LIS331 xl;
 float scale = 100.0;
-float threshold = 6.0;
+float threshold = 8.0;
 
 void setup() 
 {
@@ -38,6 +38,8 @@ void setup()
   xl.setIntThreshold(intThresholdCount/16, 1); // Threshold for an interrupt. This is
                           //  not actual counts, but rather, actual
                           //  counts divided by 16.
+  xl.enableInterrupt(LIS331::X_AXIS, LIS331::TRIG_ON_HIGH, 1, true);  
+  xl.enableInterrupt(LIS331::Y_AXIS, LIS331::TRIG_ON_HIGH, 1, true);
   xl.enableInterrupt(LIS331::Z_AXIS, LIS331::TRIG_ON_HIGH, 1, true);
                           // Enable the interrupt. Parameters indicate
                         //  which axis to sample, when to trigger
@@ -46,6 +48,8 @@ void setup()
                           //  which interrupt source we're configuring,
                           //  and whether to enable (true) or disable
                           //  (false) the interrupt.
+  xl.setPowerMode(LIS331::NORMAL);
+  xl.setODR(LIS331::DR_50HZ);
   xl.setFullScale(LIS331::LOW_RANGE);
   Serial.begin(115200);
   //test();
@@ -53,14 +57,17 @@ void setup()
 
 void loop() 
 {
-  if (digitalRead(9) == HIGH)
-  {
+  /*if(xl.newXData() || xl.newYData() || xl.newZData()){
+    float maxG = getMaxG();
+    Serial.println(maxG);
+  }*/
+
+  if (digitalRead(9) == HIGH) { //threshold MIGHT have been exceeded
     float maxG = getMaxG();
     Serial.println("Interrupt: " + String(maxG) + "g");
-    if (maxG > threshold) {
+    if (maxG > threshold) { //this is the real check
         Serial.println("Threshold exceeded");
     }
-    delay(10);
   }
 }
 
@@ -78,6 +85,9 @@ float getMaxG() {
   float xg = xl.convertToG(scale,x);
   float yg = xl.convertToG(scale,y);
   float zg = xl.convertToG(scale,z);
+  
+  //Serial.println(String(xg) + " " + String(yg) + " " + String(zg));
+  
   float maxG = sqrt(pow(xg, 2) + pow(yg, 2) + pow(zg, 2)); //pythagoream theorem for three dimensions
 
   return maxG;
