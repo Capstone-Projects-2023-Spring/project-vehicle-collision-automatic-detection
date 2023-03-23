@@ -101,7 +101,14 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     // Read/Write/Handle the data
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        guard characteristic.value != nil else { return }
+        guard characteristic.uuid == CBUUID(string: "00112233-4455-6677-8899-abbccddeefff") else {
+            return
+        }
+        
+        if let value = characteristic.value {
+            print("Received data: \(value)")
+            // Handle the received data as needed
+        }
         /*
         let stringValue = String(data: value, encoding: .utf8)
         if stringValue == "signal" { // replace "signal" with actual signal that Adafruit sends
