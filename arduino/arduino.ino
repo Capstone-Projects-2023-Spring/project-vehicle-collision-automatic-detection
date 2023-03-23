@@ -24,6 +24,7 @@ String data = " ";
 int flag = 0;
 int sleep = 0;
 int start = 0;
+int 
 const unsigned long interval = 60000;
 unsigned long previousMillis = 0;
 
@@ -133,7 +134,6 @@ void setup() {
   xl.setPowerMode(LIS331::NORMAL);
   xl.setODR(LIS331::DR_50HZ);
   xl.setFullScale(LIS331::LOW_RANGE);
-  Serial.begin(115200);
 }
 
 /**
@@ -167,20 +167,19 @@ void loop() {
       previousMillis = currentMillis;
     }
 
-    if (digitalRead(9) == HIGH) { //threshold MIGHT have been exceeded
-      float maxG = getMaxG();
+    float maxG;
+    //checks if threshold might have been exceeded, then verifies
+    if (digitalRead(9) == HIGH && (maxG = getMaxG()) > threshold) { 
       Serial.println("Interrupt: " + String(maxG) + "g");
-      if (maxG > threshold) { //this is the real check
-        Serial.println("Threshold exceeded");
-        //change the characteristic value
-        Serial.println("Changing Characteristic!");
-        //update characteristic value
-        gatt.setChar(1, 'A', BUFSIZE);
-        /*Serial.println("Changing Characteristic again!");
-        //update characteristic value again
-        gatt.setChar(1, 'B', BUFSIZE);*/
-        previousMillis = currentMillis;
-      }
+      Serial.println("Changing Characteristic!");
+      //update characteristic value
+      gatt.setChar(1, 'A', BUFSIZE);
+      delay(1000);
+      previousMillis = currentMillis;
+    } else if (gatt.getChar(1) == 'A') {
+      Serial.println("Changing Characteristic again!");
+      //update characteristic value
+      gatt.setChar(1, 'B', BUFSIZE);
     }
 
     //sleep if a minute of inactivity passes
@@ -243,10 +242,6 @@ void loop() {
  * 
  * @return float returns accelerometer reading
  */
-
-float getAccelerometerRead(){
-  return 0;
-}
 
 void error(const __FlashStringHelper*err){
   Serial.println(err);
