@@ -271,6 +271,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread(Runnable() {
                     connectionText.setTextColor(Color.parseColor("red"))
                     connectionText.setText("Not Connected")
+                    Toast.makeText(applicationContext, "Device Disconnected!", Toast.LENGTH_LONG).show()
                 })
             } else{
                 Log.d("tag3", "Connection Attempt Failed!")
