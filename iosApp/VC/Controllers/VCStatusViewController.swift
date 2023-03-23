@@ -10,7 +10,7 @@ import SwiftUI
 import CoreBluetooth
 
 /// Controller to show Home page
-final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
+final class VCStatusViewController: UIViewController, BluetoothManagerDelegate {
     
     private var peripheralStatusLabel: UILabel!
     private let bluetoothManager = BluetoothManager()
