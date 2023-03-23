@@ -13,13 +13,14 @@ import CallKit
 protocol BluetoothManagerDelegate: AnyObject {
     func didConnectPeripheral()
     func didDisconnectPeripheral()
+    func didReceiveData(_ data: Data)
 }
 
-class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, CXCallObserverDelegate {
+class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     weak var delegate: BluetoothManagerDelegate?
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
-    let BLEServiceUUID = CBUUID(string: "0000181A-0000-1000-8000-00805F9B34FB")
+    let BLEServiceUUID = CBUUID(string: "00110011-4455-6677-8899-aabbccddeeff")
     var callObserver = CXCallObserver()
     
     // Singleton instance
@@ -38,7 +39,6 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        callObserver.setDelegate(self, queue: nil)
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -90,6 +90,7 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
+    /*
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         if call.hasConnected {
             print("Call connected")
@@ -97,22 +98,15 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
             print("Call ended")
         }
     }
+     */
     
     // Read/Write/Handle the data
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        guard let value = characteristic.value else { return }
-        let stringValue = String(data: value, encoding: .utf8)
-        if stringValue == "signal" { // replace "signal" with actual signal that Adafruit sends
-            let callController = CXCallController()
-            let callHandle = CXHandle(type: .phoneNumber, value: "1234567890")
-            let startCallAction = CXStartCallAction(call: UUID(), handle: callHandle)
-            callController.requestTransaction(with: startCallAction, completion: { error in
-                if let error = error {
-                    print("Error starting call: \(error.localizedDescription)")
-                } else {
-                    print("Call initiated")
-                }
-            })
+        guard characteristic.uuid == CBUUID(string: "00112233-4455-6677-8899-abbccddeefff") else {
+            return
+        }
+        if let value = characteristic.value {
+            delegate?.didReceiveData(value)
         }
     }
     

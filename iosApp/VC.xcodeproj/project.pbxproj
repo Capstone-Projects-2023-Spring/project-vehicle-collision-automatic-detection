@@ -16,7 +16,7 @@
 		D88E9AC5298AFE1000EB1305 /* VCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AC4298AFE1000EB1305 /* VCTests.swift */; };
 		D88E9ACF298AFE1000EB1305 /* VCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9ACE298AFE1000EB1305 /* VCUITests.swift */; };
 		D88E9AD1298AFE1000EB1305 /* VCUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AD0298AFE1000EB1305 /* VCUITestsLaunchTests.swift */; };
-		D88E9AE1298B05FA00EB1305 /* VCStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE0298B05FA00EB1305 /* VCStatusViewController.swift */; };
+		D88E9AE1298B05FA00EB1305 /* VCHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */; };
 		D88E9AE3298B060C00EB1305 /* VCSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */; };
 		D88E9AE5298B073200EB1305 /* VCContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */; };
 		D8EEC46429B011CA006FE065 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC46229B011CA006FE065 /* Model.xcdatamodeld */; };
@@ -56,7 +56,7 @@
 		D88E9ACA298AFE1000EB1305 /* VCUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VCUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88E9ACE298AFE1000EB1305 /* VCUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITests.swift; sourceTree = "<group>"; };
 		D88E9AD0298AFE1000EB1305 /* VCUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		D88E9AE0298B05FA00EB1305 /* VCStatusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCStatusViewController.swift; sourceTree = "<group>"; };
+		D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCHomeViewController.swift; sourceTree = "<group>"; };
 		D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCSettingViewController.swift; sourceTree = "<group>"; };
 		D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCContactsViewController.swift; sourceTree = "<group>"; };
 		D8EEC46329B011CA006FE065 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -162,7 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
-				D88E9AE0298B05FA00EB1305 /* VCStatusViewController.swift */,
+				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
 				D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */,
 				920C054129C69CD400009395 /* BluetoothManager.swift */,
@@ -312,7 +312,7 @@
 			files = (
 				D88E9AE3298B060C00EB1305 /* VCSettingViewController.swift in Sources */,
 				D88E9AE5298B073200EB1305 /* VCContactsViewController.swift in Sources */,
-				D88E9AE1298B05FA00EB1305 /* VCStatusViewController.swift in Sources */,
+				D88E9AE1298B05FA00EB1305 /* VCHomeViewController.swift in Sources */,
 				D8EEC46A29B013D6006FE065 /* CoreDataStack.swift in Sources */,
 				D8EEC47529B024D3006FE065 /* Contact+CoreDataClass.swift in Sources */,
 				D8EEC46429B011CA006FE065 /* Model.xcdatamodeld in Sources */,

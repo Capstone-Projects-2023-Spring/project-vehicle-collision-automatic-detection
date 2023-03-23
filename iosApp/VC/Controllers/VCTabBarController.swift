@@ -28,15 +28,15 @@ final class VCTabBarController : UITabBarController {
         - Precondition: ``VCHomeViewController``, ``VCContactsViewController``, ``VCSettingViewController`` ,
         */
     private func setUpTabs() {
-        let StatusViewController = VCStatusViewController()
+        let HomeViewController = VCHomeViewController()
         let ContactsViewController = VCContactsViewController()
         let SettingViewController = VCSettingViewController()
         
-        StatusViewController.navigationItem.largeTitleDisplayMode = .automatic
+        HomeViewController.navigationItem.largeTitleDisplayMode = .automatic
         ContactsViewController.navigationItem.largeTitleDisplayMode = .automatic
         SettingViewController.navigationItem.largeTitleDisplayMode = .automatic
                 
-        let nav1 = UINavigationController(rootViewController: StatusViewController)
+        let nav1 = UINavigationController(rootViewController: HomeViewController)
         let nav2 = UINavigationController(rootViewController: ContactsViewController)
         let nav3 = UINavigationController(rootViewController: SettingViewController)
         
