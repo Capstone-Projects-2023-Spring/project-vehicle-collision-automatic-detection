@@ -23,6 +23,7 @@ const unsigned long interval = 60000;
 unsigned long previousMillis = 0;
 
 Adafruit_BluefruitLE_SPI Bluetooth(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
+Adafruit_BLEGatt gatt(Bluetooth);
 
 /**
  * @brief Initialize input, output pins and values
@@ -56,6 +57,13 @@ void setup() {
   Bluetooth.echo(false);
 
   Bluetooth.verbose(false);
+
+  // Create custom characteristic
+  Serial.println(F("Setting service + characteristic!"));
+  Bluetooth.atcommand("AT+GATTADDSERVICE=UUID128=00-11-00-11-44-55-66-77-88-99-AA-BB-CC-DD-EE-FF");
+
+  int char1 = Bluetooth.atcommand("AT+GATTADDCHAR=UUID128=00-11-22-33-44-55-66-77-88-99-AB-BC-CD-DE-EF-FF,PROPERTIES=0x10,MIN_LEN=1,VALUE=HELLO");
+  Serial.println(char1);
 
   /* Wait for connection */
   Serial.println("Looking for Bluetooth Device...");
@@ -107,6 +115,17 @@ void loop() {
       flag--;
       previousMillis = currentMillis;
     }
+
+    //change the characteristic value
+    delay(10000);
+    Serial.println("Changing Characteristic!");
+    //update characteristic value
+    gatt.setChar(1, 'A', BUFSIZE);
+    delay(5000);
+    Serial.println("Changing Characteristic again!");
+    //update characteristic value again
+    gatt.setChar(1, 'B', BUFSIZE);
+    previousMillis = currentMillis;
 
     //sleep if a minute of inactivity passes
     if((unsigned long)(currentMillis - previousMillis) >= interval && (unsigned long)(currentMillis - previousMillis) < interval * 5){
