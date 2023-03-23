@@ -314,7 +314,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             let composeVC = MFMessageComposeViewController()
             composeVC.messageComposeDelegate = self
             
-            let defaultEmergencyMsg = "Emergency! I've been in a car accident. "
+            let defaultEmergencyMsg = "Emergency! I was just in a car accident. As one of my emergency contacts, I wanted to keep you updated. "
             
             let location = "Here is my current location. https://www.google.com/maps/place/\(coordinates?.latitude ?? 0),\(coordinates?.longitude ?? 0)"
             
