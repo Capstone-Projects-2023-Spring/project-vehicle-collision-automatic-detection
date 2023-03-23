@@ -11,11 +11,9 @@ import CoreBluetooth
 
 /// Controller to show Home page
 final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
-    
     private var peripheralStatusLabel: UILabel!
     private let bluetoothManager = BluetoothManager()
     private var dataFromAdafruit: UILabel!
-    
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
      */
@@ -60,4 +58,14 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         peripheralStatusLabel.text = "Device disconnected"
         peripheralStatusLabel.textColor = UIColor.red
     }
+    
+    func didReceiveData(_ data: Data) {
+        // Convert the data to a string
+        let receivedString = String(data: data, encoding: .utf8)
+        // Update the label's text with the received string
+        dataFromAdafruit.text = receivedString
+        dataFromAdafruit.textColor = UIColor.black
+    }
+
+    
 }

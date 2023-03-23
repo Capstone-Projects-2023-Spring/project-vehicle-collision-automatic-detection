@@ -13,6 +13,7 @@ import CallKit
 protocol BluetoothManagerDelegate: AnyObject {
     func didConnectPeripheral()
     func didDisconnectPeripheral()
+    func didReceiveData(_ data: Data)
 }
 
 class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -104,26 +105,9 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
         guard characteristic.uuid == CBUUID(string: "00112233-4455-6677-8899-abbccddeefff") else {
             return
         }
-        
         if let value = characteristic.value {
-            print("Received data: \(value)")
-            // Handle the received data as needed
+            delegate?.didReceiveData(value)
         }
-        /*
-        let stringValue = String(data: value, encoding: .utf8)
-        if stringValue == "signal" { // replace "signal" with actual signal that Adafruit sends
-            let callController = CXCallController()
-            let callHandle = CXHandle(type: .phoneNumber, value: "1234567890")
-            let startCallAction = CXStartCallAction(call: UUID(), handle: callHandle)
-            callController.requestTransaction(with: startCallAction, completion: { error in
-                if let error = error {
-                    print("Error starting call: \(error.localizedDescription)")
-                } else {
-                    print("Call initiated")
-                }
-            })
-        }
-        */
     }
     
     /*
