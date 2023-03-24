@@ -81,7 +81,7 @@ LaChance, Dave. “Older GM Vehicles to Lose Connection to Onstar with Sunset of
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/Capstone-Projects-2023-Spring/project-vehicle-collision-automatic-detection">
+        <a href="https://github.com/qwertyist12">
             <br />
             <sub><b>Justice Chang</b></sub>
         </a>
