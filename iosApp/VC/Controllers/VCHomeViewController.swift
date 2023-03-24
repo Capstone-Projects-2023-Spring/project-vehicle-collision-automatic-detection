@@ -32,7 +32,7 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         // Add a label for the data
         dataFromAdafruit = UILabel()
         dataFromAdafruit.translatesAutoresizingMaskIntoConstraints = false
-        dataFromAdafruit.text = "DEFAULT_DATA"
+        dataFromAdafruit.text = "0"
         dataFromAdafruit.textColor = UIColor.gray
         view.addSubview(dataFromAdafruit)
         
@@ -46,27 +46,31 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         // Start scanning for the peripheral device
         BluetoothManager.shared.delegate = self
         BluetoothManager.shared.startScanning()
+        print("Device started in console")
     }
     
     // When the Adafruit Bluefruit LE connects -> Change the connection status text & color to green
     func didConnectPeripheral() {
+        print("Device connected in console")
         peripheralStatusLabel.text = "Device connected"
         peripheralStatusLabel.textColor = UIColor.green
     }
     
     // When the Adafruit Bluefruit LE disconnects -> Change the connection status text & color back to red
     func didDisconnectPeripheral() {
+        print("Device disconnected in console")
         peripheralStatusLabel.text = "Device disconnected"
         peripheralStatusLabel.textColor = UIColor.red
     }
     
     func didReceiveData(_ data: Data) {
+        print("Device received data from Adafruit Bluefruit LE")
         // Convert the data to a string
         let receivedString = String(data: data, encoding: .utf8)
         // Update the label's text with the received string
         dataFromAdafruit.text = receivedString
         dataFromAdafruit.textColor = UIColor.black
     }
-
+    
     
 }
