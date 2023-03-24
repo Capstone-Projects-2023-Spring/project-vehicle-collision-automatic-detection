@@ -170,6 +170,11 @@ void loop() {
 
     float maxG;
 
+    if(xl.newXData() || xl.newYData() || xl.newZData()){
+      float maxG = getMaxG();
+      Serial.println(maxG);
+    }
+
     //checks if threshold might have been exceeded, then verifies
     gatt.setChar(1, 'B', BUFSIZE);
     if (digitalRead(9) == HIGH && (maxG = getMaxG()) > threshold) { 
