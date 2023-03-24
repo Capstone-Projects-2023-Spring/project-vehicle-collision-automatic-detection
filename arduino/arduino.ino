@@ -18,13 +18,12 @@
 
 LIS331 xl;
 float scale = 100.0;
-float threshold = 8.0;
+float threshold = 6.0;
 
 String data = " ";
 int flag = 0;
 int sleep = 0;
 int start = 0;
-int 
 const unsigned long interval = 60000;
 unsigned long previousMillis = 0;
 
@@ -89,6 +88,8 @@ void setup() {
   Serial.println(F("Bluetooth Device Connected!"));
   Serial.println(F("******************************"));
   start++;
+
+  Bluetooth.begin();
 
   //accelerometer
   pinMode(9,INPUT);       // Interrupt pin input
@@ -168,19 +169,21 @@ void loop() {
     }
 
     float maxG;
+
     //checks if threshold might have been exceeded, then verifies
+    gatt.setChar(1, 'B', BUFSIZE);
     if (digitalRead(9) == HIGH && (maxG = getMaxG()) > threshold) { 
+      if(sleep == 1){
+        Serial.println("Woke Up!");
+        sleep--;
+      }
       Serial.println("Interrupt: " + String(maxG) + "g");
       Serial.println("Changing Characteristic!");
       //update characteristic value
       gatt.setChar(1, 'A', BUFSIZE);
       delay(1000);
       previousMillis = currentMillis;
-    } else if (gatt.getChar(1) == 'A') {
-      Serial.println("Changing Characteristic again!");
-      //update characteristic value
-      gatt.setChar(1, 'B', BUFSIZE);
-    }
+    } 
 
     //sleep if a minute of inactivity passes
     if((unsigned long)(currentMillis - previousMillis) >= interval && (unsigned long)(currentMillis - previousMillis) < interval * 5){
@@ -234,14 +237,6 @@ void loop() {
     delay(500);
   }
 }
-
-/**
- * @brief Gets accelerometer reading
- * 
- * @param void takes nothing
- * 
- * @return float returns accelerometer reading
- */
 
 void error(const __FlashStringHelper*err){
   Serial.println(err);
