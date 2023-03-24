@@ -29,10 +29,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
-
+import kotlin.collections.ArrayList
+import android.bluetooth.BluetoothGattDescriptor
+import android.content.Intent
+import android.net.Uri
+import android.telephony.SmsManager
 
 private const val SAVE_KEY = "save_key"
-
+val REQUEST_PHONE_CALL = 1
+val REQUEST_SEND_SMS = 2
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,10 +46,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var connectionText: TextView
     lateinit var characteristicData: TextView
     private lateinit var preferences: SharedPreferences
+    private lateinit var callButton: Button
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
-
 
 
     @SuppressLint("SetTextI18n")//added for hello world
@@ -56,6 +61,28 @@ class MainActivity : AppCompatActivity() {
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
+
+        //********
+        // Testing the calling function!
+
+        callButton = findViewById(R.id.callTest)
+        callButton.setOnClickListener{
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
+            }else{
+                //Testing sending texts
+                sendText("+14846391351", "Hello from android!")
+                Log.d("Text Check: ", "Text Sent!")
+            }
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), REQUEST_PHONE_CALL)
+            }else{
+                //Testing call
+                makeCall("+14846391351")
+                Log.d("Call Check: ", "Call Done!")
+            }
+        }
+        //********
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
@@ -147,6 +174,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PHONE_CALL)makeCall("+14846391351")
+        if (requestCode == REQUEST_SEND_SMS)sendText("+14846391351", "Hello from android!")
+    }
+
     private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
         contactList.add(ContactObject(contactNum, contactName))
     }
@@ -175,6 +212,39 @@ class MainActivity : AppCompatActivity() {
         prefEditor.apply()
     }
 
+    private fun sendText(phoneNumber: String, message: String){
+        var smsManager: SmsManager? = null
+        //var id = SmsManager.getDefaultSmsSubscriptionId()
+        smsManager = this.getSystemService(SmsManager::class.java)
+
+        smsManager?.sendTextMessage(phoneNumber, null, message, null, null)
+        Log.d("sendText", "$message sent to $phoneNumber")
+    }
+
+    private fun sendTextsToContacts(contactObjects: ArrayList<MainActivity.ContactObject>){
+
+        for(obj in contactObjects) {
+            //This is for American numbers only!
+            val numWithCountryCode = "+1" + obj.phoneNumber
+
+            //Add user variable rather than "someone", add location variable
+            sendText(
+                numWithCountryCode, "Hello ${obj.name}, I'm sorry to inform you that " +
+                        "someone has been in a serious crash. Here is their location: "
+            )
+        }
+    }
+
+    private fun makeCall(phoneNumber: String){
+
+        Log.d("Call output", "App is calling $phoneNumber")
+
+        val callIntent = Intent(Intent.ACTION_CALL)
+        //start calling intent
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+        startActivity(callIntent)
+    }
+
     inner class MyBluetoothGattCallback : BluetoothGattCallback() {
 
         @RequiresApi(Build.VERSION_CODES.S)
@@ -201,6 +271,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread(Runnable() {
                     connectionText.setTextColor(Color.parseColor("red"))
                     connectionText.setText("Not Connected")
+                    Toast.makeText(applicationContext, "Device Disconnected!", Toast.LENGTH_LONG).show()
                 })
             } else{
                 Log.d("tag3", "Connection Attempt Failed!")
@@ -208,10 +279,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        @RequiresApi(Build.VERSION_CODES.S)
+        @RequiresApi(33)
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            val serviceUuid = UUID.fromString("0000181a-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
-            val characteristicUuid = UUID.fromString("00002A6D-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
+            val serviceUuid = UUID.fromString("00110011-4455-6677-8899-aabbccddeeff")//acts like a 'password' for the bluetooth connection
+            val characteristicUuid = UUID.fromString("00112233-4455-6677-8899-abbccddeefff")//acts like a 'password' for the bluetooth connection
             if (ActivityCompat.checkSelfPermission(
                     this@MainActivity,
                     Manifest.permission.BLUETOOTH_CONNECT
@@ -236,6 +307,10 @@ class MainActivity : AppCompatActivity() {
                     Log.d("Characteristic Found:", characteristicUuid.toString())
                 }
                 gatt.setCharacteristicNotification(characteristic1, true)
+
+                val desc: BluetoothGattDescriptor = characteristic1.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+                Log.d("Descriptor Found:", "00002902-0000-1000-8000-00805f9b34fb")
+                gatt.writeDescriptor(desc, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
             }
         }
 
@@ -246,9 +321,9 @@ class MainActivity : AppCompatActivity() {
         ) {
             // handle received data
             Log.d("Characteristic Data", "Data Changed!")
-            val data = value
+            val data = String(value)
             runOnUiThread(){
-                characteristicData.text=data.toString()
+                characteristicData.text=data
             }
 
         }
