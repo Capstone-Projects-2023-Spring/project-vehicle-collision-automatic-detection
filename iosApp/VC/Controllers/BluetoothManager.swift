@@ -21,6 +21,7 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
     let BLEServiceUUID = CBUUID(string: "00110011-4455-6677-8899-aabbccddeeff")
+    private var rxCharacteristic: CBCharacteristic?
     var callObserver = CXCallObserver()
     
     // Singleton instance
@@ -67,6 +68,9 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     // When connect to the Peripheral
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        self.peripheral = peripheral
+        peripheral.delegate = self
+        peripheral.discoverServices([CBUUID(string: "00110011-4455-6677-8899-aabbccddeeff")])
         delegate?.didConnectPeripheral()
     }
     
@@ -76,28 +80,34 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        guard let services = peripheral.services else { return }
+        guard let services = peripheral.services else {
+            return
+        }
         for service in services {
-            peripheral.discoverCharacteristics(nil, for: service)
+            peripheral.discoverCharacteristics([CBUUID(string: "00112233-4455-6677-8899-abbccddeefff")], for: service)
         }
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        guard let characteristics = service.characteristics else { return }
+        guard let characteristics = service.characteristics else {
+            return
+        }
         for characteristic in characteristics {
-            print(characteristic.uuid)
-            // Handle the available characteristics as needed
+            if characteristic.uuid == CBUUID(string: "00112233-4455-6677-8899-abbccddeefff") {
+                self.rxCharacteristic = characteristic
+                peripheral.setNotifyValue(true, for: characteristic)
+            }
         }
     }
     
     /*
-    func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
-        if call.hasConnected {
-            print("Call connected")
-        } else if call.hasEnded {
-            print("Call ended")
-        }
-    }
+     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
+     if call.hasConnected {
+     print("Call connected")
+     } else if call.hasEnded {
+     print("Call ended")
+     }
+     }
      */
     
     // Read/Write/Handle the data
