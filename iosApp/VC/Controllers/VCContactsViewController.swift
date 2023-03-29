@@ -84,14 +84,15 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
         if EmergencyContactList.contains(where: {$0.contactId == contact.identifier}) {
             duplicatedContactAlert()
-            
         } else  {
             let name = contact.givenName + " " + contact.familyName
             let identifier = contact.identifier
+            let phoneNumber = (contact.phoneNumbers[0].value).value(forKey: "digits") as! String
             let managedContext = AppDelegate.sharedAppDelegate.CoreDataStack.managedContext
             let newContact = Contact(context: managedContext)
             newContact.setValue(name, forKey: #keyPath(Contact.contactName))
             newContact.setValue(identifier, forKey: #keyPath(Contact.contactId))
+            newContact.setValue(phoneNumber, forKey: #keyPath(Contact.contactPhoneNumber))
             newContact.setValue(contact, forKey: #keyPath(Contact.contactSource))
             self.EmergencyContactList.insert(newContact, at: 0)
             AppDelegate.sharedAppDelegate.CoreDataStack.saveContext() // Save changes in CoreData
@@ -219,8 +220,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         let number = (contact.phoneNumbers[0].value ).value(forKey: "digits") as! String
         let name = EmergencyContactList[indexPath.row].contactName
         
-        
-        let alert = UIAlertController(title: "Notify \(name ?? "Emergency Contact")", message: "Click Call or Text to contact \(name ?? "your emergency contact")",
+        let alert = UIAlertController(title: "Notify \(name ?? "Emergency Contact")",
+                                      message: "Click Call or Text to contact \(name ?? "your emergency contact")",
                                       preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Call", style: UIAlertAction.Style.default, handler: { _ in
             //Call action
@@ -269,7 +270,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
         coordinates = locValue
-        print("locations = \(locValue.latitude) \(locValue.longitude)")
+        //print("locations = \(locValue.latitude) \(locValue.longitude)")
     }
     
     /**
@@ -322,6 +323,14 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             locationManager.stopUpdatingLocation()
             self.present(composeVC, animated: true, completion: nil)
         }
+    }
+    
+    func getListOfphoneNumbersInEmergencyContacts() -> Array<String> {
+        var phoneNumbers = Array<String>()
+        for emergencyContact in EmergencyContactList {
+            phoneNumbers.append(emergencyContact.contactPhoneNumber ?? "")
+        }
+        return phoneNumbers
     }
     
     func textMessageWithTwilio() {
