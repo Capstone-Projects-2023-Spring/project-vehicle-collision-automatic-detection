@@ -70,6 +70,8 @@ class MainActivity : AppCompatActivity() {
         // Testing crash popup
         callButton = findViewById(R.id.callTest)
         callButton.setOnClickListener{
+            //set value to starting time
+            mTimeLeftInMillis = countdownStartTime
             //if a crash is detected by the arduino device, initiate crash popup
             val crashDialogView = LayoutInflater.from(this).inflate(R.layout.crash_procedure_popup, null)
             val crashDialogBuilder = AlertDialog.Builder(this)
@@ -88,7 +90,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onFinish() { //countdown goes to 0
                     mCountDownTimer?.cancel()
                     crashAlertDialog.dismiss()
-                    mTimeLeftInMillis = countdownStartTime
                     characteristicData.setText("Calling Emergency Services!")
                 }
             }.start()
@@ -97,7 +98,6 @@ class MainActivity : AppCompatActivity() {
             cancelButton.setOnClickListener {
                 crashAlertDialog.dismiss()
                 mCountDownTimer?.cancel()
-                mTimeLeftInMillis = countdownStartTime
             }
         }
         //********
