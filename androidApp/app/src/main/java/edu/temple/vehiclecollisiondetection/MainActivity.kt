@@ -7,12 +7,8 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -31,9 +27,11 @@ import com.google.gson.reflect.TypeToken
 import java.util.*
 import kotlin.collections.ArrayList
 import android.bluetooth.BluetoothGattDescriptor
-import android.content.Intent
+import android.content.*
 import android.net.Uri
+import android.os.*
 import android.telephony.SmsManager
+import android.content.ServiceConnection
 
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
@@ -47,6 +45,31 @@ class MainActivity : AppCompatActivity() {
     lateinit var characteristicData: TextView
     private lateinit var preferences: SharedPreferences
     private lateinit var callButton: Button
+
+    //variable for countdown service binding
+    var isServiceConnected = false
+    lateinit var countdownBinder: CountdownService.CountdownBinder
+
+    var countdownHandler = Handler(Looper.getMainLooper()){
+        Log.d("From main handler", it.toString())
+        true
+    }
+
+     val serviceConnection = object: ServiceConnection{
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            isServiceConnected = true
+
+            Log.d("service connection", "Service was connected")
+            countdownBinder = service as CountdownService.CountdownBinder
+            countdownBinder.setHandler(countdownHandler)
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceConnected = false
+            Log.d("service connection", "Service was disconnected")
+        }
+
+    }
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
@@ -113,6 +136,12 @@ class MainActivity : AppCompatActivity() {
         //Add Contact Button Functionality
         val addContactButton: View = findViewById(R.id.fab)
         addContactButton.setOnClickListener{
+            //TESTING COUNTDOWN WITH BUTTON, DELETE
+            if(isServiceConnected){
+                Log.d("In if", "Connected!")
+                countdownBinder.tenSecondCountdown()
+            }
+
             //setting up 'add contact' pop-up menu
             val contactDialogView = LayoutInflater.from(this).inflate(R.layout.layout_dialog, null)
             val contactDialogBuilder = AlertDialog.Builder(this)
@@ -172,6 +201,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Binding Service to CountdownService
+        bindService(Intent(this, CountdownService::class.java),
+            serviceConnection,
+            BIND_AUTO_CREATE
+        )
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //This will unbind the service once activity is destroyed
+        unbindService(serviceConnection)
     }
 
     override fun onRequestPermissionsResult(

@@ -25,6 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VehicleCollisionDetection"
         tools:targetApi="31">
+
+        <service
+            android:name=".CountdownService"
+            android:enabled="true"></service>
         <activity
             android:name=".MainActivity"
             android:exported="true">
