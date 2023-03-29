@@ -1,5 +1,5 @@
 //
-//  VCEmergencyContactViewController.swift
+//  VCContactsViewController.swift
 //  VC
 //
 //  Created by Nathan A on 2/1/23.
@@ -12,7 +12,7 @@ import CoreData
 import MessageUI
 import MapKit
 import CoreLocation
-
+import Foundation
 
 /// Controller to add and show Emergency Contacts
 class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate, MFMessageComposeViewControllerDelegate {
@@ -32,8 +32,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     var EmergencyContactList = [Contact]()
     var coordinates: CLLocationCoordinate2D?
     let locationManager = CLLocationManager()
-    
-    
+  
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
      */
@@ -321,9 +320,44 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             composeVC.recipients = [phoneNumber]
             composeVC.body = defaultEmergencyMsg + location
             locationManager.stopUpdatingLocation()
-            
             self.present(composeVC, animated: true, completion: nil)
         }
+    }
+    
+    func textMessageWithTwilio() {
+        let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
+        let authToken = "87914af03129b305d17f6389af728562"
+        let fromNumber = "+18663483216"
+        let toNumber = "+2674610092"
+        
+        let defaultEmergencyMsg = "Emergency! I was just in a car accident. As one of my emergency contacts, I wanted to keep you updated. "
+        let location = "Here is my current location. https://www.google.com/maps/place/\(coordinates?.latitude ?? 0),\(coordinates?.longitude ?? 0)"
+        //let message = defaultEmergencyMsg + location
+        let message = "TEST MSG sent via Twilio"
+        
+        let url = URL(string: "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)/Messages")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
+        
+        let body = "From=\(fromNumber)&To=\(toNumber)&Body=\(message)"
+        request.httpBody = body.data(using: .utf8)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error: \(error)")
+            } else if let _ = data,
+                      let response = response as? HTTPURLResponse,
+                      response.statusCode == 201 {
+                print("Message sent!")
+            } else {
+                let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
+                let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
+                print("Unexpected response: \(responseString), data: \(dataString)")
+            }
+        }
+        task.resume()
     }
     
     /**
