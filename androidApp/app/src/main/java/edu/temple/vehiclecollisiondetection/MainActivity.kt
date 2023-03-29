@@ -6,8 +6,16 @@ import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,13 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
-import kotlin.collections.ArrayList
-import android.bluetooth.BluetoothGattDescriptor
-import android.content.*
-import android.net.Uri
-import android.os.*
-import android.telephony.SmsManager
-import android.content.ServiceConnection
+
 
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
@@ -44,34 +46,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var callButton: Button
 
-    //variable for countdown service binding
-    var isServiceConnected = false
-    lateinit var countdownBinder: CountdownService.CountdownBinder
 
-    var countdownHandler = Handler(Looper.getMainLooper()){
-        Log.d("From main handler", it.toString())
-        true
-    }
-
-     val serviceConnection = object: ServiceConnection{
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            isServiceConnected = true
-
-            Log.d("service connection", "Service was connected")
-            countdownBinder = service as CountdownService.CountdownBinder
-            countdownBinder.setHandler(countdownHandler)
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isServiceConnected = false
-            Log.d("service connection", "Service was disconnected")
-        }
-
-    }
+    //countdown timer object
+    private var mCountDownTimer: CountDownTimer? = null
+    private val countdownStartTime: Long = 11000 //timer duration for when crashes are detected, current set at 11 seconds (takes a second to popup)
+    private var mTimeLeftInMillis = countdownStartTime //variable for tracking countdown duration remaining at a given time
+    private var countdownValueInt: Int? = null
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
-
 
     @SuppressLint("SetTextI18n")//added for hello world
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,23 +67,37 @@ class MainActivity : AppCompatActivity() {
         characteristicData = findViewById(R.id.characteristicDataText)
 
         //********
-        // Testing the calling function!
-
+        // Testing crash popup
         callButton = findViewById(R.id.callTest)
         callButton.setOnClickListener{
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
-            }else{
-                //Testing sending texts
-                sendText("+14846391351", "Hello from android!")
-                Log.d("Text Check: ", "Text Sent!")
-            }
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), REQUEST_PHONE_CALL)
-            }else{
-                //Testing call
-                makeCall("+14846391351")
-                Log.d("Call Check: ", "Call Done!")
+            //if a crash is detected by the arduino device, initiate crash popup
+            val crashDialogView = LayoutInflater.from(this).inflate(R.layout.crash_procedure_popup, null)
+            val crashDialogBuilder = AlertDialog.Builder(this)
+                .setView(crashDialogView)
+                .setTitle("")
+            //show dialog
+            val crashAlertDialog = crashDialogBuilder.show()
+            //countdown
+            val countdownTimerText = crashDialogView.findViewById<TextView>(R.id.countdownText)
+            mCountDownTimer = object : CountDownTimer(mTimeLeftInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) { //countdown interval
+                    mTimeLeftInMillis = millisUntilFinished
+                    countdownValueInt = ((mTimeLeftInMillis / 1000) % 60).toInt()
+                    countdownTimerText.setText(countdownValueInt.toString())
+                }
+                override fun onFinish() { //countdown goes to 0
+                    mCountDownTimer?.cancel()
+                    crashAlertDialog.dismiss()
+                    mTimeLeftInMillis = countdownStartTime
+                    characteristicData.setText("Calling Emergency Services!")
+                }
+            }.start()
+            //cancel button
+            val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
+            cancelButton.setOnClickListener {
+                crashAlertDialog.dismiss()
+                mCountDownTimer?.cancel()
+                mTimeLeftInMillis = countdownStartTime
             }
         }
         //********
@@ -134,12 +131,6 @@ class MainActivity : AppCompatActivity() {
         //Add Contact Button Functionality
         val addContactButton: View = findViewById(R.id.fab)
         addContactButton.setOnClickListener{
-            //TESTING COUNTDOWN WITH BUTTON, DELETE
-            if(isServiceConnected){
-                Log.d("In if", "Connected!")
-                countdownBinder.tenSecondCountdown()
-            }
-
             //setting up 'add contact' pop-up menu
             val contactDialogView = LayoutInflater.from(this).inflate(R.layout.layout_dialog, null)
             val contactDialogBuilder = AlertDialog.Builder(this)
@@ -198,19 +189,6 @@ class MainActivity : AppCompatActivity() {
                 deleteContactAlertDialog.dismiss()
             }
         }
-
-        //Binding Service to CountdownService
-        bindService(Intent(this, CountdownService::class.java),
-            serviceConnection,
-            BIND_AUTO_CREATE
-        )
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //This will unbind the service once activity is destroyed
-        unbindService(serviceConnection)
     }
 
     override fun onRequestPermissionsResult(
@@ -261,7 +239,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendTextsToContacts(contactObjects: ArrayList<MainActivity.ContactObject>){
-
         for(obj in contactObjects) {
             //This is for American numbers only!
             val numWithCountryCode = "+1" + obj.phoneNumber
@@ -361,12 +338,20 @@ class MainActivity : AppCompatActivity() {
             // handle received data
             Log.d("Characteristic Data", "Data Changed!")
             val data = String(value)
-            if(data == "F")
-            runOnUiThread(){
-                characteristicData.text="Crash Detected!"
-                characteristicData.setTextColor(Color.parseColor("red"))
+            if(data == "F") {
+                //if a crash is detected by the arduino device, initiate crash popup
+                val crashDialogView = LayoutInflater.from(this@MainActivity).inflate(R.layout.crash_procedure_popup, null)
+                val crashDialogBuilder = AlertDialog.Builder(this@MainActivity)
+                    .setView(crashDialogView)
+                    .setTitle("")
+                //show dialog
+                val crashAlertDialog = crashDialogBuilder.show()
+                //cancel button
+                val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
+                cancelButton.setOnClickListener {
+                    crashAlertDialog.dismiss()
+                }
             }
-
         }
 
     }
