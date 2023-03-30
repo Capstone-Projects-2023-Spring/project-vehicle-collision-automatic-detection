@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
-		D834313429D52EAF00C6656D /* TwilioVoice in Frameworks */ = {isa = PBXBuildFile; productRef = D834313329D52EAF00C6656D /* TwilioVoice */; };
 		D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */; };
 		D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */; };
 		D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */; };
@@ -71,7 +70,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D834313429D52EAF00C6656D /* TwilioVoice in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,7 +197,6 @@
 			);
 			name = VC;
 			packageProductDependencies = (
-				D834313329D52EAF00C6656D /* TwilioVoice */,
 			);
 			productName = VC;
 			productReference = D88E9AA7298AFE0A00EB1305 /* VC.app */;
@@ -274,7 +271,6 @@
 			);
 			mainGroup = D88E9A9E298AFE0A00EB1305;
 			packageReferences = (
-				D834313229D52EAF00C6656D /* XCRemoteSwiftPackageReference "twilio-voice-ios" */,
 			);
 			productRefGroup = D88E9AA8298AFE0A00EB1305 /* Products */;
 			projectDirPath = "";
@@ -430,7 +426,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -484,7 +480,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -668,25 +664,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		D834313229D52EAF00C6656D /* XCRemoteSwiftPackageReference "twilio-voice-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/twilio/twilio-voice-ios";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		D834313329D52EAF00C6656D /* TwilioVoice */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D834313229D52EAF00C6656D /* XCRemoteSwiftPackageReference "twilio-voice-ios" */;
-			productName = TwilioVoice;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		D8EEC46229B011CA006FE065 /* Model.xcdatamodeld */ = {

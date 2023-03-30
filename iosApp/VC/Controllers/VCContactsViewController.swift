@@ -10,10 +10,7 @@ import ContactsUI
 import SwiftUI
 import CoreData
 import MessageUI
-import MapKit
 import CoreLocation
-import Foundation
-import TwilioVoice
 
 /// Controller to add and show Emergency Contacts
 class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate, MFMessageComposeViewControllerDelegate {
@@ -343,6 +340,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         let location = locationManager.location?.coordinate ?? CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         locationManager.stopUpdatingLocation()
         
+        // let authToken = ""
         let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
         let fromNumber = "+18663483216"
         let toNumber = "+2674610092"
@@ -379,22 +377,17 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     
     
     func callWithTwilio() {
-
+        // let authToken = ""
         let accountSID = "AC46a6428865fac8cc0a646c6199f88c10"
         let caller = "+18665255943"
         let toNumber = "+12026006991"
 
-        // Replace with the phone number you want to call
-
-        // Replace with the TwiML URL for your TwiML application
         let twimlUrl = "http://example.com/twiml"
 
-        // Build the request URL
         let baseUrl = "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)"
         let callEndpoint = "/Calls"
         let requestUrl = URL(string: baseUrl + callEndpoint)!
 
-        // Build the request parameters
         let parameters = [
             "From": caller,
             "To": toNumber,
