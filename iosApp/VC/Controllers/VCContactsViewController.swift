@@ -13,6 +13,7 @@ import MessageUI
 import MapKit
 import CoreLocation
 import Foundation
+import TwilioVoice
 
 /// Controller to add and show Emergency Contacts
 class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate, MFMessageComposeViewControllerDelegate {
@@ -376,6 +377,56 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         task.resume()
     }
     
+    
+    func callWithTwilio() {
+
+        let accountSID = "AC46a6428865fac8cc0a646c6199f88c10"
+        let caller = "+18665255943"
+        let toNumber = "+12026006991"
+
+        // Replace with the phone number you want to call
+
+        // Replace with the TwiML URL for your TwiML application
+        let twimlUrl = "http://example.com/twiml"
+
+        // Build the request URL
+        let baseUrl = "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)"
+        let callEndpoint = "/Calls"
+        let requestUrl = URL(string: baseUrl + callEndpoint)!
+
+        // Build the request parameters
+        let parameters = [
+            "From": caller,
+            "To": toNumber,
+            "Url": twimlUrl
+        ]
+
+        // Build the authorization header
+        let credentialData = "\(accountSID):\(authToken)".data(using: String.Encoding.utf8)!
+        let base64Credentials = credentialData.base64EncodedString(options: [])
+
+        // Build the HTTP request
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "POST"
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.addValue("Basic \(base64Credentials)", forHTTPHeaderField: "Authorization")
+        request.httpBody = parameters
+            .map { (key, value) in "\(key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)=\(value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)" }
+            .joined(separator: "&")
+            .data(using: .utf8)
+
+        // Send the HTTP request
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error making phone call: \(error.localizedDescription)")
+            } else if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
+                print("Phone call successfully initiated")
+            } else {
+                print("Error making phone call: Unknown error")
+            }
+        }
+        task.resume()
+    }
     /**
      Fetches data. This method gets the list of Contacts from the CoreData using NSFetchRequest. Called everytime we open the app
      

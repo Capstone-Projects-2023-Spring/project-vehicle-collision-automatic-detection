@@ -4,6 +4,6 @@
         <attribute name="contactId" optional="YES" attributeType="String"/>
         <attribute name="contactName" optional="YES" attributeType="String"/>
         <attribute name="contactPhoneNumber" optional="YES" attributeType="String"/>
-        <attribute name="contactSource" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="CNContact"/>
+        <attribute name="contactSource" optional="YES" attributeType="Transformable" valueTransformerName="NSKeyedUnarchiveFromDataTransformerName" customClassName="CNContact"/>
     </entity>
 </model>

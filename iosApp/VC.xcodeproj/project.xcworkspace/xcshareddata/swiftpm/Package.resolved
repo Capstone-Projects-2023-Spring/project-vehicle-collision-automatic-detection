@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "twilio-voice-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/twilio/twilio-voice-ios",
+      "state" : {
+        "revision" : "fd94bbd382ac223b0ccc795e8ecc37bf7dc90814",
+        "version" : "6.5.0"
+      }
+    }
+  ],
+  "version" : 2
+}

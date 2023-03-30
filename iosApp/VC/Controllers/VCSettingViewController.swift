@@ -15,6 +15,12 @@ final class VCSettingViewController: UIViewController {
         let vcContacts = VCContactsViewController()
         vcContacts.textMessageWithTwilio()
     }
+    
+    @objc func callButtonTapped() {
+        let vcContacts = VCContactsViewController()
+        vcContacts.callWithTwilio()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -27,5 +33,13 @@ final class VCSettingViewController: UIViewController {
         button.setTitle("Test MSG", for: .normal)
         button.addTarget(self, action: #selector(sendMessageButtonTapped), for: .touchUpInside)
         view.addSubview(button)
+        
+    
+        let button2 = UIButton(type: .system)
+        button2.frame = CGRect(x: 0, y: button.frame.maxY + 20, width: 100, height: 50)
+        button2.center.x = view.center.x
+        button2.setTitle("Make Call", for: .normal)
+        button2.addTarget(self, action: #selector(callButtonTapped), for: .touchUpInside)
+        view.addSubview(button2)
     }
 }
