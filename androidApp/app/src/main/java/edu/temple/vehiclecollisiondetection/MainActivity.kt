@@ -338,18 +338,36 @@ class MainActivity : AppCompatActivity() {
             // handle received data
             Log.d("Characteristic Data", "Data Changed!")
             val data = String(value)
-            if(data == "F") {
-                //if a crash is detected by the arduino device, initiate crash popup
-                val crashDialogView = LayoutInflater.from(this@MainActivity).inflate(R.layout.crash_procedure_popup, null)
-                val crashDialogBuilder = AlertDialog.Builder(this@MainActivity)
-                    .setView(crashDialogView)
-                    .setTitle("")
-                //show dialog
-                val crashAlertDialog = crashDialogBuilder.show()
-                //cancel button
-                val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
-                cancelButton.setOnClickListener {
-                    crashAlertDialog.dismiss()
+            if(data == "B") {
+                mTimeLeftInMillis = countdownStartTime
+                runOnUiThread(){
+                    //if a crash is detected by the arduino device, initiate crash popup
+                    val crashDialogView = LayoutInflater.from(this@MainActivity).inflate(R.layout.crash_procedure_popup, null)
+                    val crashDialogBuilder = AlertDialog.Builder(this@MainActivity)
+                        .setView(crashDialogView)
+                        .setTitle("")
+                    //show dialog
+                    val crashAlertDialog = crashDialogBuilder.show()
+                    //countdown
+                    val countdownTimerText = crashDialogView.findViewById<TextView>(R.id.countdownText)
+                    mCountDownTimer = object : CountDownTimer(mTimeLeftInMillis, 1000) {
+                        override fun onTick(millisUntilFinished: Long) { //countdown interval
+                            mTimeLeftInMillis = millisUntilFinished
+                            countdownValueInt = ((mTimeLeftInMillis / 1000) % 60).toInt()
+                            countdownTimerText.setText(countdownValueInt.toString())
+                        }
+                        override fun onFinish() { //countdown goes to 0
+                            mCountDownTimer?.cancel()
+                            crashAlertDialog.dismiss()
+                            characteristicData.setText("Calling Emergency Services!")
+                        }
+                    }.start()
+                    //cancel button
+                    val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
+                    cancelButton.setOnClickListener {
+                        mCountDownTimer?.cancel()
+                        crashAlertDialog.dismiss()
+                    }
                 }
             }
         }
