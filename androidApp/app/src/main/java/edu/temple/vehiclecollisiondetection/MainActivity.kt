@@ -2,17 +2,10 @@ package edu.temple.vehiclecollisiondetection
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.bluetooth.*
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.telephony.SmsManager
@@ -22,11 +15,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -124,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         val bluetoothThreadStart: View = findViewById(R.id.bluetoothTextBackground)
         bluetoothThreadStart.setOnClickListener {
             //start bluetooth thread
-            var btRunnable = BluetoothRunnable()
+            var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
             var btThread = Thread(btRunnable)
             btThread.start()
         }
@@ -261,179 +251,5 @@ class MainActivity : AppCompatActivity() {
         startActivity(callIntent)
     }
 
-    inner class MyBluetoothGattCallback : BluetoothGattCallback() {
-
-        @RequiresApi(Build.VERSION_CODES.S)
-        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            if (ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
-                //return
-            }
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.d("tag1", "Connection Succeeded!")
-                runOnUiThread(Runnable() {
-                    Toast.makeText(applicationContext, "Device Connected!", Toast.LENGTH_LONG).show()
-                    connectionText.setTextColor(Color.parseColor("green"))
-                    connectionText.setText("Connected!")
-                })
-                gatt.discoverServices()
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                // handle disconnection
-                Log.d("tag2", "Connection Disconnected!")
-                runOnUiThread(Runnable() {
-                    connectionText.setTextColor(Color.parseColor("red"))
-                    connectionText.setText("Not Connected")
-                    Toast.makeText(applicationContext, "Device Disconnected!", Toast.LENGTH_LONG).show()
-                })
-            } else{
-                Log.d("tag3", "Connection Attempt Failed!")
-                gatt.close()
-            }
-        }
-
-        @RequiresApi(33)
-        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            val serviceUuid = UUID.fromString("00110011-4455-6677-8899-aabbccddeeff")//acts like a 'password' for the bluetooth connection
-            val characteristicUuid = UUID.fromString("00112233-4455-6677-8899-abbccddeefff")//acts like a 'password' for the bluetooth connection
-            if (ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
-                //return
-            }
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                val service1 = gatt.getService(serviceUuid)
-                val characteristic1 = service1.getCharacteristic(characteristicUuid)//characteristic uuid here
-                if(service1 == null){
-                    Log.d("Invalid service:", "service is null!")
-                    Log.d("Service UUid:", serviceUuid.toString())
-                }else{
-                    Log.d("Service Found:", serviceUuid.toString())
-                }
-                if(characteristic1 == null){
-                    Log.d("Invalid characteristic:", "characteristic is null!")
-                    Log.d("Characteristic UUid:", characteristicUuid.toString())
-                }else{
-                    Log.d("Characteristic Found:", characteristicUuid.toString())
-                }
-                gatt.setCharacteristicNotification(characteristic1, true)
-
-                val desc: BluetoothGattDescriptor = characteristic1.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
-                Log.d("Descriptor Found:", "00002902-0000-1000-8000-00805f9b34fb")
-                gatt.writeDescriptor(desc, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
-            }
-        }
-
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic,
-            value: ByteArray
-        ) {
-            // handle received data
-            Log.d("Characteristic Data", "Data Changed!")
-            val data = String(value)
-            if(data == "F") {
-                //if a crash is detected by the arduino device, initiate crash popup
-                val crashDialogView = LayoutInflater.from(this@MainActivity).inflate(R.layout.crash_procedure_popup, null)
-                val crashDialogBuilder = AlertDialog.Builder(this@MainActivity)
-                    .setView(crashDialogView)
-                    .setTitle("")
-                //show dialog
-                val crashAlertDialog = crashDialogBuilder.show()
-                //cancel button
-                val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
-                cancelButton.setOnClickListener {
-                    crashAlertDialog.dismiss()
-                }
-            }
-        }
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun hasPermissions(): Boolean {
-        if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),11)
-        }
-        if (applicationContext.checkSelfPermission(
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 12)
-        }
-        if (applicationContext.checkSelfPermission(
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), 13)
-        }
-        if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),14)
-        }
-        return true
-    }
-    inner class BluetoothRunnable: Runnable{
-
-        @RequiresApi(Build.VERSION_CODES.S)
-        override fun run() {
-            hasPermissions()
-            var btAdapter: BluetoothAdapter? = null
-            val bluetoothManager =
-                this@MainActivity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-
-            btAdapter = bluetoothManager?.adapter
-            val gattCallback = MyBluetoothGattCallback()
-            val bluetoothLeScanner = btAdapter?.bluetoothLeScanner
-            val scanCallback = object : ScanCallback() {
-                override fun onScanResult(callbackType: Int, result: ScanResult) {
-                    if (ActivityCompat.checkSelfPermission(
-                            this@MainActivity,
-                            Manifest.permission.BLUETOOTH_SCAN
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), 10)
-                        //return
-                    }
-                    if(result.device.name != null){
-                            Log.d("Device Found: ", result.device.name)
-                    }
-                    // Check if the scan result matches the target device UUID
-                    if (result.device.address.equals("E6:EC:C4:09:52:F0")) {
-                        Log.d("tag", "FOUND BLE DEVICE")
-                        runOnUiThread(Runnable() {
-                            Toast.makeText(applicationContext, "Device Found", Toast.LENGTH_LONG).show()
-                        })
-
-                        // Stop scanning
-                        bluetoothLeScanner?.stopScan(this)
-                        // Connect to the device
-                        val device = result.device
-                        // TODO: implement connection logic
-                        var gatt: BluetoothGatt? = null
-                        gatt = device?.connectGatt(this@MainActivity, false, gattCallback)
-                    }
-                }
-            }
-            // Create a ScanSettings to control the scan parameters
-            val scanSettings = ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
-                .build()
-            // Start scanning for devices that match the scan filter
-            Log.d("tag", "LOOKING FOR BLE DEVICE")
-            runOnUiThread(Runnable() {
-                Toast.makeText(applicationContext, "Scanning for Device", Toast.LENGTH_LONG).show()
-            })
-            bluetoothLeScanner?.startScan(null, scanSettings, scanCallback)
-        }
-    }
 }
 
