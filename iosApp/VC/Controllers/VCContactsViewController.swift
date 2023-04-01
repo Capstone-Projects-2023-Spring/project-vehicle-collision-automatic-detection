@@ -230,13 +230,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             
         }))
         
-        alert.addAction(UIAlertAction(title: "Text", style: UIAlertAction.Style.default, handler: { _ in
-            //Message action
-            self.textNumber(phoneNumber: number)
-            
-        }))
-        
-        
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { _ in
             //Cancel action
         }))
@@ -310,21 +303,32 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         - phoneNumber: The phone number of the recipient
      
      */
-    private func textNumber(phoneNumber: String) {
-        if MFMessageComposeViewController.canSendText() {
-            let composeVC = MFMessageComposeViewController()
-            composeVC.messageComposeDelegate = self
+    
+    func getAddressFromGPS(latitude: Double, longitude: Double, completionHandler: @escaping (String?, Error?) -> Void) {
+        let location = CLLocation(latitude: latitude, longitude: longitude)
+        let geocoder = CLGeocoder()
+        
+        geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
+            if let error = error {
+                completionHandler(nil, error)
+                return
+            }
             
-            let defaultEmergencyMsg = "Emergency! I was just in a car accident. As one of my emergency contacts, I wanted to keep you updated. "
+            guard let placemark = placemarks?.first else {
+                completionHandler(nil, NSError(domain: "com.yourapp", code: -1, userInfo: [NSLocalizedDescriptionKey: "No placemark found"]))
+                return
+            }
             
-            let location = "Here is my current location. https://www.google.com/maps/place/\(coordinates?.latitude ?? 0),\(coordinates?.longitude ?? 0)"
+            let street = placemark.thoroughfare ?? ""
+            let number = placemark.subThoroughfare ?? ""
+            let city = placemark.locality ?? ""
+            let zipCode = placemark.postalCode ?? ""
             
-            composeVC.recipients = [phoneNumber]
-            composeVC.body = defaultEmergencyMsg + location
-            locationManager.stopUpdatingLocation()
-            self.present(composeVC, animated: true, completion: nil)
+            let address = "\(number) \(street), \(city) \(zipCode)"
+            completionHandler(address, nil)
         }
     }
+
     
     func getListOfphoneNumbersInEmergencyContacts() -> Array<String> {
         var phoneNumbers = Array<String>()
@@ -344,43 +348,59 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         locationManager.stopUpdatingLocation()
         
         let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
+        let authToken = "tempToken"
         let fromNumber = "+18663483216"
         let toNumber = "+2674610092"
         
         //Twilio 160 characters limit per MSG
-        //let message = "I'm in an Emergency, here is my location. https://www.google.com/maps/place/40.0706787109375,-74.99045667245517"
-        let message = "https://www.google.com/maps/place/\(location.latitude),\(location.longitude)"
+        let currentLatitude = location.latitude
+        let currentLongitude = location.longitude
         
-        let url = URL(string: "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)/Messages")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
-        
-        let body = "From=\(fromNumber)&To=\(toNumber)&Body=\(message)"
-        request.httpBody = body.data(using: .utf8)
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        getAddressFromGPS(latitude: currentLatitude, longitude: currentLongitude) { (address, error) in
             if let error = error {
-                print("Error: \(error)")
-            } else if let responseData = data,
-                      let response = response as? HTTPURLResponse,
-                      response.statusCode == 201 {
-                let _ = String(data: responseData, encoding: .utf8) ?? "nil"
-                print("Message sent! " + message)
+                print("Geocoding error: \(error.localizedDescription)")
+                return
+            }
+            var message = "I'm in an Emergency, here is my location: "
+            if let address = address {
+                // Concatenate the address to the message
+                message += address
+                
+                let url = URL(string: "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)/Messages")!
+                var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
+                
+                let body = "From=\(fromNumber)&To=\(toNumber)&Body=\(message)"
+                request.httpBody = body.data(using: .utf8)
+                
+                let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                    if let error = error {
+                        print("Error: \(error)")
+                    } else if let responseData = data,
+                              let response = response as? HTTPURLResponse,
+                              response.statusCode == 201 {
+                        let _ = String(data: responseData, encoding: .utf8) ?? "nil"
+                        print("Message sent! " + message)
+                    } else {
+                        let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
+                        let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
+                        print("Unexpected response: \(responseString), data: \(dataString)")
+                    }
+                }
+                task.resume()
+                
             } else {
-                let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
-                let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
-                print("Unexpected response: \(responseString), data: \(dataString)")
+                print("No address found")
             }
         }
-        task.resume()
     }
-    
-    
+
     func callWithTwilio() {
 
         let accountSID = "AC46a6428865fac8cc0a646c6199f88c10"
+        let authToken = "tempToken"
         let caller = "+18665255943"
         let toNumber = "+12026006991"
 
