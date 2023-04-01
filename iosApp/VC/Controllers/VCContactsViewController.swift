@@ -293,13 +293,13 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     
-    /**
-    Texts when clicked
-     
-     - Parameters:
-        - phoneNumber: The phone number of the recipient
-     
-     */
+    func getListOfphoneNumbersInEmergencyContacts() -> Array<String> {
+        var phoneNumbers = Array<String>()
+        for emergencyContact in EmergencyContactList {
+            phoneNumbers.append(emergencyContact.contactPhoneNumber ?? "")
+        }
+        return phoneNumbers
+    }
     
     func getAddressFromGPS(latitude: Double, longitude: Double, completionHandler: @escaping (String?, Error?) -> Void) {
         let location = CLLocation(latitude: latitude, longitude: longitude)
@@ -324,15 +324,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             let address = "\(number) \(street), \(city) \(zipCode)"
             completionHandler(address, nil)
         }
-    }
-
-    
-    func getListOfphoneNumbersInEmergencyContacts() -> Array<String> {
-        var phoneNumbers = Array<String>()
-        for emergencyContact in EmergencyContactList {
-            phoneNumbers.append(emergencyContact.contactPhoneNumber ?? "")
-        }
-        return phoneNumbers
     }
     
     func textMessageWithTwilio() {
@@ -396,50 +387,37 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
 
     func callWithTwilio() {
-        // let authToken = ""
-        let accountSID = "AC46a6428865fac8cc0a646c6199f88c10"
+        let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
         let authToken = "tempToken"
-        let caller = "+18665255943"
-        let toNumber = "+12026006991"
-
-        let twimlUrl = "http://example.com/twiml"
-
-        let baseUrl = "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)"
-        let callEndpoint = "/Calls"
-        let requestUrl = URL(string: baseUrl + callEndpoint)!
-
-        let parameters = [
-            "From": caller,
-            "To": toNumber,
-            "Url": twimlUrl
-        ]
-
-        // Build the authorization header
-        let credentialData = "\(accountSID):\(authToken)".data(using: String.Encoding.utf8)!
-        let base64Credentials = credentialData.base64EncodedString(options: [])
-
-        // Build the HTTP request
-        var request = URLRequest(url: requestUrl)
+        let fromNumber = "+18663483216"
+        let toNumber = "+2674610092"
+        
+        let url = URL(string: "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)/Calls")!
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.addValue("Basic \(base64Credentials)", forHTTPHeaderField: "Authorization")
-        request.httpBody = parameters
-            .map { (key, value) in "\(key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)=\(value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)" }
-            .joined(separator: "&")
-            .data(using: .utf8)
-
-        // Send the HTTP request
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
+        
+        let body = "From=\(fromNumber)&To=\(toNumber)&Url=http://demo.twilio.com/docs/voice.xml"
+        request.httpBody = body.data(using: .utf8)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("Error making phone call: \(error.localizedDescription)")
-            } else if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
-                print("Phone call successfully initiated")
+                print("Error: \(error)")
+            } else if let responseData = data,
+                      let response = response as? HTTPURLResponse,
+                      response.statusCode == 201 {
+                let _ = String(data: responseData, encoding: .utf8) ?? "nil"
+                print("Call initiated to: " + toNumber)
             } else {
-                print("Error making phone call: Unknown error")
+                let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
+                let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
+                print("Unexpected response: \(responseString), data: \(dataString)")
             }
         }
         task.resume()
     }
+
     /**
      Fetches data. This method gets the list of Contacts from the CoreData using NSFetchRequest. Called everytime we open the app
      
