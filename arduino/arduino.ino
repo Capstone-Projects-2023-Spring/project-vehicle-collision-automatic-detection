@@ -22,7 +22,6 @@ float threshold = 6.0;
 
 String data = " ";
 int flag = 0;
-int sleep = 0;
 int start = 0;
 const unsigned long interval = 60000;
 unsigned long previousMillis = 0;
@@ -41,6 +40,9 @@ Adafruit_BLEGatt gatt(Bluetooth);
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  
+  /* Put the device into idle mode */
+  LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_ON, USART0_OFF, TWI_OFF);
 
   /* Initialise the module */
   Serial.print(F("Initialising the Bluefruit LE module: "));
@@ -73,7 +75,18 @@ void setup() {
   /* Wait for connection */
   Serial.println("Looking for Bluetooth Device...");
   while (!Bluetooth.isConnected()){
-    delay(500);    
+    unsigned long currentMillis = millis();
+    // Power down if 1 minute of no connection passes
+    if((unsigned long)(currentMillis - previousMillis) >= interval){
+      Serial.println("Powering Down!");
+      // Make the Bluetooth undiscoverable
+      Bluetooth.sendCommandCheckOK("AT+GAPDEVNAME=Undiscoverable");
+      // Turn off the Mode LED
+      Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
+      delay(500);
+      LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
+    }
+    delay(500);
   }
 
   // Change Mode LED Activity
@@ -90,6 +103,9 @@ void setup() {
   start++;
 
   Bluetooth.begin();
+
+  // Initialize the characteristic to '0'
+  gatt.setChar(1, 'B', BUFSIZE);
 
   //accelerometer
   pinMode(9,INPUT);       // Interrupt pin input
@@ -153,10 +169,14 @@ void loop() {
   while(Bluetooth.isConnected()){
     unsigned long currentMillis = millis();
 
+    //put device into idle mode
+    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_ON, USART0_OFF, TWI_OFF);
+
     //reset sleep timer for first connection
     if(start == 1){
       previousMillis = currentMillis;
       start--;
+      delay(500);
     }
 
     //reset sleep timer for reconnection
@@ -164,8 +184,9 @@ void loop() {
       Serial.println(F("******************************"));
       Serial.println(F("Bluetooth Device Connected!"));
       Serial.println(F("******************************"));
-      flag--;
       previousMillis = currentMillis;
+      flag--;
+      delay(500);
     }
 
     float maxG;
@@ -176,43 +197,29 @@ void loop() {
     }
 
     //checks if threshold might have been exceeded, then verifies
-    gatt.setChar(1, 'B', BUFSIZE);
     if (digitalRead(9) == HIGH && (maxG = getMaxG()) > threshold) { 
-      if(sleep == 1){
-        Serial.println("Woke Up!");
-        sleep--;
-      }
       Serial.println("Interrupt: " + String(maxG) + "g");
       Serial.println("Changing Characteristic!");
-      //update characteristic value
+      //change characteristic value to 'F'
       gatt.setChar(1, 'A', BUFSIZE);
       delay(1000);
+      Serial.println("Resetting Characteristic!");
+      //reset characteristic value back to '0'
+      gatt.setChar(1, 'B', BUFSIZE);
+      delay(1000);
+      //reset the sleep timer
       previousMillis = currentMillis;
     } 
 
-    //sleep if a minute of inactivity passes
-    if((unsigned long)(currentMillis - previousMillis) >= interval && (unsigned long)(currentMillis - previousMillis) < interval * 5){
-      if(sleep == 0){
-        Serial.println("Going to Sleep!");
-        sleep++;
-        delay(500);
-        LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
-      }
-    }
-
-    //power down if 5 minutes of inactivity passes
+    //disconnect from bluetooth if 5 minutes of inactivity passes
     if((unsigned long)(currentMillis - previousMillis) >= interval * 5){
-      Serial.println("Powering Down!");
+      previousMillis = currentMillis;
+      Bluetooth.disconnect();
       delay(500);
-      LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
 
     //check for incoming data from bluetooth device
     if(Bluetooth.available() > 0){
-      if(sleep == 1){
-        Serial.println("Woke Up!");
-        sleep--;
-      }
       data = Bluetooth.readString();
       Serial.print("Bluetooth: " + data); 
       previousMillis = currentMillis;
@@ -220,10 +227,6 @@ void loop() {
 
     //check for incoming data from hardware
     if(Serial.available() > 0){
-      if(sleep == 1){
-        Serial.println("Woke Up!");
-        sleep--;
-      }
       data = Serial.readString();
       Bluetooth.print("Serial: " + data);
       Serial.println("Message sent to bluetooth.");
@@ -233,6 +236,11 @@ void loop() {
 
   //check if hardware disconnects from bluetooth device
   while (!Bluetooth.isConnected()){
+    unsigned long currentMillis = millis();
+
+    //put device into idle mode
+    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_ON, USART0_OFF, TWI_OFF);
+
     if(flag == 0){
       Serial.println(F("******************************"));
       Serial.println("Bluetooth Device Disconnected!");
@@ -240,6 +248,17 @@ void loop() {
       flag++;
     }
     delay(500);
+
+    //power down if 3 minutes of no connection passes
+    if((unsigned long)(currentMillis - previousMillis) >= interval * 3){
+      Serial.println("Powering Down!");
+      // Make the Bluetooth undiscoverable
+      Bluetooth.sendCommandCheckOK("AT+GAPDEVNAME=Undiscoverable");
+      // Turn off the Mode LED
+      Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
+      delay(500);
+      LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
+    }
   }
 }
 
