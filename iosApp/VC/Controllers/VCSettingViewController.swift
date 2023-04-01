@@ -59,7 +59,7 @@ final class VCSettingViewController: UIViewController {
         // Change countDownTitle attributes
         if let titleString = countDownTitle as? NSString {
             let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor(named: "CountDownColor") ?? .orange,
+                .foregroundColor: UIColor(named: "CountDownColor") as Any,
                 .font: UIFont.boldSystemFont(ofSize: 30)
             ]
             let attributedTitle = NSAttributedString(string: titleString as String, attributes: attributes)
@@ -88,7 +88,7 @@ final class VCSettingViewController: UIViewController {
         // Create the countdown label and add it to the alert controller
         let countDownLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         countDownLabel.font = UIFont.systemFont(ofSize: 40)
-        countDownLabel.textColor = UIColor(named: "CountDownColor") ?? .orange
+        countDownLabel.textColor = UIColor(named: "CountDownColor")
         countDownLabel.textAlignment = .center
         countDownLabel.text = "10"
         alertController.view.addSubview(countDownLabel)
