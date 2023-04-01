@@ -56,11 +56,13 @@ class MainActivity : AppCompatActivity() {
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
 
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("SetTextI18n")//added for hello world
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        hasPermissions()
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
@@ -396,6 +398,10 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),14)
         }
+        if (applicationContext.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                arrayOf(Manifest.permission.CALL_PHONE),15)
+        }
         return true
     }
     inner class BluetoothRunnable: Runnable{
@@ -434,7 +440,6 @@ class MainActivity : AppCompatActivity() {
                         bluetoothLeScanner?.stopScan(this)
                         // Connect to the device
                         val device = result.device
-                        // TODO: implement connection logic
                         var gatt: BluetoothGatt? = null
                         gatt = device?.connectGatt(this@MainActivity, false, gattCallback)
                     }
