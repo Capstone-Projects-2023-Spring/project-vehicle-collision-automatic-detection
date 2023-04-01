@@ -161,11 +161,11 @@
 		D88E9ADF298B05A600EB1305 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
 				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
 				D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */,
 				920C054129C69CD400009395 /* BluetoothManager.swift */,
+				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
