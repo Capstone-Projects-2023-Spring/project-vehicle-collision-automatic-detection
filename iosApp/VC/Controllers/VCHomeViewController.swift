@@ -2,7 +2,7 @@
 //  VCHomeViewController.swift
 //  VC
 //
-//  Created by Nathan A on 2/1/23.
+//  Created/Modified by Thanh N & Nathan A.
 //
 
 import UIKit
