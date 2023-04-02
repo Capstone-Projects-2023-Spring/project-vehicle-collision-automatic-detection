@@ -25,20 +25,20 @@ final class VCTabBarController : UITabBarController {
         Calling this method sets the three tabs: Home,
         Contacts, and Settings and sets the view controllers to the respective nav bar.
 
-        - Precondition: ``VCHomeViewController``, ``VCContactsViewController``, ``VCSettingViewController`` ,
+        - Precondition: ``VCHomeViewController``, ``VCContactsViewController``, ``VCTestingViewController`` ,
         */
     private func setUpTabs() {
         let HomeViewController = VCHomeViewController()
         let ContactsViewController = VCContactsViewController()
-        let SettingViewController = VCSettingViewController()
+        let TestingViewController = VCTestingViewController()
         
         HomeViewController.navigationItem.largeTitleDisplayMode = .automatic
         ContactsViewController.navigationItem.largeTitleDisplayMode = .automatic
-        SettingViewController.navigationItem.largeTitleDisplayMode = .automatic
+        TestingViewController.navigationItem.largeTitleDisplayMode = .automatic
                 
         let nav1 = UINavigationController(rootViewController: HomeViewController)
         let nav2 = UINavigationController(rootViewController: ContactsViewController)
-        let nav3 = UINavigationController(rootViewController: SettingViewController)
+        let nav3 = UINavigationController(rootViewController: TestingViewController)
         
         nav1.tabBarItem = UITabBarItem(title: "Status", image: UIImage(systemName: "bolt.horizontal.circle.fill"), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "Contacts", image: UIImage(systemName: "person.circle.fill"), tag: 2)
