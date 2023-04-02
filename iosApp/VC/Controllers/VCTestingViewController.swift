@@ -16,7 +16,7 @@ final class VCTestingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        title = "Settings"
+        title = "Testing"
         
         let button = UIButton(type: .system)
         button.frame = CGRect(x: 0, y: 0, width: 100, height: 50)

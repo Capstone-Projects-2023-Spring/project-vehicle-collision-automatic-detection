@@ -42,7 +42,7 @@ final class VCTabBarController : UITabBarController {
         
         nav1.tabBarItem = UITabBarItem(title: "Status", image: UIImage(systemName: "bolt.horizontal.circle.fill"), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "Contacts", image: UIImage(systemName: "person.circle.fill"), tag: 2)
-        nav3.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear.circle.fill"), tag: 3)
+        nav3.tabBarItem = UITabBarItem(title: "Testing", image: UIImage(systemName: "gear.circle.fill"), tag: 3)
         
         for nav in [nav1, nav2, nav3] {
             nav.navigationBar.prefersLargeTitles = true

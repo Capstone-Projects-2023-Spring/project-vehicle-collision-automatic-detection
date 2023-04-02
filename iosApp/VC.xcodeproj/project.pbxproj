@@ -166,8 +166,8 @@
 				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
 				D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */,
-				920C054129C69CD400009395 /* BluetoothManager.swift */,
 				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
+				920C054129C69CD400009395 /* BluetoothManager.swift */,
 				92692B5029D9CE7A001B215D /* CountdownViewController.swift */,
 			);
 			name = Core;
