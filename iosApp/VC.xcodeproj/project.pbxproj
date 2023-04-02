@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
+		92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92692B5029D9CE7A001B215D /* CountdownViewController.swift */; };
 		D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */; };
 		D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */; };
 		D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */; };
@@ -17,7 +18,7 @@
 		D88E9ACF298AFE1000EB1305 /* VCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9ACE298AFE1000EB1305 /* VCUITests.swift */; };
 		D88E9AD1298AFE1000EB1305 /* VCUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AD0298AFE1000EB1305 /* VCUITestsLaunchTests.swift */; };
 		D88E9AE1298B05FA00EB1305 /* VCHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */; };
-		D88E9AE3298B060C00EB1305 /* VCSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */; };
+		D88E9AE3298B060C00EB1305 /* VCTestingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */; };
 		D88E9AE5298B073200EB1305 /* VCContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */; };
 		D8EEC46429B011CA006FE065 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC46229B011CA006FE065 /* Model.xcdatamodeld */; };
 		D8EEC46A29B013D6006FE065 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC46929B013D6006FE065 /* CoreDataStack.swift */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		920C054129C69CD400009395 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
+		92692B5029D9CE7A001B215D /* CountdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewController.swift; sourceTree = "<group>"; };
 		D88E9AA7298AFE0A00EB1305 /* VC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -57,7 +59,7 @@
 		D88E9ACE298AFE1000EB1305 /* VCUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITests.swift; sourceTree = "<group>"; };
 		D88E9AD0298AFE1000EB1305 /* VCUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCHomeViewController.swift; sourceTree = "<group>"; };
-		D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCSettingViewController.swift; sourceTree = "<group>"; };
+		D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTestingViewController.swift; sourceTree = "<group>"; };
 		D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCContactsViewController.swift; sourceTree = "<group>"; };
 		D8EEC46329B011CA006FE065 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		D8EEC46929B013D6006FE065 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
@@ -163,9 +165,10 @@
 			children = (
 				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
-				D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */,
+				D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */,
 				920C054129C69CD400009395 /* BluetoothManager.swift */,
 				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
+				92692B5029D9CE7A001B215D /* CountdownViewController.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -314,7 +317,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D88E9AE3298B060C00EB1305 /* VCSettingViewController.swift in Sources */,
+				92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */,
+				D88E9AE3298B060C00EB1305 /* VCTestingViewController.swift in Sources */,
 				D88E9AE5298B073200EB1305 /* VCContactsViewController.swift in Sources */,
 				D88E9AE1298B05FA00EB1305 /* VCHomeViewController.swift in Sources */,
 				D8EEC46A29B013D6006FE065 /* CoreDataStack.swift in Sources */,
