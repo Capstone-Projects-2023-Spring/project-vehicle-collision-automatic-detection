@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         //Add Contact Button Functionality
         val addContactButton: View = findViewById(R.id.fab)
         addContactButton.setOnClickListener{
+            hasPermissions()
             //setting up 'add contact' pop-up menu
             val contactDialogView = LayoutInflater.from(this).inflate(R.layout.layout_dialog, null)
             val contactDialogBuilder = AlertDialog.Builder(this)
@@ -164,6 +165,7 @@ class MainActivity : AppCompatActivity() {
         //delete contact button functionality
         val deleteButton: View = findViewById(R.id.deleteContactFab)
         deleteButton.setOnClickListener{
+            hasPermissions()
             val deleteContactView = LayoutInflater.from(this).inflate(R.layout.deletecontact_dialog, null)
             val deleteContactDialogBuilder = AlertDialog.Builder(this)
                 .setView(deleteContactView)
@@ -340,7 +342,7 @@ class MainActivity : AppCompatActivity() {
             // handle received data
             Log.d("Characteristic Data", "Data Changed!")
             val data = String(value)
-            if(data == "B") {
+            if(data == "B" || data =="F") {
                 mTimeLeftInMillis = countdownStartTime
                 runOnUiThread(){
                     //if a crash is detected by the arduino device, initiate crash popup
@@ -408,6 +410,10 @@ class MainActivity : AppCompatActivity() {
         if (applicationContext.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
                 arrayOf(Manifest.permission.CALL_PHONE),15)
+        }
+        if (applicationContext.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                arrayOf(Manifest.permission.SEND_SMS),16)
         }
         return true
     }
