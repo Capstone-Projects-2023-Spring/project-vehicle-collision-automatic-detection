@@ -12,6 +12,7 @@ import CoreData
 import MessageUI
 import CoreLocation
 
+var EmergencyContactList = [Contact]()
 /// Controller to add and show Emergency Contacts
 class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate{
     
@@ -27,7 +28,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         return table
     }()
     
-    var EmergencyContactList = [Contact]()
     var coordinates: CLLocationCoordinate2D?
     let locationManager = CLLocationManager()
     /**
@@ -91,7 +91,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             newContact.setValue(identifier, forKey: #keyPath(Contact.contactId))
             newContact.setValue(phoneNumber, forKey: #keyPath(Contact.contactPhoneNumber))
             newContact.setValue(contact, forKey: #keyPath(Contact.contactSource))
-            self.EmergencyContactList.insert(newContact, at: 0)
+            EmergencyContactList.insert(newContact, at: 0)
             AppDelegate.sharedAppDelegate.CoreDataStack.saveContext() // Save changes in CoreData
             DispatchQueue.main.async {
                 self.table.reloadData()
@@ -169,8 +169,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
                                           handler: {(_: UIAlertAction!) in
                 //Delete action
                 // Remove the contact from the CoreData
-                AppDelegate.sharedAppDelegate.CoreDataStack.managedContext.delete(self.EmergencyContactList[indexPath.row])
-                self.EmergencyContactList.remove(at: indexPath.row)
+                AppDelegate.sharedAppDelegate.CoreDataStack.managedContext.delete(EmergencyContactList[indexPath.row])
+                EmergencyContactList.remove(at: indexPath.row)
                 // Save Changes
                 AppDelegate.sharedAppDelegate.CoreDataStack.saveContext()
                 // Remove row from TableView
@@ -309,7 +309,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
         let authToken = "tempToken"
         let fromNumber = "+18663483216"
-        let toNumber = "+2674610092"
         
         //Twilio 160 characters limit per MSG
         let currentLatitude = location.latitude
@@ -331,25 +330,33 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
                 request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
                 
-                let body = "From=\(fromNumber)&To=\(toNumber)&Body=\(message)"
-                request.httpBody = body.data(using: .utf8)
-                
-                let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                    if let error = error {
-                        print("Error: \(error)")
-                    } else if let responseData = data,
-                              let response = response as? HTTPURLResponse,
-                              response.statusCode == 201 {
-                        let _ = String(data: responseData, encoding: .utf8) ?? "nil"
-                        print("Message sent! " + message)
+                for contact in EmergencyContactList {
+                    if let toNumber = contact.contactPhoneNumber {
+                        let body = "From=\(fromNumber)&To=\(toNumber)&Body=\(message)"
+                        print(message)
+                        print("Message sent to \(toNumber)! ")
+                        
+                        request.httpBody = body.data(using: .utf8)
+                        
+                        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                            if let error = error {
+                                print("Error: \(error)")
+                            } else if let responseData = data,
+                                      let response = response as? HTTPURLResponse,
+                                      response.statusCode == 201 {
+                                let _ = String(data: responseData, encoding: .utf8) ?? "nil"
+                                print("Message sent to \(toNumber)! " + message)
+                            } else {
+                                let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
+                                let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
+                                print("Unexpected response: \(responseString), data: \(dataString)")
+                            }
+                        }
+                        task.resume()
                     } else {
-                        let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
-                        let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
-                        print("Unexpected response: \(responseString), data: \(dataString)")
+                        print("Error: contactPhoneNumber is nil.")
                     }
                 }
-                task.resume()
-                
             } else {
                 print("No address found")
             }
