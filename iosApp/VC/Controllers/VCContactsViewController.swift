@@ -13,7 +13,7 @@ import MessageUI
 import CoreLocation
 
 /// Controller to add and show Emergency Contacts
-class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate, MFMessageComposeViewControllerDelegate {
+class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate{
     
     /**
      Creates a table to store the emergency contacts
@@ -30,7 +30,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     var EmergencyContactList = [Contact]()
     var coordinates: CLLocationCoordinate2D?
     let locationManager = CLLocationManager()
-  
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
      */
@@ -75,8 +74,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Checks if a contact has been selected by the user
      
      - Parameters:
-        - CNContactPickerViewController: The default iOS contact application
-        -  Contact: A specific contact from the contact app
+     - CNContactPickerViewController: The default iOS contact application
+     -  Contact: A specific contact from the contact app
      
      */
     func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
@@ -139,8 +138,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Checks if row can be edited
      
      - Parameters:
-        - UITableView: The table view
-        - IndexPath: The row at index path
+     - UITableView: The table view
+     - IndexPath: The row at index path
      
      - Returns: If it's possible to edit a specific row
      */
@@ -152,9 +151,9 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Allows to slide row to delete Emergency contacts
      
      - Parameters:
-        - UITableView: The table view
-        - UITableViewCell.EditingStyle: The editing style
-        - IndexPath: The row at index path
+     - UITableView: The table view
+     - UITableViewCell.EditingStyle: The editing style
+     - IndexPath: The row at index path
      */
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -191,9 +190,9 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Finds the cell at a given row
      
      - Parameters:
-        - UITableView: The table view
-        - IndexPath: The indexPath of the row
-        - UITableViewCell: The UITableViewCell
+     - UITableView: The table view
+     - IndexPath: The indexPath of the row
+     - UITableViewCell: The UITableViewCell
      
      - Returns: A cell for a given row
      */
@@ -207,8 +206,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Presents option to call or text contact when selected from the Emergency Contacts list
      
      - Parameters:
-        - UITableView: The table view
-        - IndexPath: The indexPath of the row
+     - UITableView: The table view
+     - IndexPath: The indexPath of the row
      */
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -236,40 +235,11 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
     
     /**
-    Closes the message view controller when done
-     
-     - Parameters:
-        - controller: The phone number of the recipient
-        - result: The result
-
-     */
-    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
-        // Check the result or perform other tasks.
-
-        // Dismiss the message compose view controller.
-        controller.dismiss(animated: true, completion: nil)
-    }
-    
-    /**
-     Gets the location of the device
-     
-     - Parameters:
-        - CLLocationManager: The location manager used to retrieve the location of the device
-        - CLLocation: A list of locations of type CLLocation
-     
-     */
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
-        coordinates = locValue
-        //print("locations = \(locValue.latitude) \(locValue.longitude)")
-    }
-    
-    /**
      Handles failure to get a user's location
      
      - Parameters:
-        - CLLocationManager: The location manager used to retrieve the location of the device
-        - Error: Error preventing location retrieval
+     - CLLocationManager: The location manager used to retrieve the location of the device
+     - Error: Error preventing location retrieval
      
      */
     func locationManager( _ manager: CLLocationManager, didFailWithError error: Error) {
@@ -278,10 +248,10 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
     
     /**
-    Makes a phone call when clicked
+     Makes a phone call when clicked
      
      - Parameters:
-        - phoneNumber: The phone number of the recipient
+     - phoneNumber: The phone number of the recipient
      
      */
     private func callNumber(phoneNumber: String) {
@@ -385,7 +355,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
             }
         }
     }
-
+    
     func callWithTwilio() {
         let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
         let authToken = "tempToken"
@@ -417,7 +387,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         }
         task.resume()
     }
-
+    
     /**
      Fetches data. This method gets the list of Contacts from the CoreData using NSFetchRequest. Called everytime we open the app
      
