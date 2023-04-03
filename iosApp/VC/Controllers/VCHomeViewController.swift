@@ -47,6 +47,11 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         BluetoothManager.shared.delegate = self
         BluetoothManager.shared.startScanning()
         print("Device started in console")
+        
+        /* Fake retrieving data
+        let fakeData = "Fake data".data(using: .utf8)!
+        didReceiveData(fakeData)
+        */
     }
     
     // When the Adafruit Bluefruit LE connects -> Change the connection status text & color to green
