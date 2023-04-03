@@ -36,7 +36,7 @@ import java.util.*
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
 val REQUEST_SEND_SMS = 2
-
+val emergencyServiceNum = "+14846391351"
 class MainActivity : AppCompatActivity() {
 
     //recycler view to hold contact list
@@ -199,8 +199,8 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PHONE_CALL)makeCall("+14846391351")
-        if (requestCode == REQUEST_SEND_SMS)sendText("+14846391351", "Hello from android!")
+        if (requestCode == REQUEST_PHONE_CALL)makeCall(emergencyServiceNum)
+        if (requestCode == REQUEST_SEND_SMS)sendText(emergencyServiceNum, "Hello from android!")
     }
 
     private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
@@ -362,6 +362,13 @@ class MainActivity : AppCompatActivity() {
                             mCountDownTimer?.cancel()
                             crashAlertDialog.dismiss()
                             characteristicData.setText("Calling Emergency Services!")
+                            //get list of saved emergency contacts and text them w/ emergency message
+                            val gson = Gson()
+                            val serializedList = preferences.getString(SAVE_KEY, null)
+                            val myType = object : TypeToken<ArrayList<ContactObject>>() {}.type
+                            sendTextsToContacts(gson.fromJson<ArrayList<ContactObject>>(serializedList, myType))
+                            //make call to emergency services
+                            makeCall(emergencyServiceNum)
                         }
                     }.start()
                     //cancel button
