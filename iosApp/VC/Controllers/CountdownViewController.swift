@@ -11,7 +11,7 @@ import SwiftUI
 
 class CountdownViewController: UIViewController {
     
-    var countdownTimer: Timer?
+    private var countdownTimer: Timer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,8 +62,9 @@ class CountdownViewController: UIViewController {
         countDownLabel.centerXAnchor.constraint(equalTo: alertController.view.centerXAnchor).isActive = true
         countDownLabel.centerYAnchor.constraint(equalTo: alertController.view.centerYAnchor, constant: 60).isActive = true
         
-        // Create the cancel action and add it to the alert controller
+        var cancelPressed = false
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+            cancelPressed = true
             self?.dismiss(animated: true, completion: nil)
         }
         alertController.addAction(cancelAction)
@@ -73,8 +74,26 @@ class CountdownViewController: UIViewController {
         let countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
             countdownSeconds -= 1
             countDownLabel.text = "\(countdownSeconds)"
+            
+            // Change to text color to red
+            if countdownSeconds <= 3 {
+                if let titleString = countDownTitle as? NSString {
+                           let attributes: [NSAttributedString.Key: Any] = [
+                               .foregroundColor: UIColor.red,
+                               .font: UIFont.boldSystemFont(ofSize: 30)
+                           ]
+                           let attributedTitle = NSAttributedString(string: titleString as String, attributes: attributes)
+                           alertController.setValue(attributedTitle, forKey: "attributedTitle")
+                       }
+                countDownLabel.textColor = .red
+            }
             if countdownSeconds == 0 {
                 timer.invalidate()
+                if !cancelPressed {
+                    let vcContact = VCContactsViewController()
+                    vcContact.textMessageWithTwilio()
+                    vcContact.callWithTwilio()
+                }
                 self.dismiss(animated: true, completion: nil)
             }
         }

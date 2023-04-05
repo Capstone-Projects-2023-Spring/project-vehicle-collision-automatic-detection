@@ -18,31 +18,43 @@ final class VCTestingViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "Testing"
         
-        let button = UIButton(type: .system)
-        button.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
-        button.center = view.center
-        button.setTitle("Test MSG", for: .normal)
-        button.addTarget(self, action: #selector(sendMessageButtonTapped), for: .touchUpInside)
-        view.addSubview(button)
-        
-        let button2 = UIButton(type: .system)
-        button2.frame = CGRect(x: 0, y: button.frame.maxY + 20, width: 100, height: 50)
-        button2.center.x = view.center.x
-        button2.setTitle("Make Call", for: .normal)
-        button2.addTarget(self, action: #selector(callButtonTapped), for: .touchUpInside)
-        view.addSubview(button2)
-        
+        let textMsgButton = UIButton(type: .custom)
+        textMsgButton.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+        textMsgButton.center = view.center
+        textMsgButton.setTitle("Test MSG", for: .normal)
+        textMsgButton.setTitleColor(.white, for: .normal)
+        textMsgButton.backgroundColor = .systemBlue
+        textMsgButton.layer.cornerRadius = 10
+        textMsgButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        textMsgButton.addTarget(self, action: #selector(sendMessageButtonTapped), for: .touchUpInside)
+        view.addSubview(textMsgButton)
+
+        let makeCallButton = UIButton(type: .custom)
+        makeCallButton.frame = CGRect(x: 0, y: textMsgButton.frame.maxY + 20, width: 100, height: 50)
+        makeCallButton.center.x = view.center.x
+        makeCallButton.setTitle("Make Call", for: .normal)
+        makeCallButton.setTitleColor(.white, for: .normal)
+        makeCallButton.backgroundColor = .systemBlue
+        makeCallButton.layer.cornerRadius = 10
+        makeCallButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        makeCallButton.addTarget(self, action: #selector(callButtonTapped), for: .touchUpInside)
+        view.addSubview(makeCallButton)
+
         // Instantiate countdown view controller and add it as a child view controller
         countdownViewController = CountdownViewController()
         addChild(countdownViewController)
         countdownViewController.didMove(toParent: self)
-        
-        let button3 = UIButton(type: .system)
-        button3.frame = CGRect(x: 0, y: button2.frame.maxY + 20, width: 100, height: 50)
-        button3.center.x = view.center.x
-        button3.setTitle("Countdown", for: .normal)
-        button3.addTarget(self, action: #selector(countdownButtonTapped), for: .touchUpInside)
-        view.addSubview(button3)
+
+        let startCountDownButton = UIButton(type: .custom)
+        startCountDownButton.frame = CGRect(x: 0, y: makeCallButton.frame.maxY + 20, width: 100, height: 50)
+        startCountDownButton.center.x = view.center.x
+        startCountDownButton.setTitle("Countdown", for: .normal)
+        startCountDownButton.setTitleColor(.white, for: .normal)
+        startCountDownButton.backgroundColor = .systemBlue
+        startCountDownButton.layer.cornerRadius = 10
+        startCountDownButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        startCountDownButton.addTarget(self, action: #selector(countdownButtonTapped), for: .touchUpInside)
+        view.addSubview(startCountDownButton)
     }
     
     @objc func sendMessageButtonTapped() {
