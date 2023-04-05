@@ -11,10 +11,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Looper
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,6 +29,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -36,8 +39,9 @@ import java.util.*
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
 val REQUEST_SEND_SMS = 2
+val LOCATION_PERMISSION_CODE = 3
 val emergencyServiceNum = "+14846391351"
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LocationListener{
 
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
@@ -45,13 +49,16 @@ class MainActivity : AppCompatActivity() {
     lateinit var characteristicData: TextView
     private lateinit var preferences: SharedPreferences
     private lateinit var callButton: Button
-
+    private lateinit var locationButton: Button
+    private lateinit var locationManager: LocationManager
 
     //countdown timer object
     private var mCountDownTimer: CountDownTimer? = null
     private val countdownStartTime: Long = 11000 //timer duration for when crashes are detected, current set at 11 seconds (takes a second to popup)
     private var mTimeLeftInMillis = countdownStartTime //variable for tracking countdown duration remaining at a given time
     private var countdownValueInt: Int? = null
+    private var textLat: Double? = null
+    private var textLong: Double? = null
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
@@ -63,10 +70,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         hasPermissions()
+        locationButton = findViewById(R.id.locationButton)
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
+
+        //********
+        //Testing location
+
+        locationButton.setOnClickListener{
+            getLocation()
+        }
+
+        //********
+
 
         //********
         // Testing crash popup
@@ -202,7 +220,15 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PHONE_CALL)makeCall(emergencyServiceNum)
-        if (requestCode == REQUEST_SEND_SMS)sendText(emergencyServiceNum, "Hello from android!")
+        if (requestCode == REQUEST_SEND_SMS)sendText(emergencyServiceNum, "Hello from android! Coordinates: Lat-${textLat} Long${textLong}")
+        if(requestCode == LOCATION_PERMISSION_CODE){
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
@@ -264,6 +290,31 @@ class MainActivity : AppCompatActivity() {
         callIntent.data = Uri.parse("tel:$phoneNumber")
         startActivity(callIntent)
     }
+
+    private fun getLocation(){
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+
+    }
+
+    @RequiresApi(33)
+    override fun onLocationChanged(location: Location) {
+        Log.d("Location", "Lat: ${location.latitude}, Long:${location.longitude}")
+
+        textLat = location.latitude
+        textLong = location.longitude
+//        val geocoder = Geocoder(this, Locale.getDefault())
+//
+//        geocoder.getFromLocation(location.latitude, location.longitude, 1, this)
+    }
+
+//    override fun onGeocode(addresses: MutableList<Address>) {
+//        Log.d("Geocode Address", addresses[0].toString())
+//    }
 
     inner class MyBluetoothGattCallback : BluetoothGattCallback() {
 
@@ -471,5 +522,8 @@ class MainActivity : AppCompatActivity() {
             bluetoothLeScanner?.startScan(null, scanSettings, scanCallback)
         }
     }
+
+
+
 }
 
