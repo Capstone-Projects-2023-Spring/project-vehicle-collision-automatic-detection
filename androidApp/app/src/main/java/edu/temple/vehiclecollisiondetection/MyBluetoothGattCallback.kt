@@ -27,7 +27,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 private const val SAVE_KEY = "save_key"
-private const val emergencyServiceNum = "+14846391351"
+private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
+
 class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback() {
     val activeContext = currentContext
     val activeActivity = currentActivity
