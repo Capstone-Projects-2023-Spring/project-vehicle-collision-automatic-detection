@@ -67,41 +67,6 @@ class MainActivity : AppCompatActivity() {
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
 
-        //********
-        // Testing crash popup
-        callButton = findViewById(R.id.callTest)
-        callButton.setOnClickListener{
-            //set value to starting time
-            mTimeLeftInMillis = countdownStartTime
-            //if a crash is detected by the arduino device, initiate crash popup
-            val crashDialogView = LayoutInflater.from(this).inflate(R.layout.crash_procedure_popup, null)
-            val crashDialogBuilder = AlertDialog.Builder(this)
-                .setView(crashDialogView)
-                .setTitle("")
-            //show dialog
-            val crashAlertDialog = crashDialogBuilder.show()
-            //countdown
-            val countdownTimerText = crashDialogView.findViewById<TextView>(R.id.countdownText)
-            mCountDownTimer = object : CountDownTimer(mTimeLeftInMillis, 1000) {
-                override fun onTick(millisUntilFinished: Long) { //countdown interval
-                    mTimeLeftInMillis = millisUntilFinished
-                    countdownValueInt = ((mTimeLeftInMillis / 1000) % 60).toInt()
-                    countdownTimerText.setText(countdownValueInt.toString())
-                }
-                override fun onFinish() { //countdown goes to 0
-                    mCountDownTimer?.cancel()
-                    crashAlertDialog.dismiss()
-                    characteristicData.setText("Calling Emergency Services!")
-                }
-            }.start()
-            //cancel button
-            val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
-            cancelButton.setOnClickListener {
-                crashAlertDialog.dismiss()
-                mCountDownTimer?.cancel()
-            }
-        }
-        //********
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)

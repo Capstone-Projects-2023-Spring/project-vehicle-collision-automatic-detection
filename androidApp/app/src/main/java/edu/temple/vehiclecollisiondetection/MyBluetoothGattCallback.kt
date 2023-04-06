@@ -9,6 +9,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
@@ -22,14 +25,15 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 private const val SAVE_KEY = "save_key"
 private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
 
-class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback() {
+class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback(), LocationListener {
     val activeContext = currentContext
     val activeActivity = currentActivity
     val connectionStatusText = connectionText
@@ -40,6 +44,13 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
     private var mTimeLeftInMillis = countdownStartTime //variable for tracking countdown duration remaining at a given time
     private var countdownValueInt: Int? = null
 
+    //Location Tracking Stuff
+    private lateinit var locationButton: Button
+    private lateinit var locationManager: LocationManager
+    private var textLat: Double? = null //variable used to record Latitude
+    private var textLong: Double? = null //variable used to record Longitude
+
+    //object used to get saved data (contact list)
     private lateinit var preferences: SharedPreferences
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -76,6 +87,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
     @RequiresApi(33)
     override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+        getLocation() //activates the location tracking when client app is connected to device (to preserve phone battery)
         val serviceUuid = UUID.fromString("00110011-4455-6677-8899-aabbccddeeff")//acts like a 'password' for the bluetooth connection
         val characteristicUuid = UUID.fromString("00112233-4455-6677-8899-abbccddeefff")//acts like a 'password' for the bluetooth connection
         if (ActivityCompat.checkSelfPermission(
@@ -174,7 +186,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             //Add user variable rather than "someone", add location variable
             sendText(
                 numWithCountryCode, "Hello ${obj.name}, I'm sorry to inform you that " +
-                        "someone has been in a serious crash. Here is their location: "
+                        "someone has been in a serious crash. Here is their location coordinates: Lat-${textLat} Long${textLong} "
             )
         }
     }
@@ -188,4 +200,30 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
         callIntent.data = Uri.parse("tel:$phoneNumber")
         activeContext.startActivity(callIntent)
     }
+
+    private fun getLocation(){
+        activeActivity.runOnUiThread{
+            locationManager = activeActivity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            if ((ContextCompat.checkSelfPermission(activeContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(activeActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 3)
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+        }
+    }
+
+    @RequiresApi(33)
+    override fun onLocationChanged(location: Location) {
+        Log.d("Location", "Lat: ${location.latitude}, Long:${location.longitude}")
+
+        textLat = location.latitude
+        textLong = location.longitude
+//        val geocoder = Geocoder(this, Locale.getDefault())
+//
+//        geocoder.getFromLocation(location.latitude, location.longitude, 1, this)
+    }
+
+//    override fun onGeocode(addresses: MutableList<Address>) {
+//        Log.d("Geocode Address", addresses[0].toString())
+//    }
 }
