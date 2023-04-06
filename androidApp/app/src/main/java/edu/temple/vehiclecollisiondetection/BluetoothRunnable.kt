@@ -9,6 +9,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -17,6 +18,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.content.ContextCompat.startActivity
 
 class BluetoothRunnable(currentContext: Context, currentActivity: Activity, connectionText: TextView): Runnable{
 
@@ -27,10 +29,19 @@ class BluetoothRunnable(currentContext: Context, currentActivity: Activity, conn
     override fun run() {
         hasPermissions()
         var btAdapter: BluetoothAdapter? = null
+
+        //ask user to turn on bluetooth if it isn't already
+        if (btAdapter?.isEnabled == false) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            activeContext.startActivity(enableBtIntent)
+        }
+
         val bluetoothManager =
             activeContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
 
         btAdapter = bluetoothManager?.adapter
+
+
         val gattCallback = MyBluetoothGattCallback(activeContext, activeActivity, activeTextView)
         val bluetoothLeScanner = btAdapter?.bluetoothLeScanner
         val scanCallback = object : ScanCallback() {
