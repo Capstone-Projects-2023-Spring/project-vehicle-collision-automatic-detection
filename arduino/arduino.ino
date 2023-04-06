@@ -25,6 +25,8 @@ int flag = 0;
 int start = 0;
 const unsigned long interval = 60000;
 unsigned long previousMillis = 0;
+uint8_t signal0[] = {0x48};
+uint8_t signal1[] = {0x70};
 
 Adafruit_BluefruitLE_SPI Bluetooth(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 Adafruit_BLEGatt gatt(Bluetooth);
@@ -42,7 +44,7 @@ void setup() {
   Serial.begin(115200);
   
   /* Put the device into idle mode */
-  LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_ON, USART0_OFF, TWI_OFF);
+  LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_OFF, USART0_OFF, TWI_OFF);
 
   /* Initialise the module */
   Serial.print(F("Initialising the Bluefruit LE module: "));
@@ -72,6 +74,9 @@ void setup() {
   int char1 = Bluetooth.atcommand("AT+GATTADDCHAR=UUID128=00-11-22-33-44-55-66-77-88-99-AB-BC-CD-DE-EF-FF,PROPERTIES=0x10,MIN_LEN=1,VALUE=HELLO");
   Serial.println(char1);
 
+  // Reset Bluefruit for custom characteristic
+  Bluetooth.reset();
+
   /* Wait for connection */
   Serial.println("Looking for Bluetooth Device...");
   while (!Bluetooth.isConnected()){
@@ -80,10 +85,11 @@ void setup() {
     if((unsigned long)(currentMillis - previousMillis) >= interval){
       Serial.println("Powering Down!");
       // Make the Bluetooth undiscoverable
-      Bluetooth.sendCommandCheckOK("AT+GAPDEVNAME=Undiscoverable");
+      Bluetooth.setAdvData(NULL, 0);
       // Turn off the Mode LED
       Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
       delay(500);
+      // Power down the device
       LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
     delay(500);
@@ -102,10 +108,7 @@ void setup() {
   Serial.println(F("******************************"));
   start++;
 
-  Bluetooth.begin();
-
-  // Initialize the characteristic to '0'
-  gatt.setChar(1, 'B', BUFSIZE);
+  delay(500);
 
   //accelerometer
   pinMode(9,INPUT);       // Interrupt pin input
@@ -170,11 +173,13 @@ void loop() {
     unsigned long currentMillis = millis();
 
     //put device into idle mode
-    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_ON, USART0_OFF, TWI_OFF);
+    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_OFF, USART0_OFF, TWI_OFF);
 
     //reset sleep timer for first connection
     if(start == 1){
       previousMillis = currentMillis;
+      //initialize characteristic value to '0'
+      gatt.setChar(1, signal0, sizeof(signal0));
       start--;
       delay(500);
     }
@@ -185,12 +190,15 @@ void loop() {
       Serial.println(F("Bluetooth Device Connected!"));
       Serial.println(F("******************************"));
       previousMillis = currentMillis;
+      //initialize characteristic value to '0'
+      gatt.setChar(1, signal0, sizeof(signal0));
       flag--;
       delay(500);
     }
 
     float maxG;
 
+    //print max g value
     if(xl.newXData() || xl.newYData() || xl.newZData()){
       float maxG = getMaxG();
       Serial.println(maxG);
@@ -201,11 +209,11 @@ void loop() {
       Serial.println("Interrupt: " + String(maxG) + "g");
       Serial.println("Changing Characteristic!");
       //change characteristic value to 'F'
-      gatt.setChar(1, 'A', BUFSIZE);
-      delay(1000);
+      gatt.setChar(1, signal1, sizeof(signal1));
+      delay(3000);
       Serial.println("Resetting Characteristic!");
       //reset characteristic value back to '0'
-      gatt.setChar(1, 'B', BUFSIZE);
+      gatt.setChar(1, signal0, sizeof(signal0));
       delay(1000);
       //reset the sleep timer
       previousMillis = currentMillis;
@@ -239,7 +247,7 @@ void loop() {
     unsigned long currentMillis = millis();
 
     //put device into idle mode
-    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_ON, USART0_OFF, TWI_OFF);
+    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_OFF, USART0_OFF, TWI_OFF);
 
     if(flag == 0){
       Serial.println(F("******************************"));
@@ -253,26 +261,52 @@ void loop() {
     if((unsigned long)(currentMillis - previousMillis) >= interval * 3){
       Serial.println("Powering Down!");
       // Make the Bluetooth undiscoverable
-      Bluetooth.sendCommandCheckOK("AT+GAPDEVNAME=Undiscoverable");
+      Bluetooth.setAdvData(NULL, 0);
       // Turn off the Mode LED
       Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
       delay(500);
+      // Power down the device
       LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
   }
 }
+
+/**
+ * @brief Error handler for Arduino methods
+ * 
+ * @param err error message string
+ * 
+ * @return void returns nothing
+ */
 
 void error(const __FlashStringHelper*err){
   Serial.println(err);
   while (1);
 }
 
+/**
+ * @brief Convert sensor reading into an integer value
+ * 
+ * @param maxScale maximum scale for g-force
+ * 
+ * @param g minimum g on individual axis
+ * 
+ * @return integer value of sensor reading
+ */
+
 int convertToReading(int maxScale, float g) {
   int reading = int((g * 2047) / maxScale);
   return reading;
 }
 
-//calculates maximum g-force in any direction
+/**
+ * @brief Calculates maximum g-force in any direction
+ * 
+ * @param void takes nothing
+ * 
+ * @return maximum g-force
+ */
+
 float getMaxG() {
   int16_t x, y, z;
 
@@ -281,8 +315,6 @@ float getMaxG() {
   float xg = xl.convertToG(scale,x);
   float yg = xl.convertToG(scale,y);
   float zg = xl.convertToG(scale,z);
-  
-  //Serial.println(String(xg) + " " + String(yg) + " " + String(zg));
   
   float maxG = sqrt(pow(xg, 2) + pow(yg, 2) + pow(zg, 2)); //pythagoream theorem for three dimensions
 
