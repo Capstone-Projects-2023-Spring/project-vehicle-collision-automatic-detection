@@ -11,7 +11,7 @@ import MobileCoreServices
 
 /// Controller to view and change the application's settings
 final class VCTestingViewController: UIViewController {
-    var countdownViewController = CountdownViewController()
+    private var countdownViewController = CountdownViewController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,6 +68,10 @@ final class VCTestingViewController: UIViewController {
     }
     
     @objc func countdownButtonTapped() {
+        if countdownViewController.cancelPressed || countdownViewController.notificationSent {
+            countdownViewController.cancelPressed = false
+            countdownViewController.notificationSent = false
+        }
         countdownViewController.showCountdownUI()
     }
 }

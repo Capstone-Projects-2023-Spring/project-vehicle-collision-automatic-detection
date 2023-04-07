@@ -375,6 +375,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
                 request.httpMethod = "POST"
                 request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
+                self.getContacts()
                 
                 for contact in EmergencyContactList {
                     if let toNumber = contact.contactPhoneNumber {

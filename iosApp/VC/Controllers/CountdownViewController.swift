@@ -12,6 +12,8 @@ import SwiftUI
 class CountdownViewController: UIViewController {
     
     private var countdownTimer: Timer?
+    public var cancelPressed = false
+    public var notificationSent = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,9 +64,8 @@ class CountdownViewController: UIViewController {
         countDownLabel.centerXAnchor.constraint(equalTo: alertController.view.centerXAnchor).isActive = true
         countDownLabel.centerYAnchor.constraint(equalTo: alertController.view.centerYAnchor, constant: 60).isActive = true
         
-        var cancelPressed = false
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
-            cancelPressed = true
+            self?.cancelPressed = true
             self?.dismiss(animated: true, completion: nil)
         }
         alertController.addAction(cancelAction)
@@ -78,21 +79,30 @@ class CountdownViewController: UIViewController {
             // Change to text color to red
             if countdownSeconds <= 3 {
                 if let titleString = countDownTitle as? NSString {
-                           let attributes: [NSAttributedString.Key: Any] = [
-                               .foregroundColor: UIColor.red,
-                               .font: UIFont.boldSystemFont(ofSize: 30)
-                           ]
-                           let attributedTitle = NSAttributedString(string: titleString as String, attributes: attributes)
-                           alertController.setValue(attributedTitle, forKey: "attributedTitle")
-                       }
+                    let attributes: [NSAttributedString.Key: Any] = [
+                        .foregroundColor: UIColor.red,
+                        .font: UIFont.boldSystemFont(ofSize: 30)
+                    ]
+                    let attributedTitle = NSAttributedString(string: titleString as String, attributes: attributes)
+                    alertController.setValue(attributedTitle, forKey: "attributedTitle")
+                }
                 countDownLabel.textColor = .red
             }
-            if countdownSeconds == 0 {
+            
+            // Exit loop
+            if self.cancelPressed {
+                countdownSeconds = 0
                 timer.invalidate()
-                if !cancelPressed {
+            }
+            
+            // Notify Emergency Contacts
+            else if countdownSeconds == 0 {
+                timer.invalidate()
+                if !self.cancelPressed && !self.notificationSent {
                     let vcContact = VCContactsViewController()
                     vcContact.textMessageWithTwilio()
                     vcContact.callWithTwilio()
+                    self.notificationSent = true
                 }
                 self.dismiss(animated: true, completion: nil)
             }
