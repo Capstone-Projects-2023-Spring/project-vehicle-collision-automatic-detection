@@ -2,7 +2,7 @@
 //  BluetoothManager.swift
 //  VC
 //
-//  Created by Thanh Nguyen on 3/11/23.
+//  Created/Modified by Thanh N & Nathan A.
 //
 
 import CoreBluetooth

@@ -1,8 +1,8 @@
 //
-//  VCEmergencyContactViewController.swift
+//  VCContactsViewController.swift
 //  VC
 //
-//  Created by Nathan A on 2/1/23.
+//  Created/Modified by Thanh N & Nathan A.
 //
 
 import UIKit
@@ -10,12 +10,11 @@ import ContactsUI
 import SwiftUI
 import CoreData
 import MessageUI
-import MapKit
 import CoreLocation
 
-
+var EmergencyContactList = [Contact]()
 /// Controller to add and show Emergency Contacts
-class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate, MFMessageComposeViewControllerDelegate {
+class VCContactsViewController: UIViewController, UITableViewDataSource, CNContactPickerDelegate, UITableViewDelegate, CLLocationManagerDelegate{
     
     /**
      Creates a table to store the emergency contacts
@@ -29,11 +28,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         return table
     }()
     
-    var EmergencyContactList = [Contact]()
     var coordinates: CLLocationCoordinate2D?
     let locationManager = CLLocationManager()
-    
-    
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
      */
@@ -78,23 +74,24 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Checks if a contact has been selected by the user
      
      - Parameters:
-        - CNContactPickerViewController: The default iOS contact application
-        -  Contact: A specific contact from the contact app
+     - CNContactPickerViewController: The default iOS contact application
+     -  Contact: A specific contact from the contact app
      
      */
     func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
         if EmergencyContactList.contains(where: {$0.contactId == contact.identifier}) {
             duplicatedContactAlert()
-            
         } else  {
             let name = contact.givenName + " " + contact.familyName
             let identifier = contact.identifier
+            let phoneNumber = (contact.phoneNumbers[0].value).value(forKey: "digits") as! String
             let managedContext = AppDelegate.sharedAppDelegate.CoreDataStack.managedContext
             let newContact = Contact(context: managedContext)
             newContact.setValue(name, forKey: #keyPath(Contact.contactName))
             newContact.setValue(identifier, forKey: #keyPath(Contact.contactId))
+            newContact.setValue(phoneNumber, forKey: #keyPath(Contact.contactPhoneNumber))
             newContact.setValue(contact, forKey: #keyPath(Contact.contactSource))
-            self.EmergencyContactList.insert(newContact, at: 0)
+            EmergencyContactList.insert(newContact, at: 0)
             AppDelegate.sharedAppDelegate.CoreDataStack.saveContext() // Save changes in CoreData
             DispatchQueue.main.async {
                 self.table.reloadData()
@@ -141,8 +138,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Checks if row can be edited
      
      - Parameters:
-        - UITableView: The table view
-        - IndexPath: The row at index path
+     - UITableView: The table view
+     - IndexPath: The row at index path
      
      - Returns: If it's possible to edit a specific row
      */
@@ -154,9 +151,9 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Allows to slide row to delete Emergency contacts
      
      - Parameters:
-        - UITableView: The table view
-        - UITableViewCell.EditingStyle: The editing style
-        - IndexPath: The row at index path
+     - UITableView: The table view
+     - UITableViewCell.EditingStyle: The editing style
+     - IndexPath: The row at index path
      */
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -172,8 +169,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
                                           handler: {(_: UIAlertAction!) in
                 //Delete action
                 // Remove the contact from the CoreData
-                AppDelegate.sharedAppDelegate.CoreDataStack.managedContext.delete(self.EmergencyContactList[indexPath.row])
-                self.EmergencyContactList.remove(at: indexPath.row)
+                AppDelegate.sharedAppDelegate.CoreDataStack.managedContext.delete(EmergencyContactList[indexPath.row])
+                EmergencyContactList.remove(at: indexPath.row)
                 // Save Changes
                 AppDelegate.sharedAppDelegate.CoreDataStack.saveContext()
                 // Remove row from TableView
@@ -193,9 +190,9 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Finds the cell at a given row
      
      - Parameters:
-        - UITableView: The table view
-        - IndexPath: The indexPath of the row
-        - UITableViewCell: The UITableViewCell
+     - UITableView: The table view
+     - IndexPath: The indexPath of the row
+     - UITableViewCell: The UITableViewCell
      
      - Returns: A cell for a given row
      */
@@ -209,8 +206,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Presents option to call or text contact when selected from the Emergency Contacts list
      
      - Parameters:
-        - UITableView: The table view
-        - IndexPath: The indexPath of the row
+     - UITableView: The table view
+     - IndexPath: The indexPath of the row
      */
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -220,21 +217,14 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         let number = (contact.phoneNumbers[0].value ).value(forKey: "digits") as! String
         let name = EmergencyContactList[indexPath.row].contactName
         
-        
-        let alert = UIAlertController(title: "Notify \(name ?? "Emergency Contact")", message: "Click Call or Text to contact \(name ?? "your emergency contact")",
+        let alert = UIAlertController(title: "Notify \(name ?? "Emergency Contact")",
+                                      message: "Click Call or Text to contact \(name ?? "your emergency contact")",
                                       preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "Call", style: UIAlertAction.Style.default, handler: { _ in
             //Call action
             self.callNumber(phoneNumber: number)
             
         }))
-        
-        alert.addAction(UIAlertAction(title: "Text", style: UIAlertAction.Style.default, handler: { _ in
-            //Message action
-            self.textNumber(phoneNumber: number)
-            
-        }))
-        
         
         alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { _ in
             //Cancel action
@@ -245,40 +235,11 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
     
     /**
-    Closes the message view controller when done
-     
-     - Parameters:
-        - controller: The phone number of the recipient
-        - result: The result
-
-     */
-    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
-        // Check the result or perform other tasks.
-
-        // Dismiss the message compose view controller.
-        controller.dismiss(animated: true, completion: nil)
-    }
-    
-    /**
-     Gets the location of the device
-     
-     - Parameters:
-        - CLLocationManager: The location manager used to retrieve the location of the device
-        - CLLocation: A list of locations of type CLLocation
-     
-     */
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
-        coordinates = locValue
-        print("locations = \(locValue.latitude) \(locValue.longitude)")
-    }
-    
-    /**
      Handles failure to get a user's location
      
      - Parameters:
-        - CLLocationManager: The location manager used to retrieve the location of the device
-        - Error: Error preventing location retrieval
+     - CLLocationManager: The location manager used to retrieve the location of the device
+     - Error: Error preventing location retrieval
      
      */
     func locationManager( _ manager: CLLocationManager, didFailWithError error: Error) {
@@ -287,10 +248,10 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
     
     /**
-    Makes a phone call when clicked
+     Makes a phone call when clicked
      
      - Parameters:
-        - phoneNumber: The phone number of the recipient
+     - phoneNumber: The phone number of the recipient
      
      */
     private func callNumber(phoneNumber: String) {
@@ -302,28 +263,183 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     
+    func getListOfphoneNumbersInEmergencyContacts() -> Array<String> {
+        var phoneNumbers = Array<String>()
+        for emergencyContact in EmergencyContactList {
+            phoneNumbers.append(emergencyContact.contactPhoneNumber ?? "")
+        }
+        return phoneNumbers
+    }
+    
+    func getAddressFromGPS(latitude: Double, longitude: Double, completionHandler: @escaping (String?, Error?) -> Void) {
+        let location = CLLocation(latitude: latitude, longitude: longitude)
+        let geocoder = CLGeocoder()
+        
+        geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
+            if let error = error {
+                completionHandler(nil, error)
+                return
+            }
+            
+            guard let placemark = placemarks?.first else {
+                completionHandler(nil, NSError(domain: "com.yourapp", code: -1, userInfo: [NSLocalizedDescriptionKey: "No placemark found"]))
+                return
+            }
+            
+            let street = placemark.thoroughfare ?? ""
+            let number = placemark.subThoroughfare ?? ""
+            let city = placemark.locality ?? ""
+            let zipCode = placemark.postalCode ?? ""
+            
+            let address = "\(number) \(street), \(city) \(zipCode)"
+            completionHandler(address, nil)
+        }
+    }
+    
+    
     /**
-    Texts when clicked
+     Get's the user's Full Name from the contacts
      
      - Parameters:
-        - phoneNumber: The phone number of the recipient
-     
+     - Returns: The full name of the user
      */
-    private func textNumber(phoneNumber: String) {
-        if MFMessageComposeViewController.canSendText() {
-            let composeVC = MFMessageComposeViewController()
-            composeVC.messageComposeDelegate = self
-            
-            let defaultEmergencyMsg = "Emergency! I was just in a car accident. As one of my emergency contacts, I wanted to keep you updated. "
-            
-            let location = "Here is my current location. https://www.google.com/maps/place/\(coordinates?.latitude ?? 0),\(coordinates?.longitude ?? 0)"
-            
-            composeVC.recipients = [phoneNumber]
-            composeVC.body = defaultEmergencyMsg + location
-            locationManager.stopUpdatingLocation()
-            
-            self.present(composeVC, animated: true, completion: nil)
+    func getUsersFullName() -> String? {
+        let semaphore = DispatchSemaphore(value: 0)
+        var fullName: String?
+        DispatchQueue.global(qos: .userInitiated).async {
+            let store = CNContactStore()
+            store.requestAccess(for: .contacts) { granted, error in
+                if granted {
+                    let keys = [CNContactGivenNameKey, CNContactFamilyNameKey]
+                    let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
+                    var contacts = [CNContact]()
+                    do {
+                        try store.enumerateContacts(with: request) { contact, stop in
+                            if contact.isKeyAvailable(CNContactGivenNameKey) && contact.isKeyAvailable(CNContactFamilyNameKey) {
+                                contacts.append(contact)
+                                stop.pointee = true
+                            }
+                        }
+                        if let userContact = contacts.first {
+                            fullName = userContact.givenName + " " + userContact.familyName
+                        }
+                    } catch {
+                        print("Error fetching user's contact card: \(error.localizedDescription)")
+                    }
+                } else {
+                    print("Access to contacts was not granted")
+                }
+                semaphore.signal()
+            }
         }
+        semaphore.wait()
+        return fullName
+    }
+    
+    func textMessageWithTwilio() {
+        // Get the location and stop
+        let locationManager = CLLocationManager()
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.startUpdatingLocation()
+        let location = locationManager.location?.coordinate ?? CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
+        locationManager.stopUpdatingLocation()
+        
+        // let authToken = ""
+        let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
+        let authToken = "tempToken"
+        let fromNumber = "+18663483216"
+        
+        //Twilio 160 characters limit per MSG
+        let currentLatitude = location.latitude
+        let currentLongitude = location.longitude
+        
+        getAddressFromGPS(latitude: currentLatitude, longitude: currentLongitude) { (address, error) in
+            if let error = error {
+                print("Geocoding error: \(error.localizedDescription)")
+                return
+            }
+            
+            var namePlaceHolder = "VC app user"
+            if let fullName = self.getUsersFullName() {
+                namePlaceHolder = fullName
+            }
+            var message = "Hi, this is \(namePlaceHolder). I'm in an Emergency, here is my location:"
+            
+            if let address = address {
+                // Concatenate the address to the message
+                message += address
+                
+                let url = URL(string: "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)/Messages")!
+                var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
+                self.getContacts()
+                
+                for contact in EmergencyContactList {
+                    if let toNumber = contact.contactPhoneNumber {
+                        let body = "From=\(fromNumber)&To=\(toNumber)&Body=\(message)"
+                        print(message)
+                        print("Message sent to \(toNumber)! ")
+                        
+                        request.httpBody = body.data(using: .utf8)
+                        
+                        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                            if let error = error {
+                                print("Error: \(error)")
+                            } else if let responseData = data,
+                                      let response = response as? HTTPURLResponse,
+                                      response.statusCode == 201 {
+                                let _ = String(data: responseData, encoding: .utf8) ?? "nil"
+                                print("Message sent to \(toNumber)! " + message)
+                            } else {
+                                let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
+                                let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
+                                print("Unexpected response: \(responseString), data: \(dataString)")
+                            }
+                        }
+                        task.resume()
+                    } else {
+                        print("Error: contactPhoneNumber is nil.")
+                    }
+                }
+            } else {
+                print("No address found")
+            }
+        }
+    }
+    
+    func callWithTwilio() {
+        let accountSID = "AC46a348fafe57f4dad8a537d8d7bfce10"
+        let authToken = "tempToken"
+        let fromNumber = "+18663483216"
+        let toNumber = "+2674610092"
+        
+        let url = URL(string: "https://api.twilio.com/2010-04-01/Accounts/\(accountSID)/Calls")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.addValue("Basic " + "\(accountSID):\(authToken)".data(using: .utf8)!.base64EncodedString(), forHTTPHeaderField: "Authorization")
+        
+        let body = "From=\(fromNumber)&To=\(toNumber)&Url=http://demo.twilio.com/docs/voice.xml"
+        request.httpBody = body.data(using: .utf8)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error: \(error)")
+            } else if let responseData = data,
+                      let response = response as? HTTPURLResponse,
+                      response.statusCode == 201 {
+                let _ = String(data: responseData, encoding: .utf8) ?? "nil"
+                print("Call initiated to: " + toNumber)
+            } else {
+                let dataString = String(data: data ?? Data(), encoding: .utf8) ?? "nil"
+                let responseString = (response as? HTTPURLResponse)?.statusCode.description ?? "nil"
+                print("Unexpected response: \(responseString), data: \(dataString)")
+            }
+        }
+        task.resume()
     }
     
     /**
