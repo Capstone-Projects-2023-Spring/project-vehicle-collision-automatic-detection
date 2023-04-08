@@ -12,6 +12,7 @@ import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
@@ -31,7 +32,6 @@ import com.google.gson.reflect.TypeToken
 import java.util.*
 private const val SAVE_KEY = "save_key"
 private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
-
 class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback(), LocationListener {
     val activeContext = currentContext
     val activeActivity = currentActivity
@@ -128,6 +128,8 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
         Log.d("Characteristic Data", "Data Changed!")
         val data = String(value)
         if(data == "B" || data =="F") {
+            val alertSoundPlayer: MediaPlayer? = MediaPlayer.create(activeContext, R.raw.alert_sound)
+            alertSoundPlayer?.start()
             mTimeLeftInMillis = countdownStartTime
             activeActivity.runOnUiThread(){
                 //if a crash is detected by the arduino device, initiate crash popup
@@ -147,6 +149,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                     }
                     override fun onFinish() { //countdown goes to 0
                         mCountDownTimer?.cancel()
+                        alertSoundPlayer?.stop()
                         crashAlertDialog.dismiss()
                         //get list of saved emergency contacts and text them w/ emergency message
                         preferences = activeActivity.getPreferences(AppCompatActivity.MODE_PRIVATE)
@@ -162,6 +165,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                 val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
                 cancelButton.setOnClickListener {
                     mCountDownTimer?.cancel()
+                    alertSoundPlayer?.stop()
                     crashAlertDialog.dismiss()
                 }
             }
