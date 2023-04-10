@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import CoreBluetooth
+import AVFoundation
 
 /// Controller to show Home page
 
@@ -16,6 +17,8 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
     private let bluetoothManager = BluetoothManager()
     private var dataFromAdafruit: UILabel!
     private var countdownViewController = CountdownViewController()
+    static var audioPlayer: AVAudioPlayer?
+    
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
      */
@@ -49,9 +52,16 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         BluetoothManager.shared.startScanning()
         print("Device started in console")
         
-//        //Fake retrieving data
-//        let fakeData = "Fake data".data(using: .utf8)!
-//        didReceiveData(fakeData)
+        guard let path = Bundle.main.path(forResource: "alert_sound", ofType: "mp3") else {
+            return
+        }
+        let url = URL(fileURLWithPath: path)
+        
+        do {
+            VCHomeViewController.audioPlayer = try AVAudioPlayer(contentsOf: url)
+        } catch {
+            // Error handling
+        }
         
         // Instantiate countdown view controller and add it as a child view controller
         countdownViewController = CountdownViewController()
@@ -75,6 +85,7 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
     }
     
     func didReceiveData(_ data: Data) {
+        VCHomeViewController.audioPlayer?.play()
         print("Device received data from Adafruit Bluefruit LE")
         // Convert the data to a string
         let receivedString = String(data: data, encoding: .utf8)
@@ -83,11 +94,11 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         dataFromAdafruit.font = UIFont.systemFont(ofSize: 18)
         dataFromAdafruit.textColor = UIColor.blue
         
-        // Check cancel isn't pressed from previous runs 
+        countdownViewController.showCountdownUI()
+        // Check cancel isn't pressed from previous runs
         if countdownViewController.cancelPressed || countdownViewController.notificationSent {
             countdownViewController.cancelPressed = false
             countdownViewController.notificationSent = false
         }
-        countdownViewController.showCountdownUI()
     }
 }

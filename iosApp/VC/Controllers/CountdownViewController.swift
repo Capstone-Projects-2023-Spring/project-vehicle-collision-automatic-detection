@@ -91,6 +91,7 @@ class CountdownViewController: UIViewController {
             
             // Exit loop
             if self.cancelPressed {
+                VCHomeViewController.audioPlayer?.stop()
                 countdownSeconds = 0
                 timer.invalidate()
             }

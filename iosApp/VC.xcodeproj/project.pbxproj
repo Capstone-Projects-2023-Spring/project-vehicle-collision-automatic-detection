@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
+		925A9DC029E4A32200D4C678 /* alert_sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */; };
 		92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92692B5029D9CE7A001B215D /* CountdownViewController.swift */; };
 		D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */; };
 		D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		920C054129C69CD400009395 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
+		925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alert_sound.mp3; path = ../../../../../../Downloads/alert_sound.mp3; sourceTree = "<group>"; };
 		92692B5029D9CE7A001B215D /* CountdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewController.swift; sourceTree = "<group>"; };
 		D88E9AA7298AFE0A00EB1305 /* VC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 		D88E9ADF298B05A600EB1305 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */,
 				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
 				D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */,
@@ -292,6 +295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D88E9ABA298AFE0F00EB1305 /* LaunchScreen.storyboard in Resources */,
+				925A9DC029E4A32200D4C678 /* alert_sound.mp3 in Resources */,
 				D88E9AB7298AFE0F00EB1305 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -502,7 +506,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5779RYBW52;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VC/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to a peripheral device.";
@@ -539,7 +543,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5779RYBW52;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VC/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to a peripheral device.";
