@@ -45,8 +45,8 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
     //Location Tracking Stuff
     private lateinit var locationManager: LocationManager
-    private var textLat: Double? = null //variable used to record Latitude
-    private var textLong: Double? = null //variable used to record Longitude
+    private var textLat: Double? = 39.981991 //variable used to record Latitude & defaulted to avoid null errors
+    private var textLong: Double? = -75.153053 //variable used to record Longitude & defaulted to avoid null errors
 
     //object used to get saved data (contact list)
     private lateinit var preferences: SharedPreferences
