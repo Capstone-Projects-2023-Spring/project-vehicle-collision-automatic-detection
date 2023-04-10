@@ -4,19 +4,21 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -29,16 +31,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
-import kotlin.collections.ArrayList
-import android.bluetooth.BluetoothGattDescriptor
-import android.content.Intent
-import android.net.Uri
-import android.telephony.SmsManager
+
 
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
 val REQUEST_SEND_SMS = 2
-
 class MainActivity : AppCompatActivity() {
 
     //recycler view to hold contact list
@@ -48,41 +45,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var callButton: Button
 
+
+    //countdown timer object
+    private var mCountDownTimer: CountDownTimer? = null
+    private val countdownStartTime: Long = 11000 //timer duration for when crashes are detected, current set at 11 seconds (takes a second to popup)
+    private var mTimeLeftInMillis = countdownStartTime //variable for tracking countdown duration remaining at a given time
+    private var countdownValueInt: Int? = null
+
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
 
-
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("SetTextI18n")//added for hello world
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        hasPermissions()
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
 
-        //********
-        // Testing the calling function!
-
-        callButton = findViewById(R.id.callTest)
-        callButton.setOnClickListener{
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), REQUEST_SEND_SMS)
-            }else{
-                //Testing sending texts
-                sendText("+14846391351", "Hello from android!")
-                Log.d("Text Check: ", "Text Sent!")
-            }
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), REQUEST_PHONE_CALL)
-            }else{
-                //Testing call
-                makeCall("+14846391351")
-                Log.d("Call Check: ", "Call Done!")
-            }
-        }
-        //********
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
@@ -106,13 +90,14 @@ class MainActivity : AppCompatActivity() {
         val bluetoothThreadStart: View = findViewById(R.id.bluetoothTextBackground)
         bluetoothThreadStart.setOnClickListener {
             //start bluetooth thread
-            var btRunnable = BluetoothRunnable()
+            var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
             var btThread = Thread(btRunnable)
             btThread.start()
         }
         //Add Contact Button Functionality
         val addContactButton: View = findViewById(R.id.fab)
         addContactButton.setOnClickListener{
+            hasPermissions()
             //setting up 'add contact' pop-up menu
             val contactDialogView = LayoutInflater.from(this).inflate(R.layout.layout_dialog, null)
             val contactDialogBuilder = AlertDialog.Builder(this)
@@ -144,6 +129,7 @@ class MainActivity : AppCompatActivity() {
         //delete contact button functionality
         val deleteButton: View = findViewById(R.id.deleteContactFab)
         deleteButton.setOnClickListener{
+            hasPermissions()
             val deleteContactView = LayoutInflater.from(this).inflate(R.layout.deletecontact_dialog, null)
             val deleteContactDialogBuilder = AlertDialog.Builder(this)
                 .setView(deleteContactView)
@@ -171,18 +157,8 @@ class MainActivity : AppCompatActivity() {
                 deleteContactAlertDialog.dismiss()
             }
         }
-
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PHONE_CALL)makeCall("+14846391351")
-        if (requestCode == REQUEST_SEND_SMS)sendText("+14846391351", "Hello from android!")
-    }
 
     private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
         contactList.add(ContactObject(contactNum, contactName))
@@ -212,123 +188,6 @@ class MainActivity : AppCompatActivity() {
         prefEditor.apply()
     }
 
-    private fun sendText(phoneNumber: String, message: String){
-        var smsManager: SmsManager? = null
-        //var id = SmsManager.getDefaultSmsSubscriptionId()
-        smsManager = this.getSystemService(SmsManager::class.java)
-
-        smsManager?.sendTextMessage(phoneNumber, null, message, null, null)
-        Log.d("sendText", "$message sent to $phoneNumber")
-    }
-
-    private fun sendTextsToContacts(contactObjects: ArrayList<MainActivity.ContactObject>){
-
-        for(obj in contactObjects) {
-            //This is for American numbers only!
-            val numWithCountryCode = "+1" + obj.phoneNumber
-
-            //Add user variable rather than "someone", add location variable
-            sendText(
-                numWithCountryCode, "Hello ${obj.name}, I'm sorry to inform you that " +
-                        "someone has been in a serious crash. Here is their location: "
-            )
-        }
-    }
-
-    private fun makeCall(phoneNumber: String){
-
-        Log.d("Call output", "App is calling $phoneNumber")
-
-        val callIntent = Intent(Intent.ACTION_CALL)
-        //start calling intent
-        callIntent.data = Uri.parse("tel:$phoneNumber")
-        startActivity(callIntent)
-    }
-
-    inner class MyBluetoothGattCallback : BluetoothGattCallback() {
-
-        @RequiresApi(Build.VERSION_CODES.S)
-        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            if (ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
-                //return
-            }
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.d("tag1", "Connection Succeeded!")
-                runOnUiThread(Runnable() {
-                    Toast.makeText(applicationContext, "Device Connected!", Toast.LENGTH_LONG).show()
-                    connectionText.setTextColor(Color.parseColor("green"))
-                    connectionText.setText("Connected!")
-                })
-                gatt.discoverServices()
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                // handle disconnection
-                Log.d("tag2", "Connection Disconnected!")
-                runOnUiThread(Runnable() {
-                    connectionText.setTextColor(Color.parseColor("red"))
-                    connectionText.setText("Not Connected")
-                    Toast.makeText(applicationContext, "Device Disconnected!", Toast.LENGTH_LONG).show()
-                })
-            } else{
-                Log.d("tag3", "Connection Attempt Failed!")
-                gatt.close()
-            }
-        }
-
-        @RequiresApi(33)
-        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            val serviceUuid = UUID.fromString("00110011-4455-6677-8899-aabbccddeeff")//acts like a 'password' for the bluetooth connection
-            val characteristicUuid = UUID.fromString("00112233-4455-6677-8899-abbccddeefff")//acts like a 'password' for the bluetooth connection
-            if (ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
-                //return
-            }
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                val service1 = gatt.getService(serviceUuid)
-                val characteristic1 = service1.getCharacteristic(characteristicUuid)//characteristic uuid here
-                if(service1 == null){
-                    Log.d("Invalid service:", "service is null!")
-                    Log.d("Service UUid:", serviceUuid.toString())
-                }else{
-                    Log.d("Service Found:", serviceUuid.toString())
-                }
-                if(characteristic1 == null){
-                    Log.d("Invalid characteristic:", "characteristic is null!")
-                    Log.d("Characteristic UUid:", characteristicUuid.toString())
-                }else{
-                    Log.d("Characteristic Found:", characteristicUuid.toString())
-                }
-                gatt.setCharacteristicNotification(characteristic1, true)
-
-                val desc: BluetoothGattDescriptor = characteristic1.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
-                Log.d("Descriptor Found:", "00002902-0000-1000-8000-00805f9b34fb")
-                gatt.writeDescriptor(desc, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
-            }
-        }
-
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic,
-            value: ByteArray
-        ) {
-            // handle received data
-            Log.d("Characteristic Data", "Data Changed!")
-            val data = String(value)
-            runOnUiThread(){
-                characteristicData.text=data
-            }
-
-        }
-
-    }
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun hasPermissions(): Boolean {
@@ -352,95 +211,14 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),14)
         }
+        if (applicationContext.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                arrayOf(Manifest.permission.CALL_PHONE),15)
+        }
+        if (applicationContext.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                arrayOf(Manifest.permission.SEND_SMS),16)
+        }
         return true
-    }
-    inner class BluetoothRunnable: Runnable{
-
-        @RequiresApi(Build.VERSION_CODES.S)
-        override fun run() {
-            hasPermissions()
-            var btAdapter: BluetoothAdapter? = null
-            val bluetoothManager =
-                this@MainActivity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-
-            btAdapter = bluetoothManager?.adapter
-            val gattCallback = MyBluetoothGattCallback()
-            val bluetoothLeScanner = btAdapter?.bluetoothLeScanner
-            val scanCallback = object : ScanCallback() {
-                override fun onScanResult(callbackType: Int, result: ScanResult) {
-                    if (ActivityCompat.checkSelfPermission(
-                            this@MainActivity,
-                            Manifest.permission.BLUETOOTH_SCAN
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), 10)
-                        //return
-                    }
-                    if(result.device.name != null){
-                            Log.d("Device Found: ", result.device.name)
-                    }
-                    // Check if the scan result matches the target device UUID
-                    if (result.device.address.equals("E6:EC:C4:09:52:F0")) {
-                        Log.d("tag", "FOUND BLE DEVICE")
-                        runOnUiThread(Runnable() {
-                            Toast.makeText(applicationContext, "Device Found", Toast.LENGTH_LONG).show()
-                        })
-
-                        // Stop scanning
-                        bluetoothLeScanner?.stopScan(this)
-                        // Connect to the device
-                        val device = result.device
-                        // TODO: implement connection logic
-                        var gatt: BluetoothGatt? = null
-                        gatt = device?.connectGatt(this@MainActivity, false, gattCallback)
-                    }
-                }
-            }
-            // Create a ScanSettings to control the scan parameters
-            val scanSettings = ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
-                .build()
-            // Start scanning for devices that match the scan filter
-            Log.d("tag", "LOOKING FOR BLE DEVICE")
-            runOnUiThread(Runnable() {
-                Toast.makeText(applicationContext, "Scanning for Device", Toast.LENGTH_LONG).show()
-            })
-            bluetoothLeScanner?.startScan(null, scanSettings, scanCallback)
-        }
-    }
-}
-
-class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): RecyclerView.Adapter<ContactAdapter.ViewHolder>(){
-
-    private var contactObjects = _contactObjects
-
-    inner class ViewHolder (itemView: View):  RecyclerView.ViewHolder(itemView) {
-        var textView: TextView
-        var textView2: TextView
-        lateinit var contactObject: MainActivity.ContactObject
-
-        init {
-            textView = itemView.findViewById(R.id.listItem)
-            textView2 = itemView.findViewById(R.id.listItem2)
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        //Inflate layout, defines UI of list item
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_layout, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.contactObject = contactObjects[position]
-
-        //Sets contents of recycler view as the drawable provided in imageObject List
-        holder.textView.text = contactObjects[position].name //Add phone numbers later
-        holder.textView2.text = contactObjects[position].phoneNumber
-    }
-
-    override fun getItemCount(): Int {
-        return contactObjects.size
     }
 }
