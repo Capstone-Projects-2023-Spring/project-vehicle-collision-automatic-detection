@@ -18,8 +18,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContextCompat.startActivity
-
 class BluetoothRunnable(currentContext: Context, currentActivity: Activity, connectionText: TextView): Runnable{
 
     val activeContext = currentContext
@@ -87,33 +85,15 @@ class BluetoothRunnable(currentContext: Context, currentActivity: Activity, conn
     }
     @RequiresApi(Build.VERSION_CODES.S)
     private fun hasPermissions(): Boolean {
-        if (activeContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (activeContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            activeContext.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+            activeContext.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+            activeContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            activeContext.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
+            activeContext.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
+            activeContext.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
-                activeActivity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),11)
-        }
-        if (activeContext.checkSelfPermission(
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions( activeActivity, arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 12)
-        }
-        if (activeContext.checkSelfPermission(
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions( activeActivity, arrayOf(Manifest.permission.BLUETOOTH_SCAN), 13)
-        }
-        if (activeContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                activeActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),14)
-        }
-        if (activeContext.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                activeActivity, arrayOf(Manifest.permission.CALL_PHONE),15)
-        }
-        if (activeContext.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                activeActivity, arrayOf(Manifest.permission.SEND_SMS),16)
+                activeActivity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS),11)
         }
         return true
     }

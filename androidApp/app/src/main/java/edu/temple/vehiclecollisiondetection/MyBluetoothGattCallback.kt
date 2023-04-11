@@ -33,6 +33,7 @@ import java.util.*
 private const val SAVE_KEY = "save_key"
 private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
 class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback(), LocationListener {
+    //inherited objects to use with rest of the app
     val activeContext = currentContext
     val activeActivity = currentActivity
     val connectionStatusText = connectionText
@@ -127,7 +128,8 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
         // handle received data
         Log.d("Characteristic Data", "Data Changed!")
         val data = String(value)
-        if(data == "B" || data =="F") {
+
+        if(data == "B" || data =="F") {//crash detected!
             val alertSoundPlayer: MediaPlayer? = MediaPlayer.create(activeContext, R.raw.alert_sound)
             alertSoundPlayer?.start()
             mTimeLeftInMillis = countdownStartTime
