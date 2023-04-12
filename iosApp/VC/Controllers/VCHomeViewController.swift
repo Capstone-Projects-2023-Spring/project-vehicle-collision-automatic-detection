@@ -94,11 +94,11 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         dataFromAdafruit.font = UIFont.systemFont(ofSize: 18)
         dataFromAdafruit.textColor = UIColor.blue
         
-        countdownViewController.showCountdownUI()
         // Check cancel isn't pressed from previous runs
         if countdownViewController.cancelPressed || countdownViewController.notificationSent {
             countdownViewController.cancelPressed = false
             countdownViewController.notificationSent = false
         }
+        countdownViewController.showCountdownUI()
     }
 }

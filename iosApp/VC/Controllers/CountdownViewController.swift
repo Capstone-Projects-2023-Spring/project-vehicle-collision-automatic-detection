@@ -66,6 +66,8 @@ class CountdownViewController: UIViewController {
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
             self?.cancelPressed = true
+            VCHomeViewController.audioPlayer?.stop()
+            VCTestingViewController.audioPlayer?.stop()
             self?.dismiss(animated: true, completion: nil)
         }
         alertController.addAction(cancelAction)
@@ -91,7 +93,6 @@ class CountdownViewController: UIViewController {
             
             // Exit loop
             if self.cancelPressed {
-                VCHomeViewController.audioPlayer?.stop()
                 countdownSeconds = 0
                 timer.invalidate()
             }
