@@ -11,6 +11,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,7 +30,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
@@ -36,14 +45,20 @@ import java.util.*
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
 val REQUEST_SEND_SMS = 2
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LocationListener {
 
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
     lateinit var characteristicData: TextView
     private lateinit var preferences: SharedPreferences
-    private lateinit var callButton: Button
+
+    //DELETE
+    private lateinit var locationManager: LocationManager
+    private var textLat: Double? = 39.981991 //variable used to record Latitude & defaulted to avoid null errors
+    private var textLong: Double? = -75.153053 //variable used to record Longitude & defaulted to avoid null errors
+    val API_KEY = "AIzaSyAMxe8n3-KtX3cRs-4BKSd7lXovPlTvEZE" //Move later
+    private lateinit var locButton: Button
 
 
     //countdown timer object
@@ -67,6 +82,11 @@ class MainActivity : AppCompatActivity() {
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
 
+        //DELETE
+        locButton = findViewById(R.id.locationButton)
+        locButton.setOnClickListener{
+            getLocation()
+        }
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
@@ -221,4 +241,48 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
+    //TEST GETTING ADDRESS DELETE LATER
+    private fun getLocation(){
+        this.runOnUiThread{
+            locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 3)
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+        }
+    }
+
+    @RequiresApi(33)
+    override fun onLocationChanged(location: Location) {
+        Log.d("Location", "Lat: ${location.latitude}, Long:${location.longitude}")
+
+        textLat = location.latitude
+        textLong = location.longitude
+
+        getStreetAddress(textLat!!, textLong!!)
+    }
+
+
+     fun getStreetAddress(latitude: Double, longitude: Double){
+        val queue = Volley.newRequestQueue(this)
+        val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}"
+
+        Log.d("volley", "Starting volley")
+        // Request a string response from the provided URL.
+        val jsonObjectRequest = JsonObjectRequest(
+             Request.Method.GET, url, null,
+            { response ->
+                val address = response.getJSONArray("results")
+                    .getJSONObject(0)
+                    .getString("formatted_address")
+                Log.d("res", address.toString())
+            },
+            { Log.d("error", "That didn't work") })
+
+// Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest)
+    }
+
 }

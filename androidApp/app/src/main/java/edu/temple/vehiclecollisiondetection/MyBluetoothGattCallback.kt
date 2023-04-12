@@ -27,6 +27,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
@@ -36,6 +41,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
     val activeContext = currentContext
     val activeActivity = currentActivity
     val connectionStatusText = connectionText
+    val API_KEY = "AIzaSyAMxe8n3-KtX3cRs-4BKSd7lXovPlTvEZE" //Move later
 
     //countdown timer object
     private var mCountDownTimer: CountDownTimer? = null
@@ -47,6 +53,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
     private lateinit var locationManager: LocationManager
     private var textLat: Double? = 39.981991 //variable used to record Latitude & defaulted to avoid null errors
     private var textLong: Double? = -75.153053 //variable used to record Longitude & defaulted to avoid null errors
+    private var textAddress: String = ""
 
     //object used to get saved data (contact list)
     private lateinit var preferences: SharedPreferences
@@ -85,6 +92,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
     @RequiresApi(33)
     override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+
         getLocation() //activates the location tracking when client app is connected to device (to preserve phone battery)
         val serviceUuid = UUID.fromString("00110011-4455-6677-8899-aabbccddeeff")//acts like a 'password' for the bluetooth connection
         val characteristicUuid = UUID.fromString("00112233-4455-6677-8899-abbccddeefff")//acts like a 'password' for the bluetooth connection
@@ -188,7 +196,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             //Add user variable rather than "someone", add location variable
             sendText(
                 numWithCountryCode, "Hello ${obj.name}, I'm sorry to inform you that " +
-                        "someone has been in a serious crash. Here is their location coordinates: Lat-${textLat} Long${textLong} "
+                        "someone has been in a serious crash. They are located at ${textAddress}. Here is their location coordinates: Lat-${textLat} Long-${textLong} "
             )
         }
     }
@@ -220,12 +228,30 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
         textLat = location.latitude
         textLong = location.longitude
-//        val geocoder = Geocoder(this, Locale.getDefault())
-//
-//        geocoder.getFromLocation(location.latitude, location.longitude, 1, this)
+
+        getStreetAddress(textLat!!, textLong!!)
     }
 
-//    override fun onGeocode(addresses: MutableList<Address>) {
-//        Log.d("Geocode Address", addresses[0].toString())
-//    }
+
+    private fun getStreetAddress(latitude: Double, longitude: Double){
+        val queue = Volley.newRequestQueue(activeContext)
+        val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}"
+
+        Log.d("volley", "Starting volley")
+        // Request a string response from the provided URL.
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            { response ->
+                val address = response.getJSONArray("results")
+                    .getJSONObject(0)
+                    .getString("formatted_address")
+                Log.d("res", address.toString())
+
+                textAddress = address
+            },
+            { Log.d("error", "That didn't work") })
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest)
+    }
 }
