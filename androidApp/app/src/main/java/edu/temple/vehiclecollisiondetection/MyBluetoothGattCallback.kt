@@ -15,7 +15,11 @@ import android.location.LocationManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.CountDownTimer
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,6 +42,7 @@ import java.util.*
 private const val SAVE_KEY = "save_key"
 private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
 class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback(), LocationListener {
+    //inherited objects to use with rest of the app
     val activeContext = currentContext
     val activeActivity = currentActivity
     val connectionStatusText = connectionText
@@ -135,11 +140,18 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
         // handle received data
         Log.d("Characteristic Data", "Data Changed!")
         val data = String(value)
-        if(data == "B" || data =="F") {
+
+        if(data == "B" || data =="F") {//crash detected!
             val alertSoundPlayer: MediaPlayer? = MediaPlayer.create(activeContext, R.raw.alert_sound)
             alertSoundPlayer?.start()
             mTimeLeftInMillis = countdownStartTime
             activeActivity.runOnUiThread(){
+                //speech recognition intialization
+                var speech = SpeechRecognizer.createSpeechRecognizer(activeContext);
+                Log.d("VC Status", "isRecognitionAvailable: " + SpeechRecognizer.isRecognitionAvailable(activeContext));
+                val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
                 //if a crash is detected by the arduino device, initiate crash popup
                 val crashDialogView = LayoutInflater.from(activeContext).inflate(R.layout.crash_procedure_popup, null)
                 val crashDialogBuilder = AlertDialog.Builder(activeContext)
@@ -159,6 +171,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                         mCountDownTimer?.cancel()
                         alertSoundPlayer?.stop()
                         crashAlertDialog.dismiss()
+                        speech.stopListening()
                         //get list of saved emergency contacts and text them w/ emergency message
                         preferences = activeActivity.getPreferences(AppCompatActivity.MODE_PRIVATE)
                         val gson = Gson()
@@ -169,13 +182,41 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                         makeCall(emergencyServiceNum)
                     }
                 }.start()
+                //Voice Recognition / Control Stuff (setting listener)
+                speech!!.setRecognitionListener(object: RecognitionListener{
+                    override fun onReadyForSpeech(params: Bundle?) {}
+                    override fun onBeginningOfSpeech() {
+                        Log.d("VC Stuff", "Beginning of Speech detected!")
+                    }
+                    override fun onRmsChanged(rmsdB: Float) {}
+                    override fun onBufferReceived(buffer: ByteArray?) {}
+                    override fun onEndOfSpeech() {}
+                    override fun onError(error: Int) {}
+                    override fun onResults(results: Bundle?) {
+                        val dataVC = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        Log.d("VC RESULT", dataVC!![0])
+                        if(dataVC!![0] == "cancel" || dataVC!![0] == "stop"){
+                            mCountDownTimer?.cancel()
+                            speech.stopListening()
+                            alertSoundPlayer?.stop()
+                            crashAlertDialog.dismiss()
+                        } else{//if command not detected, listen again for another command
+                            speech.startListening(speechIntent)
+                        }
+                    }
+                    override fun onPartialResults(partialResults: Bundle?) {}
+                    override fun onEvent(eventType: Int, params: Bundle?) {}
+
+                })
                 //cancel button
                 val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
                 cancelButton.setOnClickListener {
                     mCountDownTimer?.cancel()
+                    speech.stopListening()
                     alertSoundPlayer?.stop()
                     crashAlertDialog.dismiss()
                 }
+                speech.startListening(speechIntent)
             }
         }
     }
