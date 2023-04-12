@@ -15,7 +15,11 @@ import android.location.LocationManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.CountDownTimer
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -134,6 +138,29 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             alertSoundPlayer?.start()
             mTimeLeftInMillis = countdownStartTime
             activeActivity.runOnUiThread(){
+                //Voice Recognition / Control Stuff
+                var speech = SpeechRecognizer.createSpeechRecognizer(activeContext);
+                Log.d("VC Status", "isRecognitionAvailable: " + SpeechRecognizer.isRecognitionAvailable(activeContext));
+                val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                speech!!.setRecognitionListener(object: RecognitionListener{
+                    override fun onReadyForSpeech(params: Bundle?) {}
+                    override fun onBeginningOfSpeech() {
+                        Log.d("VC Stuff", "Beginning of Speech detected!")
+                    }
+                    override fun onRmsChanged(rmsdB: Float) {}
+                    override fun onBufferReceived(buffer: ByteArray?) {}
+                    override fun onEndOfSpeech() {}
+                    override fun onError(error: Int) {}
+                    override fun onResults(results: Bundle?) {
+                        val dataVC = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        Log.d("VC RESULT", dataVC!![0])
+                    }
+                    override fun onPartialResults(partialResults: Bundle?) {}
+                    override fun onEvent(eventType: Int, params: Bundle?) {}
+
+                })
                 //if a crash is detected by the arduino device, initiate crash popup
                 val crashDialogView = LayoutInflater.from(activeContext).inflate(R.layout.crash_procedure_popup, null)
                 val crashDialogBuilder = AlertDialog.Builder(activeContext)
@@ -167,9 +194,11 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                 val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
                 cancelButton.setOnClickListener {
                     mCountDownTimer?.cancel()
+                    speech.stopListening()
                     alertSoundPlayer?.stop()
                     crashAlertDialog.dismiss()
                 }
+                speech.startListening(speechIntent)
             }
         }
     }
