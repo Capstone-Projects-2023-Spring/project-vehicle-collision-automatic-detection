@@ -8,12 +8,10 @@
 import UIKit
 import SwiftUI
 import MobileCoreServices
-import AVFoundation
 
 /// Controller to view and change the application's settings
 final class VCTestingViewController: UIViewController {
     private var countdownViewController = CountdownViewController()
-    static var audioPlayer: AVAudioPlayer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,17 +39,6 @@ final class VCTestingViewController: UIViewController {
         makeCallButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         makeCallButton.addTarget(self, action: #selector(callButtonTapped), for: .touchUpInside)
         view.addSubview(makeCallButton)
-       
-        guard let path = Bundle.main.path(forResource: "alert_sound", ofType: "mp3") else {
-            return
-        }
-        let url = URL(fileURLWithPath: path)
-        
-        do {
-            VCTestingViewController.audioPlayer = try AVAudioPlayer(contentsOf: url)
-        } catch {
-            // Error handling
-        }
 
         // Instantiate countdown view controller and add it as a child view controller
         countdownViewController = CountdownViewController()
@@ -81,7 +68,6 @@ final class VCTestingViewController: UIViewController {
     }
     
     @objc func countdownButtonTapped() {
-        VCTestingViewController.audioPlayer?.play()
         if countdownViewController.cancelPressed || countdownViewController.notificationSent {
             countdownViewController.cancelPressed = false
             countdownViewController.notificationSent = false

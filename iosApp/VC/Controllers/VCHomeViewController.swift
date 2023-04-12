@@ -8,7 +8,6 @@
 import UIKit
 import SwiftUI
 import CoreBluetooth
-import AVFoundation
 
 /// Controller to show Home page
 
@@ -17,7 +16,6 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
     private let bluetoothManager = BluetoothManager()
     private var dataFromAdafruit: UILabel!
     private var countdownViewController = CountdownViewController()
-    static var audioPlayer: AVAudioPlayer?
     
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
@@ -52,17 +50,6 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         BluetoothManager.shared.startScanning()
         print("Device started in console")
         
-        guard let path = Bundle.main.path(forResource: "alert_sound", ofType: "mp3") else {
-            return
-        }
-        let url = URL(fileURLWithPath: path)
-        
-        do {
-            VCHomeViewController.audioPlayer = try AVAudioPlayer(contentsOf: url)
-        } catch {
-            // Error handling
-        }
-        
         // Instantiate countdown view controller and add it as a child view controller
         countdownViewController = CountdownViewController()
         addChild(countdownViewController)
@@ -85,7 +72,6 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
     }
     
     func didReceiveData(_ data: Data) {
-        VCHomeViewController.audioPlayer?.play()
         print("Device received data from Adafruit Bluefruit LE")
         // Convert the data to a string
         let receivedString = String(data: data, encoding: .utf8)
@@ -99,6 +85,9 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
             countdownViewController.cancelPressed = false
             countdownViewController.notificationSent = false
         }
-        countdownViewController.showCountdownUI()
+        // delay 3 secs after receiving data for testing
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.countdownViewController.showCountdownUI()
+        }
     }
 }

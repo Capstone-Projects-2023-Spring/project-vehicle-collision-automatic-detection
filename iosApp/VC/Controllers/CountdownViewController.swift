@@ -8,18 +8,22 @@
 import Foundation
 import UIKit
 import SwiftUI
+import AVFoundation
 
 class CountdownViewController: UIViewController {
     
     private var countdownTimer: Timer?
     public var cancelPressed = false
     public var notificationSent = false
+    private var audioPlayer: AVAudioPlayer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     func showCountdownUI() {
+        setUpSound()
+        audioPlayer?.play()
         let countDownTitle = "Crash Detected!"
         let countDownMessage = "\nTo cancel automatic notifications, press 'Cancel'"
         let alertController = UIAlertController(title: countDownTitle, message: countDownMessage, preferredStyle: .alert)
@@ -66,8 +70,7 @@ class CountdownViewController: UIViewController {
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
             self?.cancelPressed = true
-            VCHomeViewController.audioPlayer?.stop()
-            VCTestingViewController.audioPlayer?.stop()
+            self?.audioPlayer?.stop()
             self?.dismiss(animated: true, completion: nil)
         }
         alertController.addAction(cancelAction)
@@ -122,5 +125,19 @@ class CountdownViewController: UIViewController {
         
         // Present the alert controller
         present(alertController, animated: true, completion: nil)
+    }
+    
+    private func setUpSound() {
+        // Setup sound
+        guard let path = Bundle.main.path(forResource: "alert_sound", ofType: "mp3") else {
+            return
+        }
+        let url = URL(fileURLWithPath: path)
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+        } catch {
+            // Error handling
+        }
     }
 }
