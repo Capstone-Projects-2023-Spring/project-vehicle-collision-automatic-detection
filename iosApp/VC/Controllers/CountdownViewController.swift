@@ -104,6 +104,7 @@ class CountdownViewController: UIViewController {
             
             // Exit loop
             if self.cancelPressed || voiceManager.voiceDetected == true {
+                self.audioPlayer?.stop()
                 countdownSeconds = 0
                 timer.invalidate()
                 self.dismiss(animated: true, completion: nil)
@@ -111,6 +112,7 @@ class CountdownViewController: UIViewController {
             
             // Notify Emergency Contacts
             else if countdownSeconds == 0 {
+                self.audioPlayer?.stop()
                 timer.invalidate()
                 if !self.cancelPressed && !self.notificationSent {
                     let vcContact = VCContactsViewController()

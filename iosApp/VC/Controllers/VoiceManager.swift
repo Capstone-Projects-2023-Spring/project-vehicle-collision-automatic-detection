@@ -45,7 +45,7 @@ class VoiceManager: UIViewController, SFSpeechRecognizerDelegate {
         recognitionTask = nil
         
         let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .mixWithOthers])
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         
