@@ -22,8 +22,16 @@ class CountdownViewController: UIViewController {
     }
     
     func showCountdownUI() {
+        // Play Alarm Sound
         setUpSound()
         audioPlayer?.play()
+        // Active Voice Recognition
+        let voiceManager = VoiceManager()
+        do {
+            try voiceManager.startRecording()
+        } catch let error {
+            print("Error starting recording: \(error.localizedDescription)")
+        }
         let countDownTitle = "Crash Detected!"
         let countDownMessage = "\nTo cancel automatic notifications, press 'Cancel'"
         let alertController = UIAlertController(title: countDownTitle, message: countDownMessage, preferredStyle: .alert)
@@ -95,9 +103,10 @@ class CountdownViewController: UIViewController {
             }
             
             // Exit loop
-            if self.cancelPressed {
+            if self.cancelPressed || voiceManager.voiceDetected == true {
                 countdownSeconds = 0
                 timer.invalidate()
+                self.dismiss(animated: true, completion: nil)
             }
             
             // Notify Emergency Contacts
