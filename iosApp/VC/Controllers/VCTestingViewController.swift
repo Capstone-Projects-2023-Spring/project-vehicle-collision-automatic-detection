@@ -12,6 +12,7 @@ import MobileCoreServices
 /// Controller to view and change the application's settings
 final class VCTestingViewController: UIViewController {
     private var countdownViewController = CountdownViewController()
+    private var voiceManager = VoiceManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +49,7 @@ final class VCTestingViewController: UIViewController {
         voiceTestButton.backgroundColor = .systemBlue
         voiceTestButton.layer.cornerRadius = 10
         voiceTestButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        voiceTestButton.addTarget(self, action: #selector(callButtonTapped), for: .touchUpInside)
+        voiceTestButton.addTarget(self, action: #selector(voiceManagerButtonTapped), for: .touchUpInside)
         view.addSubview(voiceTestButton)
 
         // Instantiate countdown view controller and add it as a child view controller
@@ -85,4 +86,14 @@ final class VCTestingViewController: UIViewController {
         }
         countdownViewController.showCountdownUI()
     }
+    
+    @objc func voiceManagerButtonTapped() {
+        let vcVoice = VoiceManager()
+        do {
+            try vcVoice.startRecording()
+        } catch let error {
+            print("Error starting recording: \(error.localizedDescription)")
+        }
+    }
+
 }
