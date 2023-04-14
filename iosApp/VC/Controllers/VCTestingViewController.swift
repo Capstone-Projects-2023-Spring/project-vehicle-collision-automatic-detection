@@ -39,6 +39,17 @@ final class VCTestingViewController: UIViewController {
         makeCallButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         makeCallButton.addTarget(self, action: #selector(callButtonTapped), for: .touchUpInside)
         view.addSubview(makeCallButton)
+        
+        let voiceTestButton = UIButton(type: .custom)
+        voiceTestButton.frame = CGRect(x: 0, y: makeCallButton.frame.maxY + 20, width: 100, height: 50)
+        voiceTestButton.center.x = view.center.x
+        voiceTestButton.setTitle("Voice Test", for: .normal)
+        voiceTestButton.setTitleColor(.white, for: .normal)
+        voiceTestButton.backgroundColor = .systemBlue
+        voiceTestButton.layer.cornerRadius = 10
+        voiceTestButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        voiceTestButton.addTarget(self, action: #selector(callButtonTapped), for: .touchUpInside)
+        view.addSubview(voiceTestButton)
 
         // Instantiate countdown view controller and add it as a child view controller
         countdownViewController = CountdownViewController()
@@ -46,7 +57,7 @@ final class VCTestingViewController: UIViewController {
         countdownViewController.didMove(toParent: self)
 
         let startCountDownButton = UIButton(type: .custom)
-        startCountDownButton.frame = CGRect(x: 0, y: makeCallButton.frame.maxY + 20, width: 100, height: 50)
+        startCountDownButton.frame = CGRect(x: 0, y: voiceTestButton.frame.maxY + 20, width: 100, height: 50)
         startCountDownButton.center.x = view.center.x
         startCountDownButton.setTitle("Countdown", for: .normal)
         startCountDownButton.setTitleColor(.white, for: .normal)
