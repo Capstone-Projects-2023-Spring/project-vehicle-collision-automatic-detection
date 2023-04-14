@@ -15,7 +15,11 @@ import android.location.LocationManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.CountDownTimer
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,15 +31,22 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 private const val SAVE_KEY = "save_key"
 private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
 class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback(), LocationListener {
+    //inherited objects to use with rest of the app
     val activeContext = currentContext
     val activeActivity = currentActivity
     val connectionStatusText = connectionText
+    val API_KEY = "AIzaSyAMxe8n3-KtX3cRs-4BKSd7lXovPlTvEZE" //Move later
 
     //countdown timer object
     private var mCountDownTimer: CountDownTimer? = null
@@ -45,8 +56,9 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
     //Location Tracking Stuff
     private lateinit var locationManager: LocationManager
-    private var textLat: Double? = null //variable used to record Latitude
-    private var textLong: Double? = null //variable used to record Longitude
+    private var textLat: Double? = 39.981991 //variable used to record Latitude & defaulted to avoid null errors
+    private var textLong: Double? = -75.153053 //variable used to record Longitude & defaulted to avoid null errors
+    private var textAddress: String = ""
 
     //object used to get saved data (contact list)
     private lateinit var preferences: SharedPreferences
@@ -85,6 +97,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
     @RequiresApi(33)
     override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+
         getLocation() //activates the location tracking when client app is connected to device (to preserve phone battery)
         val serviceUuid = UUID.fromString("00110011-4455-6677-8899-aabbccddeeff")//acts like a 'password' for the bluetooth connection
         val characteristicUuid = UUID.fromString("00112233-4455-6677-8899-abbccddeefff")//acts like a 'password' for the bluetooth connection
@@ -127,11 +140,18 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
         // handle received data
         Log.d("Characteristic Data", "Data Changed!")
         val data = String(value)
-        if(data == "B" || data =="F") {
+
+        if(data == "B" || data =="F") {//crash detected!
             val alertSoundPlayer: MediaPlayer? = MediaPlayer.create(activeContext, R.raw.alert_sound)
             alertSoundPlayer?.start()
             mTimeLeftInMillis = countdownStartTime
             activeActivity.runOnUiThread(){
+                //speech recognition intialization
+                var speech = SpeechRecognizer.createSpeechRecognizer(activeContext);
+                Log.d("VC Status", "isRecognitionAvailable: " + SpeechRecognizer.isRecognitionAvailable(activeContext));
+                val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
                 //if a crash is detected by the arduino device, initiate crash popup
                 val crashDialogView = LayoutInflater.from(activeContext).inflate(R.layout.crash_procedure_popup, null)
                 val crashDialogBuilder = AlertDialog.Builder(activeContext)
@@ -151,6 +171,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                         mCountDownTimer?.cancel()
                         alertSoundPlayer?.stop()
                         crashAlertDialog.dismiss()
+                        speech.stopListening()
                         //get list of saved emergency contacts and text them w/ emergency message
                         preferences = activeActivity.getPreferences(AppCompatActivity.MODE_PRIVATE)
                         val gson = Gson()
@@ -161,13 +182,41 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                         makeCall(emergencyServiceNum)
                     }
                 }.start()
+                //Voice Recognition / Control Stuff (setting listener)
+                speech!!.setRecognitionListener(object: RecognitionListener{
+                    override fun onReadyForSpeech(params: Bundle?) {}
+                    override fun onBeginningOfSpeech() {
+                        Log.d("VC Stuff", "Beginning of Speech detected!")
+                    }
+                    override fun onRmsChanged(rmsdB: Float) {}
+                    override fun onBufferReceived(buffer: ByteArray?) {}
+                    override fun onEndOfSpeech() {}
+                    override fun onError(error: Int) {}
+                    override fun onResults(results: Bundle?) {
+                        val dataVC = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        Log.d("VC RESULT", dataVC!![0])
+                        if(dataVC!![0] == "cancel" || dataVC!![0] == "stop"){
+                            mCountDownTimer?.cancel()
+                            speech.stopListening()
+                            alertSoundPlayer?.stop()
+                            crashAlertDialog.dismiss()
+                        } else{//if command not detected, listen again for another command
+                            speech.startListening(speechIntent)
+                        }
+                    }
+                    override fun onPartialResults(partialResults: Bundle?) {}
+                    override fun onEvent(eventType: Int, params: Bundle?) {}
+
+                })
                 //cancel button
                 val cancelButton = crashDialogView.findViewById<Button>(R.id.crash_cancel_button)
                 cancelButton.setOnClickListener {
                     mCountDownTimer?.cancel()
+                    speech.stopListening()
                     alertSoundPlayer?.stop()
                     crashAlertDialog.dismiss()
                 }
+                speech.startListening(speechIntent)
             }
         }
     }
@@ -188,7 +237,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             //Add user variable rather than "someone", add location variable
             sendText(
                 numWithCountryCode, "Hello ${obj.name}, I'm sorry to inform you that " +
-                        "someone has been in a serious crash. Here is their location coordinates: Lat-${textLat} Long${textLong} "
+                        "someone has been in a serious crash. They are located at ${textAddress}. Here is their location coordinates: Lat-${textLat} Long-${textLong} "
             )
         }
     }
@@ -220,12 +269,30 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
         textLat = location.latitude
         textLong = location.longitude
-//        val geocoder = Geocoder(this, Locale.getDefault())
-//
-//        geocoder.getFromLocation(location.latitude, location.longitude, 1, this)
+
+        getStreetAddress(textLat!!, textLong!!)
     }
 
-//    override fun onGeocode(addresses: MutableList<Address>) {
-//        Log.d("Geocode Address", addresses[0].toString())
-//    }
+
+    private fun getStreetAddress(latitude: Double, longitude: Double){
+        val queue = Volley.newRequestQueue(activeContext)
+        val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}"
+
+        Log.d("volley", "Starting volley")
+        // Request a string response from the provided URL.
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            { response ->
+                val address = response.getJSONArray("results")
+                    .getJSONObject(0)
+                    .getString("formatted_address")
+                Log.d("res", address.toString())
+
+                textAddress = address
+            },
+            { Log.d("error", "That didn't work") })
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest)
+    }
 }
