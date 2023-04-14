@@ -10,6 +10,7 @@
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
 		925A9DC029E4A32200D4C678 /* alert_sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */; };
 		92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92692B5029D9CE7A001B215D /* CountdownViewController.swift */; };
+		92FB894C29E9E4F30050AA4C /* VoiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92FB894B29E9E4F30050AA4C /* VoiceManager.swift */; };
 		D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */; };
 		D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */; };
 		D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */; };
@@ -48,6 +49,7 @@
 		920C054129C69CD400009395 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alert_sound.mp3; path = ../../../../../../Downloads/alert_sound.mp3; sourceTree = "<group>"; };
 		92692B5029D9CE7A001B215D /* CountdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewController.swift; sourceTree = "<group>"; };
+		92FB894B29E9E4F30050AA4C /* VoiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceManager.swift; sourceTree = "<group>"; };
 		D88E9AA7298AFE0A00EB1305 /* VC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
 				920C054129C69CD400009395 /* BluetoothManager.swift */,
 				92692B5029D9CE7A001B215D /* CountdownViewController.swift */,
+				92FB894B29E9E4F30050AA4C /* VoiceManager.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */,
 				D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */,
 				D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */,
+				92FB894C29E9E4F30050AA4C /* VoiceManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
