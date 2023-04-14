@@ -33,7 +33,7 @@ class CountdownViewController: UIViewController {
             print("Error starting recording: \(error.localizedDescription)")
         }
         let countDownTitle = "Crash Detected!"
-        let countDownMessage = "\nTo cancel automatic notifications, press 'Cancel'"
+        let countDownMessage = "\nTo cancel automatic notifications, press or say 'Cancel'"
         let alertController = UIAlertController(title: countDownTitle, message: countDownMessage, preferredStyle: .alert)
         
         // Change countDownTitle attributes

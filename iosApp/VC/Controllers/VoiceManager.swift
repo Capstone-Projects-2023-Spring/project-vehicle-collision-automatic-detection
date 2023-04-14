@@ -59,7 +59,8 @@ class VoiceManager: UIViewController, SFSpeechRecognizerDelegate {
             if let result = result {
                 //print(result.bestTranscription.formattedString)
                 isFinal = result.isFinal
-                if result.bestTranscription.formattedString.lowercased().contains("cancel") {
+                if result.bestTranscription.formattedString.lowercased().contains("cancel") || result.bestTranscription.formattedString.lowercased().contains("stop") ||
+                    result.bestTranscription.formattedString.lowercased().contains("no"){
                     // Perform the cancel action
                     print("Cancel detected!")
                     self.voiceDetected = true
