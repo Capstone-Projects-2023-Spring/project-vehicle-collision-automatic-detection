@@ -17,8 +17,11 @@
 
 String data = " ";
 int flag = 0;
+uint8_t signal0[] = {0x48};
+uint8_t signal1[] = {0x70};
 
 Adafruit_BluefruitLE_SPI Bluetooth(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
+Adafruit_BLEGatt gatt(Bluetooth);
 
 /**
  * @brief Initialize input, output pins and values
@@ -33,32 +36,49 @@ void setup() {
   Serial.begin(115200);
 
   /* Initialise the module */
-  Serial.print(F("Initialising the Bluefruit LE module test: "));
+  Serial.println(F("Initialising the Bluefruit LE module: "));
+
+  // Test for idle mode
+  TestIdle();
+  delay(1000);
 
   TestBegin();
+  delay(1000);
 
   TestFactoryReset();
+  delay(1000);
 
   /* Disable command echo from Bluefruit */
-  Bluetooth.echo(false);
+  TestEcho();
+  delay(1000);
 
-  Bluetooth.verbose(false);
+  TestVerbose();
+  delay(1000);
+
+  // Test to execute AT command
+  TestATCommand();
+  delay(1000);
+
+  // Test to reset Bluetooth
+  TestReset();
+  delay(1000);
 
   /* Test for connection */
   Serial.println("Looking for Bluetooth Device...");
   TestConnected();
+  delay(1000);
 
-  // Change Mode LED Activity
-  if (Bluetooth.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION)){
-    Bluetooth.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
-  }
+  // Test if firmware is up to date
+  TestIsVersionAtLeast();
+  delay(1000);
 
   // Test if Bluefruit sets to DATA mode
   TestSetMode();
+  delay(1000);
 }
 
 /**
- * @brief Waits for a bluetooth device to connect, continuously gets accelerometer 
+ * @brief Waits for a Bluetooth device to connect, continuously gets accelerometer 
  * readings, sends signal to mobile phone after exceeding a certain threshold
  * 
  * @param void takes nothing
@@ -69,14 +89,29 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  //check if bluetooth device is connected to hardware
+  //check if Bluetooth device is connected to hardware
   while(Bluetooth.isConnected()){
     //test for incoming data from hardware
     TestAvailable();
+    TestSetChar();
   }
 
-  //test if hardware disconnects from bluetooth device
+  //test if hardware disconnects from Bluetooth device
   TestDisconnected();
+  delay(1000);
+
+  //test if device powers down
+  TestPowerDown();
+}
+
+void TestATCommand(){
+  Serial.println(F("Setting service + characteristic!"));
+  Bluetooth.atcommand("AT+GATTADDSERVICE=UUID128=00-11-00-11-44-55-66-77-88-99-AA-BB-CC-DD-EE-FF");
+
+  int char1 = Bluetooth.atcommand("AT+GATTADDCHAR=UUID128=00-11-22-33-44-55-66-77-88-99-AB-BC-CD-DE-EF-FF,PROPERTIES=0x10,MIN_LEN=1,VALUE=HELLO");
+  Serial.println(char1);
+  Serial.println("AT Command Test Passed!");
+  Serial.println();
 }
 
 //tests for incoming data from hardware
@@ -86,18 +121,20 @@ void TestAvailable(){
     Bluetooth.print("Bluetooth: " + data);
     Serial.println("Message sent to Bluetooth Device!");
     Serial.println("Available Test Passed!");
+    Serial.println();
   }
 }
 
-//tests if hardware can setup bluetooth connections
+//tests if hardware can setup Bluetooth connections
 void TestBegin(){
   if(!Bluetooth.begin(VERBOSE_MODE)){
     error(F("Couldn't find Bluefruit, make sure it's in Command mode & check wiring?"));
   }
   Serial.println("Begin Test Passed!");
+  Serial.println();
 }
 
-//test if hardware can connect to bluetooth devices
+//test if hardware can connect to Bluetooth devices
 void TestConnected(){
   while (!Bluetooth.isConnected()){
     delay(500);    
@@ -105,18 +142,20 @@ void TestConnected(){
   if(Bluetooth.isConnected()){
     Serial.println("Device Connected!");
     Serial.println("Connected Test Passed!");
+    Serial.println();
   }
 }
 
-//test if hardware can disconnect from bluetooth devices
+//test if hardware can disconnect from Bluetooth devices
 void TestDisconnected(){
   while (!Bluetooth.isConnected()){
     if(flag == 0){
       Serial.println("Bluetooth Device Disconnected!");
       Serial.println("Disconnected Test Passed!");
+      Serial.println();
       flag++;
     }
-    delay(500);
+    break;
   }
 }
 
@@ -130,6 +169,7 @@ void TestFactoryReset(){
     }
     delay(500);
     Serial.println("Factory Reset Test Passed!");
+    Serial.println();
   }
 }
 
@@ -138,7 +178,68 @@ void TestSetMode(){
   if(Bluetooth.setMode(BLUEFRUIT_MODE_DATA)){
     Serial.println("Mode Changed!");
     Serial.println("Set Mode Test Passed!");
+    Serial.println();
   }
+}
+
+void TestSetChar(){
+  Serial.println("Changing Characteristic!");
+  //change characteristic value to 'F'
+  gatt.setChar(1, signal1, sizeof(signal1));
+  delay(3000);
+  Serial.println("Resetting Characteristic!");
+  //reset characteristic value back to '0'
+  gatt.setChar(1, signal0, sizeof(signal0));
+  delay(1000);
+  //reset the sleep timer
+  Serial.println("SetChar Test Passed!");
+  Serial.println();
+}
+
+void TestReset(){
+  Serial.println("Resetting Bluetooth!");
+  Bluetooth.reset();
+  Serial.println("Reset Test Passed!");
+  Serial.println();
+}
+
+void TestIsVersionAtLeast(){
+  Serial.println("Going into idle mode!");
+  if (Bluetooth.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION)){
+    Bluetooth.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
+  }
+  Serial.println("Is Version At Least Test Passed!");
+  Serial.println();
+}
+
+void TestEcho(){
+  Serial.println("Disabling Echo Command!");
+  Bluetooth.echo(false);
+  Serial.println("Echo Test Passed!");
+  Serial.println();
+}
+
+void TestVerbose(){
+  Serial.println("Disabling Verbose!");
+  Bluetooth.verbose(false);
+  Serial.println("Verbose Test Passed!");
+  Serial.println();
+}
+
+void TestIdle(){
+  Serial.println("Going into idle mode!");
+  LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_OFF, USART0_OFF, TWI_OFF);
+  Serial.println("Idle Test Passed!");
+  Serial.println();
+}
+
+void TestPowerDown(){
+  Serial.println("Powering Down!");
+  Serial.println("Power Down Test Passed!");
+  Serial.println();
+  Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
+  delay(500);
+  LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 }
 
 //error handler method

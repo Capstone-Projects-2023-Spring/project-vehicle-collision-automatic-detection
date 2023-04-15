@@ -18,12 +18,12 @@
 
 LIS331 xl;
 float scale = 100.0;
-float threshold = 6.0;
+float threshold = 10.0;
 
 String data = " ";
 int flag = 0;
 int start = 0;
-const unsigned long interval = 60000;
+const unsigned long interval = 30000;
 unsigned long previousMillis = 0;
 uint8_t signal0[] = {0x48};
 uint8_t signal1[] = {0x70};
@@ -81,7 +81,7 @@ void setup() {
   Serial.println("Looking for Bluetooth Device...");
   while (!Bluetooth.isConnected()){
     unsigned long currentMillis = millis();
-    // Power down if 1 minute of no connection passes
+    // Power down if 30 seconds of no connection passes
     if((unsigned long)(currentMillis - previousMillis) >= interval){
       Serial.println("Powering Down!");
       // Make the Bluetooth undiscoverable
@@ -219,8 +219,8 @@ void loop() {
       previousMillis = currentMillis;
     } 
 
-    //disconnect from bluetooth if 5 minutes of inactivity passes
-    if((unsigned long)(currentMillis - previousMillis) >= interval * 5){
+    //disconnect from bluetooth if 10 minutes of inactivity passes
+    if((unsigned long)(currentMillis - previousMillis) >= interval * 20){
       previousMillis = currentMillis;
       Bluetooth.disconnect();
       delay(500);
@@ -257,8 +257,8 @@ void loop() {
     }
     delay(500);
 
-    //power down if 3 minutes of no connection passes
-    if((unsigned long)(currentMillis - previousMillis) >= interval * 3){
+    //power down if 30 seconds of no connection passes
+    if((unsigned long)(currentMillis - previousMillis) >= interval){
       Serial.println("Powering Down!");
       // Make the Bluetooth undiscoverable
       Bluetooth.setAdvData(NULL, 0);
