@@ -16,6 +16,7 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
     private let bluetoothManager = BluetoothManager()
     private var dataFromAdafruit: UILabel!
     private var countdownViewController = CountdownViewController()
+    
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.
      */
@@ -44,14 +45,8 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
             dataFromAdafruit.topAnchor.constraint(equalTo: peripheralStatusLabel.bottomAnchor, constant: 20) // Position below peripheralStatusLabel label
         ])
         
-        // Start scanning for the peripheral device
-        BluetoothManager.shared.delegate = self
-        BluetoothManager.shared.startScanning()
         print("Device started in console")
-        
-//        //Fake retrieving data
-//        let fakeData = "Fake data".data(using: .utf8)!
-//        didReceiveData(fakeData)
+        startScanningForDevice()
         
         // Instantiate countdown view controller and add it as a child view controller
         countdownViewController = CountdownViewController()
@@ -75,19 +70,39 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
     }
     
     func didReceiveData(_ data: Data) {
-        print("Device received data from Adafruit Bluefruit LE")
         // Convert the data to a string
         let receivedString = String(data: data, encoding: .utf8)
-        // Update the label's text with the received string
-        dataFromAdafruit.text = receivedString
-        dataFromAdafruit.font = UIFont.systemFont(ofSize: 18)
-        dataFromAdafruit.textColor = UIColor.blue
-        
-        // Check cancel isn't pressed from previous runs 
-        if countdownViewController.cancelPressed || countdownViewController.notificationSent {
-            countdownViewController.cancelPressed = false
-            countdownViewController.notificationSent = false
+        if receivedString == "F" {
+            print("Device received crashed data from Adafruit Bluefruit LE")
+            // Print out the data
+            print("Received data: \(receivedString ?? "nil")")
+            // Update the label's text with the received string
+            dataFromAdafruit.text = receivedString
+            dataFromAdafruit.font = UIFont.systemFont(ofSize: 18)
+            dataFromAdafruit.textColor = UIColor.blue
+            // Check cancel isn't pressed from previous runs
+            if countdownViewController.cancelPressed || countdownViewController.notificationSent {
+                countdownViewController.cancelPressed = false
+                countdownViewController.notificationSent = false
+            }
+            // Shows the UI when receiving data and stop scanning for 3 seconds
+            self.countdownViewController.showCountdownUI()
+            stopScanningForDevice()
+            // Delay 3 secs and start scanning again
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                print("Start scanning again")
+                self.startScanningForDevice()
+            }
         }
-        countdownViewController.showCountdownUI()
+    }
+    
+    func startScanningForDevice() {
+        // Start scanning for the peripheral device
+        BluetoothManager.shared.delegate = self
+        BluetoothManager.shared.startScanning()
+    }
+    
+    func stopScanningForDevice() {
+        BluetoothManager.shared.centralManager.stopScan()
     }
 }

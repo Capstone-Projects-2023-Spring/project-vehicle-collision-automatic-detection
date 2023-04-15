@@ -8,20 +8,32 @@
 import Foundation
 import UIKit
 import SwiftUI
+import AVFoundation
 
 class CountdownViewController: UIViewController {
     
     private var countdownTimer: Timer?
     public var cancelPressed = false
     public var notificationSent = false
+    private var audioPlayer: AVAudioPlayer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     func showCountdownUI() {
+        // Play Alarm Sound
+        setUpSound()
+        audioPlayer?.play()
+        // Active Voice Recognition
+        let voiceManager = VoiceManager()
+        do {
+            try voiceManager.startRecording()
+        } catch let error {
+            print("Error starting recording: \(error.localizedDescription)")
+        }
         let countDownTitle = "Crash Detected!"
-        let countDownMessage = "\nTo cancel automatic notifications, press 'Cancel'"
+        let countDownMessage = "\nTo cancel automatic notifications, press or say 'Cancel'"
         let alertController = UIAlertController(title: countDownTitle, message: countDownMessage, preferredStyle: .alert)
         
         // Change countDownTitle attributes
@@ -66,6 +78,7 @@ class CountdownViewController: UIViewController {
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
             self?.cancelPressed = true
+            self?.audioPlayer?.stop()
             self?.dismiss(animated: true, completion: nil)
         }
         alertController.addAction(cancelAction)
@@ -90,13 +103,16 @@ class CountdownViewController: UIViewController {
             }
             
             // Exit loop
-            if self.cancelPressed {
+            if self.cancelPressed || voiceManager.voiceDetected == true {
+                self.audioPlayer?.stop()
                 countdownSeconds = 0
                 timer.invalidate()
+                self.dismiss(animated: true, completion: nil)
             }
             
             // Notify Emergency Contacts
             else if countdownSeconds == 0 {
+                self.audioPlayer?.stop()
                 timer.invalidate()
                 if !self.cancelPressed && !self.notificationSent {
                     let vcContact = VCContactsViewController()
@@ -120,5 +136,19 @@ class CountdownViewController: UIViewController {
         
         // Present the alert controller
         present(alertController, animated: true, completion: nil)
+    }
+    
+    private func setUpSound() {
+        // Setup sound
+        guard let path = Bundle.main.path(forResource: "alert_sound", ofType: "mp3") else {
+            return
+        }
+        let url = URL(fileURLWithPath: path)
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+        } catch {
+            // Error handling
+        }
     }
 }
