@@ -296,46 +296,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
         }
     }
     
-    
-    /**
-     Get's the user's Full Name from the contacts
-     
-     - Parameters:
-     - Returns: The full name of the user
-     */
-    func getUsersFullName() -> String? {
-        let semaphore = DispatchSemaphore(value: 0)
-        var fullName: String?
-        DispatchQueue.global(qos: .userInitiated).async {
-            let store = CNContactStore()
-            store.requestAccess(for: .contacts) { granted, error in
-                if granted {
-                    let keys = [CNContactGivenNameKey, CNContactFamilyNameKey]
-                    let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
-                    var contacts = [CNContact]()
-                    do {
-                        try store.enumerateContacts(with: request) { contact, stop in
-                            if contact.isKeyAvailable(CNContactGivenNameKey) && contact.isKeyAvailable(CNContactFamilyNameKey) {
-                                contacts.append(contact)
-                                stop.pointee = true
-                            }
-                        }
-                        if let userContact = contacts.first {
-                            fullName = userContact.givenName + " " + userContact.familyName
-                        }
-                    } catch {
-                        print("Error fetching user's contact card: \(error.localizedDescription)")
-                    }
-                } else {
-                    print("Access to contacts was not granted")
-                }
-                semaphore.signal()
-            }
-        }
-        semaphore.wait()
-        return fullName
-    }
-    
     func textMessageWithTwilio() {
         // Get the location and stop
         let locationManager = CLLocationManager()
@@ -360,11 +320,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
                 return
             }
             
-            var namePlaceHolder = "VC app user"
-            if let fullName = self.getUsersFullName() {
-                namePlaceHolder = fullName
-            }
-            var message = "Hi, this is \(namePlaceHolder). I'm in an Emergency, here is my location:"
+            let namePlaceHolder = "VehicleCollision's User"
+            var message = "Hi, this is \(namePlaceHolder). I'm in an Emergency, here is my location: "
             
             if let address = address {
                 // Concatenate the address to the message
