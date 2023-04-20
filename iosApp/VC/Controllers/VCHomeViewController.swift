@@ -12,10 +12,10 @@ import CoreBluetooth
 /// Controller to show Home page
 
 final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
-    private var peripheralStatusLabel: UILabel!
-    private let bluetoothManager = BluetoothManager()
-    private var dataFromAdafruit: UILabel!
-    private var countdownViewController = CountdownViewController()
+    var peripheralStatusLabel: UILabel!
+    let bluetoothManager = BluetoothManager()
+    var dataFromAdafruit: UILabel!
+    var countdownViewController = CountdownViewController()
     
     /**
      This method is called after the view controller has loaded its view hierarchy into memory.

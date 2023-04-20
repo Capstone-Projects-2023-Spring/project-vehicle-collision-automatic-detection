@@ -22,6 +22,8 @@
 		D88E9AE1298B05FA00EB1305 /* VCHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */; };
 		D88E9AE3298B060C00EB1305 /* VCTestingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */; };
 		D88E9AE5298B073200EB1305 /* VCContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */; };
+		D89378AD29F0F14500FF16D1 /* VCTestingViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */; };
+		D89378B129F0F80300FF16D1 /* VCHomeControllerViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */; };
 		D8EEC46429B011CA006FE065 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC46229B011CA006FE065 /* Model.xcdatamodeld */; };
 		D8EEC46A29B013D6006FE065 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC46929B013D6006FE065 /* CoreDataStack.swift */; };
 		D8EEC47529B024D3006FE065 /* Contact+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC47329B024D3006FE065 /* Contact+CoreDataClass.swift */; };
@@ -65,6 +67,8 @@
 		D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCHomeViewController.swift; sourceTree = "<group>"; };
 		D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTestingViewController.swift; sourceTree = "<group>"; };
 		D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCContactsViewController.swift; sourceTree = "<group>"; };
+		D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTestingViewControllerTests.swift; sourceTree = "<group>"; };
+		D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCHomeControllerViewTests.swift; sourceTree = "<group>"; };
 		D8EEC46329B011CA006FE065 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		D8EEC46929B013D6006FE065 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		D8EEC47329B024D3006FE065 /* Contact+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Contact+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -132,6 +136,8 @@
 			isa = PBXGroup;
 			children = (
 				D88E9AC4298AFE1000EB1305 /* VCTests.swift */,
+				D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */,
+				D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */,
 			);
 			path = VCTests;
 			sourceTree = "<group>";
@@ -344,7 +350,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D89378B129F0F80300FF16D1 /* VCHomeControllerViewTests.swift in Sources */,
 				D88E9AC5298AFE1000EB1305 /* VCTests.swift in Sources */,
+				D89378AD29F0F14500FF16D1 /* VCTestingViewControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,7 +518,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3334VHMS7U;
+				DEVELOPMENT_TEAM = 5779RYBW52;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VC/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to a peripheral device.";
@@ -547,7 +555,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3334VHMS7U;
+				DEVELOPMENT_TEAM = 5779RYBW52;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VC/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to a peripheral device.";
@@ -581,8 +589,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5779RYBW52;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MARKETING_VERSION = 1.0;
@@ -600,8 +610,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5779RYBW52;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MARKETING_VERSION = 1.0;
@@ -620,6 +632,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5779RYBW52;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VCUITests;
@@ -637,6 +650,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5779RYBW52;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VCUITests;
