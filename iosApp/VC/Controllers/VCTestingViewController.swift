@@ -11,8 +11,8 @@ import MobileCoreServices
 
 /// Controller to view and change the application's settings
 final class VCTestingViewController: UIViewController {
-    private var countdownViewController = CountdownViewController()
-    private var voiceManager = VoiceManager()
+    var countdownViewController = CountdownViewController()
+    var voiceManager = VoiceManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
