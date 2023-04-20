@@ -142,6 +142,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
         val data = String(value)
 
         if(data == "B" || data =="F") {//crash detected!
+            getStreetAddress(textLat!!, textLong!!) //default address in case location never updates
             val alertSoundPlayer: MediaPlayer? = MediaPlayer.create(activeContext, R.raw.alert_sound)
             alertSoundPlayer?.start()
             mTimeLeftInMillis = countdownStartTime
