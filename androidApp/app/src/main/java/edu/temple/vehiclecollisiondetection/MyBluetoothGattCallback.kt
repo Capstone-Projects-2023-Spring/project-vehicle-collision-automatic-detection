@@ -195,7 +195,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                     override fun onResults(results: Bundle?) {
                         val dataVC = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                         Log.d("VC RESULT", dataVC!![0])
-                        if(dataVC!![0] == "cancel" || dataVC!![0] == "stop"){
+                        if(dataVC!![0].contains("cancel") || dataVC!![0].contains("stop")){
                             mCountDownTimer?.cancel()
                             speech.stopListening()
                             alertSoundPlayer?.stop()
