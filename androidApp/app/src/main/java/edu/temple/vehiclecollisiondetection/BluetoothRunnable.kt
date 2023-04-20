@@ -58,9 +58,6 @@ class BluetoothRunnable(currentContext: Context, currentActivity: Activity, conn
                 // Check if the scan result matches the target device UUID
                 if (result.device.address.equals("E6:EC:C4:09:52:F0")) {
                     Log.d("tag", "FOUND BLE DEVICE")
-                    activeActivity.runOnUiThread(Runnable() {
-                        Toast.makeText(activeContext, "Device Found", Toast.LENGTH_LONG).show()
-                    })
 
                     // Stop scanning
                     bluetoothLeScanner?.stopScan(this)
@@ -78,9 +75,6 @@ class BluetoothRunnable(currentContext: Context, currentActivity: Activity, conn
             .build()
         // Start scanning for devices that match the scan filter
         Log.d("tag", "LOOKING FOR BLE DEVICE")
-        activeActivity.runOnUiThread(Runnable() {
-            Toast.makeText(activeContext, "Scanning for Device", Toast.LENGTH_LONG).show()
-        })
         bluetoothLeScanner?.startScan(null, scanSettings, scanCallback)
     }
     @RequiresApi(Build.VERSION_CODES.S)

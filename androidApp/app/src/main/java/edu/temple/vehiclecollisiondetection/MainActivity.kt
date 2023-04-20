@@ -60,6 +60,10 @@ class MainActivity : AppCompatActivity() {
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
 
+        //try to connect when app opens
+        var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
+        var btThread = Thread(btRunnable)
+        btThread.start()
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
@@ -83,9 +87,11 @@ class MainActivity : AppCompatActivity() {
         val bluetoothThreadStart: View = findViewById(R.id.bluetoothTextBackground)
         bluetoothThreadStart.setOnClickListener {
             //start bluetooth thread
-            var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
-            var btThread = Thread(btRunnable)
-            btThread.start()
+            if(connectionText.text != "Connected!") {
+                var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
+                var btThread = Thread(btRunnable)
+                btThread.start()
+            }
         }
         //Add Contact Button Functionality
         val addContactButton: View = findViewById(R.id.fab)
