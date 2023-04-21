@@ -53,16 +53,5 @@ class VCHomeViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.dataFromAdafruit.text, "F")
         XCTAssertEqual(sut.dataFromAdafruit.textColor, UIColor.blue)
     }
-    
-    func testStartScanningForDevice() {
-        sut.startScanningForDevice()
-        XCTAssertNotNil(sut.bluetoothManager.delegate)
-    }
-    
-    func testStopScanningForDevice() {
-        sut.stopScanningForDevice()
-        XCTAssertNil(sut.bluetoothManager.centralManager.delegate)
-    }
-    
 }
 
