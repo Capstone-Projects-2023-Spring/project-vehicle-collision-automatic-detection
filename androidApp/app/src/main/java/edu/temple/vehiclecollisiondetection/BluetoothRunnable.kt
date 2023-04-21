@@ -18,11 +18,12 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
-class BluetoothRunnable(currentContext: Context, currentActivity: Activity, connectionText: TextView): Runnable{
+class BluetoothRunnable(currentContext: Context, currentActivity: Activity, connectionText: TextView, connectionTipText: TextView): Runnable{
 
     val activeContext = currentContext
     val activeActivity = currentActivity
     val activeTextView = connectionText
+    val activeConnectionTip = connectionTipText
     @RequiresApi(Build.VERSION_CODES.S)
     override fun run() {
         hasPermissions()
@@ -40,7 +41,7 @@ class BluetoothRunnable(currentContext: Context, currentActivity: Activity, conn
         btAdapter = bluetoothManager?.adapter
 
 
-        val gattCallback = MyBluetoothGattCallback(activeContext, activeActivity, activeTextView)
+        val gattCallback = MyBluetoothGattCallback(activeContext, activeActivity, activeTextView, activeConnectionTip)
         val bluetoothLeScanner = btAdapter?.bluetoothLeScanner
         val scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {

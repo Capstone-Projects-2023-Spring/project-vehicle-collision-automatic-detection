@@ -23,6 +23,7 @@ import android.speech.SpeechRecognizer
 import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +32,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
@@ -41,12 +43,13 @@ import com.google.gson.reflect.TypeToken
 import java.util.*
 private const val SAVE_KEY = "save_key"
 private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
-class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView) : BluetoothGattCallback(), LocationListener {
+class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView, connectionTipText: TextView) : BluetoothGattCallback(), LocationListener {
     //inherited objects to use with rest of the app
     val activeContext = currentContext
     val activeActivity = currentActivity
     val connectionStatusText = connectionText
     val API_KEY = "AIzaSyAMxe8n3-KtX3cRs-4BKSd7lXovPlTvEZE" //Move later
+    val connectionTipText = connectionTipText
 
     //countdown timer object
     private var mCountDownTimer: CountDownTimer? = null
@@ -79,6 +82,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                 Toast.makeText(activeContext, "Device Connected!", Toast.LENGTH_LONG).show()
                 connectionStatusText.setTextColor(Color.parseColor("green"))
                 connectionStatusText.setText("Connected!")
+                connectionTipText.setVisibility(View.INVISIBLE)
             })
             gatt.discoverServices()
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
@@ -87,6 +91,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             activeActivity.runOnUiThread(Runnable() {
                 connectionStatusText.setTextColor(Color.parseColor("red"))
                 connectionStatusText.setText("Not Connected")
+                connectionTipText.setVisibility(View.VISIBLE)
                 Toast.makeText(activeContext, "Device Disconnected!", Toast.LENGTH_LONG).show()
             })
         } else{

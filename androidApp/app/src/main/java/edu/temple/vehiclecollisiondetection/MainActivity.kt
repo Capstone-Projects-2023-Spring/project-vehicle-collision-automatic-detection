@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
     lateinit var characteristicData: TextView
+    lateinit var connectionTipText: TextView
     private lateinit var preferences: SharedPreferences
 
     //contact data class
@@ -59,9 +60,10 @@ class MainActivity : AppCompatActivity() {
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
+        connectionTipText = findViewById(R.id.connectionOffTip)
 
         //try to connect when app opens
-        var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
+        var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
         var btThread = Thread(btRunnable)
         btThread.start()
 
@@ -88,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         bluetoothThreadStart.setOnClickListener {
             //start bluetooth thread
             if(connectionText.text != "Connected!") {
-                var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
+                var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
                 var btThread = Thread(btRunnable)
                 btThread.start()
             }
