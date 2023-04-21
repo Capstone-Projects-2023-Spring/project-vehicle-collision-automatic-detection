@@ -12,10 +12,10 @@ import AVFoundation
 
 class CountdownViewController: UIViewController {
     
-    private var countdownTimer: Timer?
+    public var countdownTimer: Timer?
     public var cancelPressed = false
     public var notificationSent = false
-    private var audioPlayer: AVAudioPlayer?
+    public var audioPlayer: AVAudioPlayer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
