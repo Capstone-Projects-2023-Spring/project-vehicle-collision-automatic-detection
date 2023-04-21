@@ -140,7 +140,7 @@ class CountdownViewController: UIViewController {
     
     private func setUpSound() {
         // Setup sound
-        guard let path = Bundle.main.path(forResource: "alert_sound", ofType: "mp3") else {
+        guard let path = Bundle.main.path(forResource: "audiomass-output", ofType: "mp3") else {
             return
         }
         let url = URL(fileURLWithPath: path)
