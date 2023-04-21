@@ -21,8 +21,7 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
     var centralManager: CBCentralManager!
     var peripheral: CBPeripheral!
     let BLEServiceUUID = CBUUID(string: "00110011-4455-6677-8899-aabbccddeeff")
-    private var rxCharacteristic: CBCharacteristic?
-    var callObserver = CXCallObserver()
+    internal var rxCharacteristic: CBCharacteristic?
     
     // Singleton instance
     static let shared = BluetoothManager()
@@ -100,16 +99,6 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
-    /*
-     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
-     if call.hasConnected {
-     print("Call connected")
-     } else if call.hasEnded {
-     print("Call ended")
-     }
-     }
-     */
-    
     // Read/Write/Handle the data
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard characteristic.uuid == CBUUID(string: "00112233-4455-6677-8899-abbccddeefff") else {
@@ -119,12 +108,4 @@ class BluetoothManager: UIViewController, CBCentralManagerDelegate, CBPeripheral
             delegate?.didReceiveData(value)
         }
     }
-    
-    /*
-     func writeToCharacteristic(data: Data) {
-     guard let characteristic = self.characteristic else { return }
-     peripheral.writeValue(data, for: characteristic, type: .withResponse)
-     }
-     */
-    
 }
