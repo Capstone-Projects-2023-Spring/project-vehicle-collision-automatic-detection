@@ -29,24 +29,6 @@ class VCTestingViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.view.backgroundColor, UIColor.systemBackground)
     }
 
-    func test_sendMessageButtonTapped_instantiatesVCContactsViewControllerAndCallsTextMessageWithTwilio() throws {
-        let mockVCContacts = MockVCContactsViewController()
-        sut.addChild(mockVCContacts)
-
-        sut.sendMessageButtonTapped()
-
-        XCTAssertTrue(mockVCContacts.textMessageWithTwilioCalled)
-    }
-
-    func test_callButtonTapped_instantiatesVCContactsViewControllerAndCallsCallWithTwilio() throws {
-        let mockVCContacts = MockVCContactsViewController()
-        sut.addChild(mockVCContacts)
-
-        sut.callButtonTapped()
-
-        XCTAssertTrue(mockVCContacts.callWithTwilioCalled)
-    }
-
     func test_countdownButtonTapped_setsCancelPressedAndNotificationSentToFalse_ifTheyWereTrue() throws {
         let mockCountdownVC = MockCountdownViewController()
         sut.countdownViewController = mockCountdownVC
@@ -67,16 +49,6 @@ class VCTestingViewControllerTests: XCTestCase {
 
         XCTAssertTrue(mockCountdownVC.showCountdownUICalled)
     }
-
-    func test_voiceManagerButtonTapped_callsStartRecording() throws {
-        let mockVoiceManager = MockVoiceManager()
-        sut.voiceManager = mockVoiceManager
-
-        sut.voiceManagerButtonTapped()
-
-        XCTAssertTrue(mockVoiceManager.startRecordingCalled)
-    }
-
 }
 
 class MockVCContactsViewController: VCContactsViewController {

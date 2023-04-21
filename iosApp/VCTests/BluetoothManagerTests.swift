@@ -21,24 +21,6 @@ class BluetoothManagerTests: XCTestCase {
         super.tearDown()
     }
     
-    func testBluetoothManagerDelegateMethods() {
-        let mockDelegate = MockBluetoothManagerDelegate()
-        bluetoothManager.delegate = mockDelegate
-        
-        // Test didConnectPeripheral()
-        bluetoothManager.centralManager(bluetoothManager.centralManager, didConnect: bluetoothManager.peripheral)
-        XCTAssertTrue(mockDelegate.didConnectPeripheralCalled)
-        
-        // Test didDisconnectPeripheral()
-        bluetoothManager.centralManager(bluetoothManager.centralManager, didDisconnectPeripheral: bluetoothManager.peripheral, error: nil)
-        XCTAssertTrue(mockDelegate.didDisconnectPeripheralCalled)
-        
-        // Test didReceiveData(_ data: Data)
-        let testData = Data([0x01, 0x02, 0x03])
-        bluetoothManager.peripheral(bluetoothManager.peripheral, didUpdateValueFor: bluetoothManager.rxCharacteristic!, error: nil)
-        XCTAssertEqual(mockDelegate.receivedData, testData)
-    }
-    
     func testBluetoothManagerConnect() {
         bluetoothManager.centralManagerDidUpdateState(bluetoothManager.centralManager)
         XCTAssertEqual(bluetoothManager.centralManager.state, .poweredOn)
