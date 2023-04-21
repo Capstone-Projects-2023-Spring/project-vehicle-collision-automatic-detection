@@ -10,7 +10,7 @@
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
 		925A9DC029E4A32200D4C678 /* alert_sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */; };
 		92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92692B5029D9CE7A001B215D /* CountdownViewController.swift */; };
-		92AFF04229F20F3500413A68 /* VCTabBarControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04129F20F3500413A68 /* VCTabBarControllerTests.swift */; };
+		92A4203B29F21786004463E2 /* VCTabBarControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */; };
 		92AFF04629F2138C00413A68 /* CountdownViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04529F2138C00413A68 /* CountdownViewControllerTests.swift */; };
 		92AFF04829F2140400413A68 /* VoiceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04729F2140400413A68 /* VoiceManagerTests.swift */; };
 		92AFF04C29F2161300413A68 /* BluetoothManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04B29F2161300413A68 /* BluetoothManagerTests.swift */; };
@@ -55,7 +55,7 @@
 		920C054129C69CD400009395 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alert_sound.mp3; path = ../../../../../../Downloads/alert_sound.mp3; sourceTree = "<group>"; };
 		92692B5029D9CE7A001B215D /* CountdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewController.swift; sourceTree = "<group>"; };
-		92AFF04129F20F3500413A68 /* VCTabBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTabBarControllerTests.swift; sourceTree = "<group>"; };
+		92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTabBarControllerTests.swift; sourceTree = "<group>"; };
 		92AFF04529F2138C00413A68 /* CountdownViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewControllerTests.swift; sourceTree = "<group>"; };
 		92AFF04729F2140400413A68 /* VoiceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceManagerTests.swift; sourceTree = "<group>"; };
 		92AFF04B29F2161300413A68 /* BluetoothManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManagerTests.swift; sourceTree = "<group>"; };
@@ -146,7 +146,7 @@
 				D88E9AC4298AFE1000EB1305 /* VCTests.swift */,
 				D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */,
 				D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */,
-				92AFF04129F20F3500413A68 /* VCTabBarControllerTests.swift */,
+				92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */,
 				92AFF04B29F2161300413A68 /* BluetoothManagerTests.swift */,
 				92AFF04529F2138C00413A68 /* CountdownViewControllerTests.swift */,
 				92AFF04729F2140400413A68 /* VoiceManagerTests.swift */,
@@ -362,9 +362,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92AFF04229F20F3500413A68 /* VCTabBarControllerTests.swift in Sources */,
 				D89378B129F0F80300FF16D1 /* VCHomeControllerViewTests.swift in Sources */,
 				92AFF04829F2140400413A68 /* VoiceManagerTests.swift in Sources */,
+				92A4203B29F21786004463E2 /* VCTabBarControllerTests.swift in Sources */,
 				D88E9AC5298AFE1000EB1305 /* VCTests.swift in Sources */,
 				92AFF04629F2138C00413A68 /* CountdownViewControllerTests.swift in Sources */,
 				92AFF04C29F2161300413A68 /* BluetoothManagerTests.swift in Sources */,

@@ -27,7 +27,7 @@ final class VCTabBarController : UITabBarController {
 
         - Precondition: ``VCHomeViewController``, ``VCContactsViewController``, ``VCTestingViewController`` ,
         */
-    private func setUpTabs() {
+    public func setUpTabs() {
         let HomeViewController = VCHomeViewController()
         let ContactsViewController = VCContactsViewController()
         let TestingViewController = VCTestingViewController()
