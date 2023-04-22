@@ -18,7 +18,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     
     /**
      Creates a table to store the emergency contacts
-     
      - Returns: The table made
      */
     private let table: UITableView = {
@@ -104,7 +103,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Checks if newly selected contact already exists in the Emergency Contact list and handles duplicated contacts accordingly.
      
      - Parameters:
-     -
      - Returns: Alerts the user
      
      */
@@ -187,7 +185,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
     
     /**
-     Finds the cell at a given row
+     Display all contacts cell when access Emergency Contacts Tab
      
      - Parameters:
      - UITableView: The table view
@@ -199,7 +197,13 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = EmergencyContactList[indexPath.row].contactName
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 19)
         return cell
+    }
+    
+    // Adjust height of each cell
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60 // Change the cell height to 80 points
     }
     
     /**
@@ -248,7 +252,7 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
     }
     
     /**
-     Makes a phone call when clicked
+     Makes a phone call when clicked Call when click on the added contact card
      
      - Parameters:
      - phoneNumber: The phone number of the recipient
@@ -403,7 +407,6 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
      Fetches data. This method gets the list of Contacts from the CoreData using NSFetchRequest. Called everytime we open the app
      
      - Parameters:
-     
      - Returns: Contacts Data from CoreData
      */
     private func getContacts() {
