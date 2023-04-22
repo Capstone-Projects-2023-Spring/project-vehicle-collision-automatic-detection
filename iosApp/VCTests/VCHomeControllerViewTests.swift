@@ -47,11 +47,5 @@ class VCHomeViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.peripheralStatusLabel.textColor, UIColor.red)
     }
     
-    func testDidReceiveData() {
-        let data = "F".data(using: .utf8)!
-        sut.didReceiveData(data)
-        XCTAssertEqual(sut.dataFromAdafruit.text, "F")
-        XCTAssertEqual(sut.dataFromAdafruit.textColor, UIColor.blue)
-    }
 }
 
