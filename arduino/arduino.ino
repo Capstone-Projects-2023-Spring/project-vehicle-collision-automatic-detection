@@ -154,6 +154,8 @@ void setup() {
   xl.setPowerMode(LIS331::NORMAL);
   xl.setODR(LIS331::DR_50HZ);
   xl.setFullScale(LIS331::LOW_RANGE);
+
+  testAccelerometer();
 }
 
 /**
@@ -167,7 +169,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  
   //check if bluetooth device is connected to hardware
   while(Bluetooth.isConnected()){
     unsigned long currentMillis = millis();
@@ -201,7 +203,10 @@ void loop() {
     //print max g value
     if(xl.newXData() || xl.newYData() || xl.newZData()){
       float maxG = getMaxG();
-      Serial.println(maxG);
+      int16_t x, y, z;
+      xl.readAxes(x, y, z);
+      Serial.println(String(x) + "\t" + String(y) + "\t" + String(z));
+      //Serial.println(maxG);
     }
 
     //checks if threshold might have been exceeded, then verifies
@@ -319,4 +324,38 @@ float getMaxG() {
   float maxG = sqrt(pow(xg, 2) + pow(yg, 2) + pow(zg, 2)); //pythagoream theorem for three dimensions
 
   return maxG;
+}
+
+void testAccelerometer() {
+  Serial.println("Testing accelerometer reading");
+  int16_t x, y, z;
+  int resultX, resultY, resultZ = 0;
+  for (int i = 0; i < 10; i++) {
+    xl.readAxes(x, y, z);
+    if (x) {
+      resultX = 1;
+    }
+    if (y) {
+      resultY = 1;
+    }
+    if (z) {
+      resultZ = 1;
+    }
+  }
+  if (resultX) {
+    Serial.println("x axis passed");
+  } else {
+    Serial.println("x axis FAILED");    
+  }
+  if (resultY) {
+    Serial.println("y axis passed");
+  } else {
+    Serial.println("y axis FAILED");
+  }
+  if (resultZ) {
+    Serial.println("z axis passed");
+  } else {
+    Serial.println("z axis FAILED");
+  }
+  delay(1000);
 }
