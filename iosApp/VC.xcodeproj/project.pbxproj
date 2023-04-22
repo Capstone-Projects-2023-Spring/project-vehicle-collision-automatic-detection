@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
+		9261FE8029F48588004F1C19 /* VCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9261FE7F29F48588004F1C19 /* VCUITests.swift */; };
+		9261FE8229F485A9004F1C19 /* VCUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */; };
 		92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92692B5029D9CE7A001B215D /* CountdownViewController.swift */; };
 		92A4203B29F21786004463E2 /* VCTabBarControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */; };
 		92AFF04829F2140400413A68 /* VoiceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04729F2140400413A68 /* VoiceManagerTests.swift */; };
@@ -52,6 +54,9 @@
 
 /* Begin PBXFileReference section */
 		920C054129C69CD400009395 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
+		9261FE7E29F48587004F1C19 /* VCUITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VCUITests-Bridging-Header.h"; sourceTree = "<group>"; };
+		9261FE7F29F48588004F1C19 /* VCUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITests.swift; sourceTree = "<group>"; };
+		9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		92692B5029D9CE7A001B215D /* CountdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewController.swift; sourceTree = "<group>"; };
 		92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTabBarControllerTests.swift; sourceTree = "<group>"; };
 		92AFF04729F2140400413A68 /* VoiceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceManagerTests.swift; sourceTree = "<group>"; };
@@ -104,14 +109,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9261FE7D29F48509004F1C19 /* VCUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9261FE7F29F48588004F1C19 /* VCUITests.swift */,
+				9261FE7E29F48587004F1C19 /* VCUITests-Bridging-Header.h */,
+				9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */,
+			);
+			path = VCUITests;
+			sourceTree = "<group>";
+		};
 		D88E9A9E298AFE0A00EB1305 = {
 			isa = PBXGroup;
 			children = (
+				9261FE7D29F48509004F1C19 /* VCUITests */,
 				D88E9AA9298AFE0A00EB1305 /* VC */,
 				D88E9AC3298AFE1000EB1305 /* VCTests */,
 				D88E9AA8298AFE0A00EB1305 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		D88E9AA8298AFE0A00EB1305 /* Products */ = {
 			isa = PBXGroup;
@@ -269,6 +286,7 @@
 					};
 					D88E9AC9298AFE1000EB1305 = {
 						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1430;
 						TestTargetID = D88E9AA6298AFE0A00EB1305;
 					};
 				};
@@ -362,6 +380,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9261FE8029F48588004F1C19 /* VCUITests.swift in Sources */,
+				9261FE8229F485A9004F1C19 /* VCUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,6 +652,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3334VHMS7U;
@@ -641,6 +663,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "VCUITests/VCUITests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = VC;
@@ -651,6 +675,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3334VHMS7U;
@@ -660,6 +686,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "VCUITests/VCUITests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = VC;
