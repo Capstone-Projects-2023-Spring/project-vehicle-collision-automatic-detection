@@ -37,21 +37,14 @@ import java.util.*
 private const val SAVE_KEY = "save_key"
 val REQUEST_PHONE_CALL = 1
 val REQUEST_SEND_SMS = 2
-class MainActivity : AppCompatActivity(), LocationListener {
+class MainActivity : AppCompatActivity() {
 
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
     lateinit var characteristicData: TextView
+    lateinit var connectionTipText: TextView
     private lateinit var preferences: SharedPreferences
-
-    //DELETE
-    private lateinit var locationManager: LocationManager
-    private var textLat: Double? = 39.981991 //variable used to record Latitude & defaulted to avoid null errors
-    private var textLong: Double? = -75.153053 //variable used to record Longitude & defaulted to avoid null errors
-    val API_KEY = "AIzaSyAMxe8n3-KtX3cRs-4BKSd7lXovPlTvEZE" //Move later
-    private lateinit var locButton: Button
-
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
@@ -67,12 +60,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
+        connectionTipText = findViewById(R.id.connectionOffTip)
 
-        //DELETE
-        locButton = findViewById(R.id.locationButton)
-        locButton.setOnClickListener{
-            getLocation()
-        }
+        //try to connect when app opens
+        var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
+        var btThread = Thread(btRunnable)
+        btThread.start()
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
@@ -96,9 +89,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
         val bluetoothThreadStart: View = findViewById(R.id.bluetoothTextBackground)
         bluetoothThreadStart.setOnClickListener {
             //start bluetooth thread
-            var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText)
-            var btThread = Thread(btRunnable)
-            btThread.start()
+            if(connectionText.text != "Connected!") {
+                var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
+                var btThread = Thread(btRunnable)
+                btThread.start()
+            }
         }
         //Add Contact Button Functionality
         val addContactButton: View = findViewById(R.id.fab)
@@ -219,48 +214,4 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
         return true
     }
-
-    //TEST GETTING ADDRESS DELETE LATER
-    private fun getLocation(){
-        this.runOnUiThread{
-            locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 3)
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
-        }
-    }
-
-    @RequiresApi(33)
-    override fun onLocationChanged(location: Location) {
-        Log.d("Location", "Lat: ${location.latitude}, Long:${location.longitude}")
-
-        textLat = location.latitude
-        textLong = location.longitude
-
-        getStreetAddress(textLat!!, textLong!!)
-    }
-
-
-     fun getStreetAddress(latitude: Double, longitude: Double){
-        val queue = Volley.newRequestQueue(this)
-        val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}"
-
-        Log.d("volley", "Starting volley")
-        // Request a string response from the provided URL.
-        val jsonObjectRequest = JsonObjectRequest(
-             Request.Method.GET, url, null,
-            { response ->
-                val address = response.getJSONArray("results")
-                    .getJSONObject(0)
-                    .getString("formatted_address")
-                Log.d("res", address.toString())
-            },
-            { Log.d("error", "That didn't work") })
-
-// Add the request to the RequestQueue.
-        queue.add(jsonObjectRequest)
-    }
-
 }
