@@ -330,6 +330,7 @@ void testAccelerometer() {
   Serial.println("Testing accelerometer reading");
   int16_t x, y, z;
   int resultX, resultY, resultZ = 0;
+
   for (int i = 0; i < 10; i++) {
     xl.readAxes(x, y, z);
     if (x) {
@@ -342,6 +343,7 @@ void testAccelerometer() {
       resultZ = 1;
     }
   }
+  
   if (resultX) {
     Serial.println("x axis passed");
   } else {
