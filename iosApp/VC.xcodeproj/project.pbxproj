@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
-		925A9DC029E4A32200D4C678 /* alert_sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */; };
+		9261FE8029F48588004F1C19 /* VCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9261FE7F29F48588004F1C19 /* VCUITests.swift */; };
+		9261FE8229F485A9004F1C19 /* VCUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */; };
 		92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92692B5029D9CE7A001B215D /* CountdownViewController.swift */; };
 		92A4203B29F21786004463E2 /* VCTabBarControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */; };
 		92AFF04829F2140400413A68 /* VoiceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04729F2140400413A68 /* VoiceManagerTests.swift */; };
@@ -53,7 +54,9 @@
 
 /* Begin PBXFileReference section */
 		920C054129C69CD400009395 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
-		925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alert_sound.mp3; path = ../../../../../../Downloads/alert_sound.mp3; sourceTree = "<group>"; };
+		9261FE7E29F48587004F1C19 /* VCUITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VCUITests-Bridging-Header.h"; sourceTree = "<group>"; };
+		9261FE7F29F48588004F1C19 /* VCUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITests.swift; sourceTree = "<group>"; };
+		9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		92692B5029D9CE7A001B215D /* CountdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewController.swift; sourceTree = "<group>"; };
 		92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTabBarControllerTests.swift; sourceTree = "<group>"; };
 		92AFF04729F2140400413A68 /* VoiceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceManagerTests.swift; sourceTree = "<group>"; };
@@ -74,7 +77,7 @@
 		D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCContactsViewController.swift; sourceTree = "<group>"; };
 		D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTestingViewControllerTests.swift; sourceTree = "<group>"; };
 		D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCHomeControllerViewTests.swift; sourceTree = "<group>"; };
-		D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "audiomass-output.mp3"; path = "../../../../../../Downloads/audiomass-output.mp3"; sourceTree = "<group>"; };
+		D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "audiomass-output.mp3"; sourceTree = "<group>"; };
 		D8EEC46329B011CA006FE065 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		D8EEC46929B013D6006FE065 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		D8EEC47329B024D3006FE065 /* Contact+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Contact+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -106,15 +109,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9261FE7D29F48509004F1C19 /* VCUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9261FE7F29F48588004F1C19 /* VCUITests.swift */,
+				9261FE7E29F48587004F1C19 /* VCUITests-Bridging-Header.h */,
+				9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */,
+			);
+			path = VCUITests;
+			sourceTree = "<group>";
+		};
 		D88E9A9E298AFE0A00EB1305 = {
 			isa = PBXGroup;
 			children = (
+				9261FE7D29F48509004F1C19 /* VCUITests */,
 				D88E9AA9298AFE0A00EB1305 /* VC */,
 				D88E9AC3298AFE1000EB1305 /* VCTests */,
-				D88E9ACD298AFE1000EB1305 /* VCUITests */,
 				D88E9AA8298AFE0A00EB1305 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		D88E9AA8298AFE0A00EB1305 /* Products */ = {
 			isa = PBXGroup;
@@ -151,13 +165,6 @@
 			path = VCTests;
 			sourceTree = "<group>";
 		};
-		D88E9ACD298AFE1000EB1305 /* VCUITests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = VCUITests;
-			sourceTree = "<group>";
-		};
 		D88E9ADD298B048C00EB1305 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -180,7 +187,6 @@
 		D88E9ADF298B05A600EB1305 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				925A9DBF29E4A32200D4C678 /* alert_sound.mp3 */,
 				D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */,
 				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
@@ -280,6 +286,7 @@
 					};
 					D88E9AC9298AFE1000EB1305 = {
 						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1430;
 						TestTargetID = D88E9AA6298AFE0A00EB1305;
 					};
 				};
@@ -312,7 +319,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D88E9ABA298AFE0F00EB1305 /* LaunchScreen.storyboard in Resources */,
-				925A9DC029E4A32200D4C678 /* alert_sound.mp3 in Resources */,
 				D8C62FF829F30ABE00C3D02F /* audiomass-output.mp3 in Resources */,
 				D88E9AB7298AFE0F00EB1305 /* Assets.xcassets in Resources */,
 			);
@@ -374,6 +380,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9261FE8029F48588004F1C19 /* VCUITests.swift in Sources */,
+				9261FE8229F485A9004F1C19 /* VCUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,6 +652,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3334VHMS7U;
@@ -653,6 +663,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "VCUITests/VCUITests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = VC;
@@ -663,6 +675,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3334VHMS7U;
@@ -672,6 +686,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "VCUITests/VCUITests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = VC;

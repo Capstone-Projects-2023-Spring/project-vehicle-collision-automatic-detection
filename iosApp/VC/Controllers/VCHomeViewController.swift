@@ -29,20 +29,24 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         peripheralStatusLabel = UILabel()
         peripheralStatusLabel.translatesAutoresizingMaskIntoConstraints = false
         peripheralStatusLabel.text = "Device disconnected"
+        peripheralStatusLabel.font = UIFont.systemFont(ofSize: 23)
         peripheralStatusLabel.textColor = UIColor.red
         view.addSubview(peripheralStatusLabel)
-        // Add a label for the data
+        /* Add a label for the data for TESTING purpose
         dataFromAdafruit = UILabel()
         dataFromAdafruit.translatesAutoresizingMaskIntoConstraints = false
         dataFromAdafruit.text = "0"
         dataFromAdafruit.textColor = UIColor.gray
         view.addSubview(dataFromAdafruit)
+        */
         
         NSLayoutConstraint.activate([
             peripheralStatusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            peripheralStatusLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20), // Position above dataFromAdafruit label
+            peripheralStatusLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
+            /* TESTING purpose data
             dataFromAdafruit.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            dataFromAdafruit.topAnchor.constraint(equalTo: peripheralStatusLabel.bottomAnchor, constant: 20) // Position below peripheralStatusLabel label
+            dataFromAdafruit.topAnchor.constraint(equalTo: peripheralStatusLabel.bottomAnchor, constant: 20)
+            */
         ])
         
         print("Device started in console")
@@ -74,12 +78,13 @@ final class VCHomeViewController: UIViewController, BluetoothManagerDelegate {
         let receivedString = String(data: data, encoding: .utf8)
         if receivedString == "F" {
             print("Device received crashed data from Adafruit Bluefruit LE")
-            // Print out the data
+            /* Print out the data for TESTING purpose
             print("Received data: \(receivedString ?? "nil")")
             // Update the label's text with the received string
             dataFromAdafruit.text = receivedString
             dataFromAdafruit.font = UIFont.systemFont(ofSize: 18)
             dataFromAdafruit.textColor = UIColor.blue
+            */
             // Check cancel isn't pressed from previous runs
             if countdownViewController.cancelPressed || countdownViewController.notificationSent {
                 countdownViewController.cancelPressed = false
