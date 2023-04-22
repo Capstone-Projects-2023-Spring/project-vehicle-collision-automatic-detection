@@ -320,8 +320,8 @@ class VCContactsViewController: UIViewController, UITableViewDataSource, CNConta
                 return
             }
             
-            var namePlaceHolder = "VC app user"
-            var message = "Hi, this is \(namePlaceHolder). I'm in an Emergency, here is my location:"
+            let namePlaceHolder = "Vehicle Collision's User"
+            var message = "Hi, this is \(namePlaceHolder). I'm in an Emergency, here is my location: "
             
             if let address = address {
                 // Concatenate the address to the message
