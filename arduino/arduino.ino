@@ -155,7 +155,7 @@ void setup() {
   xl.setODR(LIS331::DR_50HZ);
   xl.setFullScale(LIS331::LOW_RANGE);
 
-  testAccelerometer();
+  //testAccelerometerReading();
 }
 
 /**
@@ -326,7 +326,7 @@ float getMaxG() {
   return maxG;
 }
 
-void testAccelerometer() {
+void testAccelerometerReading() {
   Serial.println("Testing accelerometer reading");
   int16_t x, y, z;
   int resultX, resultY, resultZ = 0;
@@ -343,21 +343,13 @@ void testAccelerometer() {
       resultZ = 1;
     }
   }
-  
-  if (resultX) {
-    Serial.println("x axis passed");
+
+
+  if (resultX && resultY && resultZ) {
+    Serial.println("Accelerometer readings passed");
   } else {
-    Serial.println("x axis FAILED");    
+    Serial.println("Acceleromter reading FAILED");
   }
-  if (resultY) {
-    Serial.println("y axis passed");
-  } else {
-    Serial.println("y axis FAILED");
-  }
-  if (resultZ) {
-    Serial.println("z axis passed");
-  } else {
-    Serial.println("z axis FAILED");
-  }
-  delay(1000);
+  delay(2000);
 }
+
