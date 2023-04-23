@@ -242,6 +242,16 @@ void TestPowerDown(){
   LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 }
 
+void TestSetAdvData(void) {
+  Bluetooth.setAdvData(NULL, 0);
+
+  Bluetooth.advertise();
+
+  delay(5000);
+
+  blePeripheral.stopAdvertise();
+}
+
 //error handler method
 void error(const __FlashStringHelper*err){
   Serial.println(err);
