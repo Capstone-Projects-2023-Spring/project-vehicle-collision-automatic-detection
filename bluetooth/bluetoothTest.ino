@@ -248,8 +248,13 @@ void TestSetAdvData() {
 }
 
 void TestSendCommandCheckOK(){
-  Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
-  Serial.println("sendCommandCheckOK Test ran! Check if the mode LED on the device has been turned off.");
+  bool passed = Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
+  
+  if(passed){
+    Serial.println("sendCommandCheckOK Test ran! Check if the mode LED on the device has been turned off.");
+  }
+  else{
+    Serial.println("The command failed.");
 }
 
 //error handler method
