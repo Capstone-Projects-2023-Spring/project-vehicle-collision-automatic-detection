@@ -242,12 +242,14 @@ void TestPowerDown(){
   LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 }
 
-void TestSetAdvData(void) {
+void TestSetAdvData() {
   Bluetooth.setAdvData(NULL, 0);
-  Bluetooth.advertise();
-  delay(5000);
-  Bluetooth.stopAdvertise();
-  Serial.println("SetAdvData Test Passed!");
+  Serial.println("SetAdvData Test ran! The device should be undiscoverable now.");
+}
+
+void TestSendCommandCheckOK(){
+  Bluetooth.sendCommandCheckOK("AT+HWModeLED=0");
+  Serial.println("sendCommandCheckOK Test ran! Check if the mode LED on the device has been turned off.");
 }
 
 //error handler method
