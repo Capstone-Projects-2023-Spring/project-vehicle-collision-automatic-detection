@@ -244,12 +244,10 @@ void TestPowerDown(){
 
 void TestSetAdvData(void) {
   Bluetooth.setAdvData(NULL, 0);
-
   Bluetooth.advertise();
-
   delay(5000);
-
-  blePeripheral.stopAdvertise();
+  Bluetooth.stopAdvertise();
+  Serial.println("SetAdvData Test Passed!");
 }
 
 //error handler method
