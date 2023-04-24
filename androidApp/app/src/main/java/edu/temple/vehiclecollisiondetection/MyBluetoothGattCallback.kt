@@ -152,7 +152,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             alertSoundPlayer?.start()
             mTimeLeftInMillis = countdownStartTime
             activeActivity.runOnUiThread(){
-                //speech recognition intialization
+                //speech recognition initialization
                 var speech = SpeechRecognizer.createSpeechRecognizer(activeContext);
                 Log.d("VC Status", "isRecognitionAvailable: " + SpeechRecognizer.isRecognitionAvailable(activeContext));
                 val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -226,16 +226,23 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             }
         }
     }
-    private fun sendText(phoneNumber: String, message: String){
+
+    var testText = false
+
+    fun sendText(phoneNumber: String, message: String){
         var smsManager: SmsManager? = null
         //var id = SmsManager.getDefaultSmsSubscriptionId()
         smsManager = activeActivity.getSystemService(SmsManager::class.java)
 
         smsManager?.sendTextMessage(phoneNumber, null, message, null, null)
         Log.d("sendText", "$message sent to $phoneNumber")
+        testText = true
     }
 
-    private fun sendTextsToContacts(contactObjects: ArrayList<MainActivity.ContactObject>){
+    //Test sending to contact list
+    var testTexts = 0
+
+    fun sendTextsToContacts(contactObjects: ArrayList<MainActivity.ContactObject>){
         for(obj in contactObjects) {
             //This is for American numbers only!
             val numWithCountryCode = "+1" + obj.phoneNumber
@@ -243,12 +250,18 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             //Add user variable rather than "someone", add location variable
             sendText(
                 numWithCountryCode, "Hello ${obj.name}, I " +
-                        "have been in a serious crash. Address: ${textAddress}. Coordinates: Lat-${textLat} Long-${textLong} "
+                        "have been in a serious crash. Address: ${textAddress}."
             )
+            sendText(
+                numWithCountryCode, "Coordinates: Lat-${textLat} Long-${textLong} "
+            )
+
+            testTexts += 1
         }
     }
 
-    private fun makeCall(phoneNumber: String){
+    var testCall = false
+    fun makeCall(phoneNumber: String){
 
         Log.d("Call output", "App is calling $phoneNumber")
 
@@ -256,6 +269,8 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
         //start calling intent
         callIntent.data = Uri.parse("tel:$phoneNumber")
         activeContext.startActivity(callIntent)
+
+        testCall = true
     }
 
     private fun getLocation(){

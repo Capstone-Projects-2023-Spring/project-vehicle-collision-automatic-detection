@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var connectionTipText: TextView
     private lateinit var preferences: SharedPreferences
 
+
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
 
@@ -161,10 +162,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
+    fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
         contactList.add(ContactObject(contactNum, contactName))
     }
-    private fun deleteContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String): ArrayList<MainActivity.ContactObject>{//returns a new arraylist w/o the specified contact
+    fun deleteContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String): ArrayList<MainActivity.ContactObject>{//returns a new arraylist w/o the specified contact
         var tempList = arrayListOf<ContactObject>()
         for (item in contactList){
             if(contactName.equals(item.name)){
@@ -176,7 +177,7 @@ class MainActivity : AppCompatActivity() {
         return tempList
     }
 
-    private fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
+    fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
         val prefEditor = preferences.edit()
         val gson = Gson() //library used to serialize and deserialize objects
 
@@ -189,8 +190,18 @@ class MainActivity : AppCompatActivity() {
         prefEditor.apply()
     }
 
+    fun getContactList(): ArrayList<ContactObject>? {
+        val gson = Gson()
+        val serializedList = preferences.getString(SAVE_KEY, null)
+
+        val myType = object : TypeToken<ArrayList<ContactObject>>() {}.type
+        val contactObjects = gson.fromJson<ArrayList<ContactObject>>(serializedList, myType)
+
+        return contactObjects
+    }
+
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun hasPermissions(): Boolean {
+    fun hasPermissions(): Boolean {
         if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
             applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
             applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
