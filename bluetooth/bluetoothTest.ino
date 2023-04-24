@@ -71,10 +71,6 @@ void setup() {
   // Test if firmware is up to date
   TestIsVersionAtLeast();
   delay(1000);
-  
-  // Test if the device will be undiscoverable
-  TestSetAdvData();
-  delay(1000);
 
   // Test if Bluefruit sets to DATA mode
   TestSetMode();
@@ -98,10 +94,19 @@ void loop() {
     //test for incoming data from hardware
     TestAvailable();
     TestSetChar();
+    delay(3000);
   }
 
   //test if hardware disconnects from Bluetooth device
   TestDisconnected();
+  delay(1000);
+
+  // Test if the device will be undiscoverable
+  TestSetAdvData();
+  delay(1000);
+
+  // Test if at command waits for OK
+  TestSendCommandCheckOK();
   delay(1000);
 
   //test if device powers down
@@ -259,6 +264,7 @@ void TestSendCommandCheckOK(){
   }
   else{
     Serial.println("The command failed.");
+  }
 }
 
 //error handler method
