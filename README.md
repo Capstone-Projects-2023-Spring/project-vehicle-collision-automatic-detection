@@ -19,9 +19,9 @@ Section 3, Kotlin, Swift, Android, iOS, Arduino, Bluetooth, App, Accelerometer, 
 This  document  proposes  a  device  with  a  companion  smartphone  app,  which  in  combination,  will  alert emergency services or other individuals in the event of a vehicle collision. The device is attached to the user’s vehicle and connects to their phone via Bluetooth when in range. When the device detects a severe collision (indicated by rapid acceleration/deceleration), the device communicates with the app on the user’s phone, and the app initiates calls or text messages with a brief notification that an car accident has occurred at the user’s location. The user’s location is determined from the GPS coordinates of the user’s smartphone, and the contact numbers can be set by the user through the app. Unlike existing smartphone apps which send alerts based on acceleration of the phone itself, the accelerometer in this product is securely fixed to the vehicle. This will lead to fewer of the false positives that the smartphone apps are prone to.
 
 ## Software Requirements:
-Android: Requires Android Version 13+ \ln
-iOS: iOS 15.5+ \ln
-*Note: If your mobile device does not meet these software requirements, the app may not work as expected. \ln
+Android: Requires Android Version 13+ <br />
+iOS: iOS 15.5+ <br />
+*Note: If your mobile device does not meet these software requirements, the app may not work as expected. <br />
 
 ## High Level Requirement
 
