@@ -113,7 +113,7 @@
         android:layout_height="wrap_content"
         android:text="@string/not_connected"
         android:textColor="#373737"
-        android:textSize="20dp"
+        android:textSize="30dp"
         app:fontFamily="@font/aldrich"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
