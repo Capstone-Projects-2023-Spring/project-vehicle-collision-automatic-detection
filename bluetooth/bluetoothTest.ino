@@ -71,6 +71,10 @@ void setup() {
   // Test if firmware is up to date
   TestIsVersionAtLeast();
   delay(1000);
+  
+  // Test if the device will be undiscoverable
+  TestSetAdvData();
+  delay(1000);
 
   // Test if Bluefruit sets to DATA mode
   TestSetMode();
