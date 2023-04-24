@@ -45,10 +45,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var characteristicData: TextView
     private lateinit var preferences: SharedPreferences
 
+    //lateinit var contactObjects: ArrayList<ContactObject>
+
     //DELETE
     private lateinit var locationManager: LocationManager
-    private var textLat: Double? = 39.981991 //variable used to record Latitude & defaulted to avoid null errors
-    private var textLong: Double? = -75.153053 //variable used to record Longitude & defaulted to avoid null errors
+    var textLat: Double? = 39.981991 //variable used to record Latitude & defaulted to avoid null errors
+    var textLong: Double? = -75.153053 //variable used to record Longitude & defaulted to avoid null errors
     val API_KEY = "AIzaSyAMxe8n3-KtX3cRs-4BKSd7lXovPlTvEZE" //Move later
     private lateinit var locButton: Button
 
@@ -166,10 +168,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
     }
 
 
-    private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
+    fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
         contactList.add(ContactObject(contactNum, contactName))
     }
-    private fun deleteContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String): ArrayList<MainActivity.ContactObject>{//returns a new arraylist w/o the specified contact
+    fun deleteContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String): ArrayList<MainActivity.ContactObject>{//returns a new arraylist w/o the specified contact
         var tempList = arrayListOf<ContactObject>()
         for (item in contactList){
             if(contactName.equals(item.name)){
@@ -181,7 +183,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         return tempList
     }
 
-    private fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
+    fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
         val prefEditor = preferences.edit()
         val gson = Gson() //library used to serialize and deserialize objects
 
@@ -194,8 +196,18 @@ class MainActivity : AppCompatActivity(), LocationListener {
         prefEditor.apply()
     }
 
+    fun getContactList(): ArrayList<ContactObject>? {
+        val gson = Gson()
+        val serializedList = preferences.getString(SAVE_KEY, null)
+
+        val myType = object : TypeToken<ArrayList<ContactObject>>() {}.type
+        val contactObjects = gson.fromJson<ArrayList<ContactObject>>(serializedList, myType)
+
+        return contactObjects
+    }
+
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun hasPermissions(): Boolean {
+    fun hasPermissions(): Boolean {
         if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
             applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
             applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
@@ -220,8 +232,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
         return true
     }
 
+    lateinit var loc: Location
     //TEST GETTING ADDRESS DELETE LATER
-    private fun getLocation(){
+    fun getLocation(){
         this.runOnUiThread{
             locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -242,10 +255,13 @@ class MainActivity : AppCompatActivity(), LocationListener {
         getStreetAddress(textLat!!, textLong!!)
     }
 
+    //FOR TESTING
+    var textAddress: String = ""
 
-     fun getStreetAddress(latitude: Double, longitude: Double){
+    fun getStreetAddress(latitude: Double, longitude: Double){
         val queue = Volley.newRequestQueue(this)
         val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}"
+        var addr: String = ""
 
         Log.d("volley", "Starting volley")
         // Request a string response from the provided URL.
@@ -256,11 +272,13 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     .getJSONObject(0)
                     .getString("formatted_address")
                 Log.d("res", address.toString())
+                addr = address
             },
             { Log.d("error", "That didn't work") })
 
-// Add the request to the RequestQueue.
+        // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest)
+        textAddress = addr
     }
 
 }
