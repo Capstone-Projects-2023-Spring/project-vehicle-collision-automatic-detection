@@ -243,7 +243,10 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
             //Add user variable rather than "someone", add location variable
             sendText(
                 numWithCountryCode, "Hello ${obj.name}, I " +
-                        "have been in a serious crash. Address: ${textAddress}. Coordinates: Lat-${textLat} Long-${textLong} "
+                        "have been in a serious crash. Address: ${textAddress}."
+            )
+            sendText(
+                numWithCountryCode, "Coordinates: Lat-${textLat} Long-${textLong} "
             )
         }
     }
