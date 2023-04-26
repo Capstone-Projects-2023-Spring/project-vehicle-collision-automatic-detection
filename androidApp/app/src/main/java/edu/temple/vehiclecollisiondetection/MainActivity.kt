@@ -64,10 +64,22 @@ class MainActivity : AppCompatActivity() {
         characteristicData = findViewById(R.id.characteristicDataText)
         connectionTipText = findViewById(R.id.connectionOffTip)
 
-        //try to connect when app opens
-        var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
-        var btThread = Thread(btRunnable)
-        btThread.start()
+
+        if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {}
+        else{
+            //try to connect when app opens
+            var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
+            var btThread = Thread(btRunnable)
+            btThread.start()
+        }
+
+
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
