@@ -155,12 +155,11 @@ void setup() {
   xl.setFullScale(LIS331::LOW_RANGE);
 
   //test cases, uncomment to enable
-  
-  testAccelerometerReading();
+  /*testAccelerometerReading();
   testConvertToReading();
   testGetMaxG();
   delay(10000);
-  
+  */
 }
 
 /**
