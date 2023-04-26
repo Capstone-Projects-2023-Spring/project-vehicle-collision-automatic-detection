@@ -40,7 +40,6 @@ Adafruit_BLEGatt gatt(Bluetooth);
  */
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
   
   /* Put the device into idle mode */
@@ -155,7 +154,13 @@ void setup() {
   xl.setODR(LIS331::DR_50HZ);
   xl.setFullScale(LIS331::LOW_RANGE);
 
-  //testAccelerometerReading();
+  //test cases, uncomment to enable
+  
+  testAccelerometerReading();
+  testConvertToReading();
+  testGetMaxG();
+  delay(10000);
+  
 }
 
 /**
@@ -205,7 +210,6 @@ void loop() {
       float maxG = getMaxG();
       int16_t x, y, z;
       xl.readAxes(x, y, z);
-      //Serial.println(String(x) + "\t" + String(y) + "\t" + String(z));
       Serial.println(maxG);
     }
 
@@ -328,7 +332,7 @@ float getMaxG() {
 }
 
 void testAccelerometerReading() {
-  Serial.println("Testing accelerometer reading");
+  Serial.println("Testing accelerometer reading...");
   int16_t x, y, z;
   int resultX, resultY, resultZ = 0;
 
@@ -345,12 +349,52 @@ void testAccelerometerReading() {
     }
   }
 
-
   if (resultX && resultY && resultZ) {
-    Serial.println("Accelerometer readings passed");
+    Serial.println("passed");
   } else {
-    Serial.println("Acceleromter reading FAILED");
+    Serial.println("FAILED");
   }
-  delay(2000);
 }
 
+void testConvertToReading() {
+  int seed = analogRead(7); //uses stray voltage from unused pin to get "true" random number
+  randomSeed(seed);
+  bool passed = true;
+
+  Serial.println("Testing convertToReading()...");
+  
+  for(int i = 0; i < 10; i++) {
+    int rand = random();
+    float g = xl.convertToG(scale, rand);
+    int reading = convertToReading(scale, g);
+    if (reading != rand) {
+      passed = false;
+    }
+  }
+
+  if (passed) {
+      Serial.println("passed");
+  } else {
+      Serial.println("FAILED");
+  }
+}
+
+void testGetMaxG() { //assumes device is at rest, may fail if device is currently accelerating/decelerating
+  Serial.println("Testing getMaxG()...");
+
+  float avgMaxG = 0;
+  int numTests = 10;
+  
+  for(int i = 0; i < numTests; i++) {
+    while(!(xl.newXData() || xl.newYData() || xl.newZData())){}
+    avgMaxG += getMaxG();
+  }
+  
+  avgMaxG /= numTests;
+  
+  if (avgMaxG < 5.0 && avgMaxG >= 0.0) {
+    Serial.println("passed");
+  } else {
+    Serial.println("FAILED");
+  }
+}
