@@ -205,8 +205,8 @@ void loop() {
       float maxG = getMaxG();
       int16_t x, y, z;
       xl.readAxes(x, y, z);
-      Serial.println(String(x) + "\t" + String(y) + "\t" + String(z));
-      //Serial.println(maxG);
+      //Serial.println(String(x) + "\t" + String(y) + "\t" + String(z));
+      Serial.println(maxG);
     }
 
     //checks if threshold might have been exceeded, then verifies
@@ -255,10 +255,11 @@ void loop() {
     LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER2_OFF, TIMER1_OFF, TIMER0_ON, SPI_OFF, USART0_OFF, TWI_OFF);
 
     if(flag == 0){
-      Serial.println(F("******************************"));
+      Serial.println(F("**"));
       Serial.println("Bluetooth Device Disconnected!");
-      Serial.println(F("******************************"));
+      Serial.println(F("**"));
       flag++;
+      previousMillis = currentMillis;
     }
     delay(500);
 
