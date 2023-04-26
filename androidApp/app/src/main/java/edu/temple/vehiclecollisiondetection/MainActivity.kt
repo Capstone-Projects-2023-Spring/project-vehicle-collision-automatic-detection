@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -93,6 +94,7 @@ class MainActivity : AppCompatActivity() {
             if(connectionText.text != "Connected!") {
                 var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
                 var btThread = Thread(btRunnable)
+                Toast.makeText(applicationContext,"Scanning for Device", Toast.LENGTH_SHORT).show()
                 btThread.start()
             }
         }
