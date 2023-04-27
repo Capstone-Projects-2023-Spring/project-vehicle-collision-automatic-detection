@@ -2,7 +2,7 @@
 //  VCUITests.swift
 //  VCUITests
 //
-//  Created by Nathan A on 2/1/23.
+//  Created by Thanh Nguyen on 4/22/23.
 //
 
 import XCTest
@@ -11,7 +11,6 @@ final class VCUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
 

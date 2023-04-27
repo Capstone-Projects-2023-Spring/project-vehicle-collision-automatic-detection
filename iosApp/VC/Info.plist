@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>This app uses Bluetooth to connect to a peripheral device.</string>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
@@ -21,5 +19,7 @@
             </array>
         </dict>
     </dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app uses the microphone to detect voice commands for hands-free control.</string>
 </dict>
 </plist>

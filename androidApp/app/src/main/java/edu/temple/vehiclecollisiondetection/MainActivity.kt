@@ -2,60 +2,71 @@ package edu.temple.vehiclecollisiondetection
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.bluetooth.*
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
-import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 
 
 private const val SAVE_KEY = "save_key"
-
-
+val REQUEST_PHONE_CALL = 1
+val REQUEST_SEND_SMS = 2
 class MainActivity : AppCompatActivity() {
 
     //recycler view to hold contact list
     lateinit var recyclerView: RecyclerView
     lateinit var connectionText: TextView
     lateinit var characteristicData: TextView
+    lateinit var connectionTipText: TextView
     private lateinit var preferences: SharedPreferences
+
 
     //contact data class
     data class ContactObject(val phoneNumber: String, val name: String)
 
-
-
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("SetTextI18n")//added for hello world
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        hasPermissions()
         recyclerView = findViewById(R.id.contactRecyclerView)
         connectionText = findViewById(R.id.connectionText)
         connectionText.setTextColor(Color.parseColor("red"))
         characteristicData = findViewById(R.id.characteristicDataText)
+        connectionTipText = findViewById(R.id.connectionOffTip)
+
+        //try to connect when app opens
+        var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
+        var btThread = Thread(btRunnable)
+        btThread.start()
 
         //ability to access shared preferences
         preferences = getPreferences(MODE_PRIVATE)
@@ -79,13 +90,16 @@ class MainActivity : AppCompatActivity() {
         val bluetoothThreadStart: View = findViewById(R.id.bluetoothTextBackground)
         bluetoothThreadStart.setOnClickListener {
             //start bluetooth thread
-            var btRunnable = BluetoothRunnable()
-            var btThread = Thread(btRunnable)
-            btThread.start()
+            if(connectionText.text != "Connected!") {
+                var btRunnable = BluetoothRunnable(this@MainActivity, this, connectionText, connectionTipText)
+                var btThread = Thread(btRunnable)
+                btThread.start()
+            }
         }
         //Add Contact Button Functionality
         val addContactButton: View = findViewById(R.id.fab)
         addContactButton.setOnClickListener{
+            hasPermissions()
             //setting up 'add contact' pop-up menu
             val contactDialogView = LayoutInflater.from(this).inflate(R.layout.layout_dialog, null)
             val contactDialogBuilder = AlertDialog.Builder(this)
@@ -117,6 +131,7 @@ class MainActivity : AppCompatActivity() {
         //delete contact button functionality
         val deleteButton: View = findViewById(R.id.deleteContactFab)
         deleteButton.setOnClickListener{
+            hasPermissions()
             val deleteContactView = LayoutInflater.from(this).inflate(R.layout.deletecontact_dialog, null)
             val deleteContactDialogBuilder = AlertDialog.Builder(this)
                 .setView(deleteContactView)
@@ -144,13 +159,13 @@ class MainActivity : AppCompatActivity() {
                 deleteContactAlertDialog.dismiss()
             }
         }
-
     }
 
-    private fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
+
+    fun addContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String, contactNum: String){
         contactList.add(ContactObject(contactNum, contactName))
     }
-    private fun deleteContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String): ArrayList<MainActivity.ContactObject>{//returns a new arraylist w/o the specified contact
+    fun deleteContact(contactList: ArrayList<MainActivity.ContactObject>, contactName: String): ArrayList<MainActivity.ContactObject>{//returns a new arraylist w/o the specified contact
         var tempList = arrayListOf<ContactObject>()
         for (item in contactList){
             if(contactName.equals(item.name)){
@@ -162,7 +177,7 @@ class MainActivity : AppCompatActivity() {
         return tempList
     }
 
-    private fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
+    fun saveContactList(contactList: ArrayList<MainActivity.ContactObject>){
         val prefEditor = preferences.edit()
         val gson = Gson() //library used to serialize and deserialize objects
 
@@ -175,197 +190,39 @@ class MainActivity : AppCompatActivity() {
         prefEditor.apply()
     }
 
-    inner class MyBluetoothGattCallback : BluetoothGattCallback() {
+    fun getContactList(): ArrayList<ContactObject>? {
+        val gson = Gson()
+        val serializedList = preferences.getString(SAVE_KEY, null)
 
-        @RequiresApi(Build.VERSION_CODES.S)
-        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            if (ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
-                //return
-            }
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.d("tag1", "Connection Succeeded!")
-                runOnUiThread(Runnable() {
-                    Toast.makeText(applicationContext, "Device Connected!", Toast.LENGTH_LONG).show()
-                    connectionText.setTextColor(Color.parseColor("green"))
-                    connectionText.setText("Connected!")
-                })
-                gatt.discoverServices()
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                // handle disconnection
-                Log.d("tag2", "Connection Disconnected!")
-                runOnUiThread(Runnable() {
-                    connectionText.setTextColor(Color.parseColor("red"))
-                    connectionText.setText("Not Connected")
-                })
-            } else{
-                Log.d("tag3", "Connection Attempt Failed!")
-                gatt.close()
-            }
-        }
+        val myType = object : TypeToken<ArrayList<ContactObject>>() {}.type
+        val contactObjects = gson.fromJson<ArrayList<ContactObject>>(serializedList, myType)
 
-        @RequiresApi(Build.VERSION_CODES.S)
-        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            val serviceUuid = UUID.fromString("0000181a-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
-            val characteristicUuid = UUID.fromString("00002A6D-0000-1000-8000-00805f9b34fb")//acts like a 'password' for the bluetooth connection
-            if (ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 10)
-                //return
-            }
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                val service1 = gatt.getService(serviceUuid)
-                val characteristic1 = service1.getCharacteristic(characteristicUuid)//characteristic uuid here
-                if(service1 == null){
-                    Log.d("Invalid service:", "service is null!")
-                    Log.d("Service UUid:", serviceUuid.toString())
-                }else{
-                    Log.d("Service Found:", serviceUuid.toString())
-                }
-                if(characteristic1 == null){
-                    Log.d("Invalid characteristic:", "characteristic is null!")
-                    Log.d("Characteristic UUid:", characteristicUuid.toString())
-                }else{
-                    Log.d("Characteristic Found:", characteristicUuid.toString())
-                }
-                gatt.setCharacteristicNotification(characteristic1, true)
-            }
-        }
-
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt,
-            characteristic: BluetoothGattCharacteristic,
-            value: ByteArray
-        ) {
-            // handle received data
-            Log.d("Characteristic Data", "Data Changed!")
-            val data = value
-            runOnUiThread(){
-                characteristicData.text=data.toString()
-            }
-
-        }
-
+        return contactObjects
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun hasPermissions(): Boolean {
-        if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),11)
-        }
-        if (applicationContext.checkSelfPermission(
-                Manifest.permission.BLUETOOTH_CONNECT
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), 12)
-        }
-        if (applicationContext.checkSelfPermission(
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), 13)
-        }
-        if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),14)
+    fun hasPermissions(): Boolean {
+        if (applicationContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
+            applicationContext.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.SEND_SMS,
+                    Manifest.permission.RECORD_AUDIO
+                ),
+                11
+            )
         }
         return true
-    }
-    inner class BluetoothRunnable: Runnable{
-
-        @RequiresApi(Build.VERSION_CODES.S)
-        override fun run() {
-            hasPermissions()
-            var btAdapter: BluetoothAdapter? = null
-            val bluetoothManager =
-                this@MainActivity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-
-            btAdapter = bluetoothManager?.adapter
-            val gattCallback = MyBluetoothGattCallback()
-            val bluetoothLeScanner = btAdapter?.bluetoothLeScanner
-            val scanCallback = object : ScanCallback() {
-                override fun onScanResult(callbackType: Int, result: ScanResult) {
-                    if (ActivityCompat.checkSelfPermission(
-                            this@MainActivity,
-                            Manifest.permission.BLUETOOTH_SCAN
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), 10)
-                        //return
-                    }
-                    if(result.device.name != null){
-                            Log.d("Device Found: ", result.device.name)
-                    }
-                    // Check if the scan result matches the target device UUID
-                    if (result.device.address.equals("E6:EC:C4:09:52:F0")) {
-                        Log.d("tag", "FOUND BLE DEVICE")
-                        runOnUiThread(Runnable() {
-                            Toast.makeText(applicationContext, "Device Found", Toast.LENGTH_LONG).show()
-                        })
-
-                        // Stop scanning
-                        bluetoothLeScanner?.stopScan(this)
-                        // Connect to the device
-                        val device = result.device
-                        // TODO: implement connection logic
-                        var gatt: BluetoothGatt? = null
-                        gatt = device?.connectGatt(this@MainActivity, false, gattCallback)
-                    }
-                }
-            }
-            // Create a ScanSettings to control the scan parameters
-            val scanSettings = ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
-                .build()
-            // Start scanning for devices that match the scan filter
-            Log.d("tag", "LOOKING FOR BLE DEVICE")
-            runOnUiThread(Runnable() {
-                Toast.makeText(applicationContext, "Scanning for Device", Toast.LENGTH_LONG).show()
-            })
-            bluetoothLeScanner?.startScan(null, scanSettings, scanCallback)
-        }
-    }
-}
-
-class ContactAdapter(_contactObjects: ArrayList<MainActivity.ContactObject>): RecyclerView.Adapter<ContactAdapter.ViewHolder>(){
-
-    private var contactObjects = _contactObjects
-
-    inner class ViewHolder (itemView: View):  RecyclerView.ViewHolder(itemView) {
-        var textView: TextView
-        var textView2: TextView
-        lateinit var contactObject: MainActivity.ContactObject
-
-        init {
-            textView = itemView.findViewById(R.id.listItem)
-            textView2 = itemView.findViewById(R.id.listItem2)
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        //Inflate layout, defines UI of list item
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_layout, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.contactObject = contactObjects[position]
-
-        //Sets contents of recycler view as the drawable provided in imageObject List
-        holder.textView.text = contactObjects[position].name //Add phone numbers later
-        holder.textView2.text = contactObjects[position].phoneNumber
-    }
-
-    override fun getItemCount(): Int {
-        return contactObjects.size
     }
 }

@@ -8,17 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		920C054229C69CD400009395 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920C054129C69CD400009395 /* BluetoothManager.swift */; };
+		9261FE8029F48588004F1C19 /* VCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9261FE7F29F48588004F1C19 /* VCUITests.swift */; };
+		9261FE8229F485A9004F1C19 /* VCUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */; };
+		92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92692B5029D9CE7A001B215D /* CountdownViewController.swift */; };
+		92A4203B29F21786004463E2 /* VCTabBarControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */; };
+		92AFF04829F2140400413A68 /* VoiceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04729F2140400413A68 /* VoiceManagerTests.swift */; };
+		92AFF04C29F2161300413A68 /* BluetoothManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFF04B29F2161300413A68 /* BluetoothManagerTests.swift */; };
+		92FB894C29E9E4F30050AA4C /* VoiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92FB894B29E9E4F30050AA4C /* VoiceManager.swift */; };
 		D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */; };
 		D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */; };
 		D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */; };
 		D88E9AB7298AFE0F00EB1305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D88E9AB6298AFE0F00EB1305 /* Assets.xcassets */; };
 		D88E9ABA298AFE0F00EB1305 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D88E9AB8298AFE0F00EB1305 /* LaunchScreen.storyboard */; };
 		D88E9AC5298AFE1000EB1305 /* VCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AC4298AFE1000EB1305 /* VCTests.swift */; };
-		D88E9ACF298AFE1000EB1305 /* VCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9ACE298AFE1000EB1305 /* VCUITests.swift */; };
-		D88E9AD1298AFE1000EB1305 /* VCUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AD0298AFE1000EB1305 /* VCUITestsLaunchTests.swift */; };
 		D88E9AE1298B05FA00EB1305 /* VCHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */; };
-		D88E9AE3298B060C00EB1305 /* VCSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */; };
+		D88E9AE3298B060C00EB1305 /* VCTestingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */; };
 		D88E9AE5298B073200EB1305 /* VCContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */; };
+		D89378AD29F0F14500FF16D1 /* VCTestingViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */; };
+		D89378B129F0F80300FF16D1 /* VCHomeControllerViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */; };
+		D8C62FF829F30ABE00C3D02F /* audiomass-output.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */; };
+		D8C62FF929F30ABE00C3D02F /* audiomass-output.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */; };
+		D8C62FFA29F30ABE00C3D02F /* audiomass-output.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */; };
 		D8EEC46429B011CA006FE065 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC46229B011CA006FE065 /* Model.xcdatamodeld */; };
 		D8EEC46A29B013D6006FE065 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC46929B013D6006FE065 /* CoreDataStack.swift */; };
 		D8EEC47529B024D3006FE065 /* Contact+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EEC47329B024D3006FE065 /* Contact+CoreDataClass.swift */; };
@@ -44,6 +54,14 @@
 
 /* Begin PBXFileReference section */
 		920C054129C69CD400009395 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
+		9261FE7E29F48587004F1C19 /* VCUITests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VCUITests-Bridging-Header.h"; sourceTree = "<group>"; };
+		9261FE7F29F48588004F1C19 /* VCUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITests.swift; sourceTree = "<group>"; };
+		9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		92692B5029D9CE7A001B215D /* CountdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownViewController.swift; sourceTree = "<group>"; };
+		92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTabBarControllerTests.swift; sourceTree = "<group>"; };
+		92AFF04729F2140400413A68 /* VoiceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceManagerTests.swift; sourceTree = "<group>"; };
+		92AFF04B29F2161300413A68 /* BluetoothManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManagerTests.swift; sourceTree = "<group>"; };
+		92FB894B29E9E4F30050AA4C /* VoiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceManager.swift; sourceTree = "<group>"; };
 		D88E9AA7298AFE0A00EB1305 /* VC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88E9AAA298AFE0A00EB1305 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D88E9AAC298AFE0A00EB1305 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -54,11 +72,12 @@
 		D88E9AC0298AFE1000EB1305 /* VCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88E9AC4298AFE1000EB1305 /* VCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTests.swift; sourceTree = "<group>"; };
 		D88E9ACA298AFE1000EB1305 /* VCUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VCUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D88E9ACE298AFE1000EB1305 /* VCUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITests.swift; sourceTree = "<group>"; };
-		D88E9AD0298AFE1000EB1305 /* VCUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCHomeViewController.swift; sourceTree = "<group>"; };
-		D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCSettingViewController.swift; sourceTree = "<group>"; };
+		D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTestingViewController.swift; sourceTree = "<group>"; };
 		D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCContactsViewController.swift; sourceTree = "<group>"; };
+		D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTestingViewControllerTests.swift; sourceTree = "<group>"; };
+		D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCHomeControllerViewTests.swift; sourceTree = "<group>"; };
+		D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "audiomass-output.mp3"; sourceTree = "<group>"; };
 		D8EEC46329B011CA006FE065 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		D8EEC46929B013D6006FE065 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		D8EEC47329B024D3006FE065 /* Contact+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Contact+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -90,15 +109,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9261FE7D29F48509004F1C19 /* VCUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9261FE7F29F48588004F1C19 /* VCUITests.swift */,
+				9261FE7E29F48587004F1C19 /* VCUITests-Bridging-Header.h */,
+				9261FE8129F485A9004F1C19 /* VCUITestsLaunchTests.swift */,
+			);
+			path = VCUITests;
+			sourceTree = "<group>";
+		};
 		D88E9A9E298AFE0A00EB1305 = {
 			isa = PBXGroup;
 			children = (
+				9261FE7D29F48509004F1C19 /* VCUITests */,
 				D88E9AA9298AFE0A00EB1305 /* VC */,
 				D88E9AC3298AFE1000EB1305 /* VCTests */,
-				D88E9ACD298AFE1000EB1305 /* VCUITests */,
 				D88E9AA8298AFE0A00EB1305 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		D88E9AA8298AFE0A00EB1305 /* Products */ = {
 			isa = PBXGroup;
@@ -126,17 +156,13 @@
 			isa = PBXGroup;
 			children = (
 				D88E9AC4298AFE1000EB1305 /* VCTests.swift */,
+				D89378B029F0F80300FF16D1 /* VCHomeControllerViewTests.swift */,
+				D89378AC29F0F14500FF16D1 /* VCTestingViewControllerTests.swift */,
+				92A4203A29F21786004463E2 /* VCTabBarControllerTests.swift */,
+				92AFF04B29F2161300413A68 /* BluetoothManagerTests.swift */,
+				92AFF04729F2140400413A68 /* VoiceManagerTests.swift */,
 			);
 			path = VCTests;
-			sourceTree = "<group>";
-		};
-		D88E9ACD298AFE1000EB1305 /* VCUITests */ = {
-			isa = PBXGroup;
-			children = (
-				D88E9ACE298AFE1000EB1305 /* VCUITests.swift */,
-				D88E9AD0298AFE1000EB1305 /* VCUITestsLaunchTests.swift */,
-			);
-			path = VCUITests;
 			sourceTree = "<group>";
 		};
 		D88E9ADD298B048C00EB1305 /* Resources */ = {
@@ -161,11 +187,14 @@
 		D88E9ADF298B05A600EB1305 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
+				D8C62FF729F30ABE00C3D02F /* audiomass-output.mp3 */,
 				D88E9AE0298B05FA00EB1305 /* VCHomeViewController.swift */,
 				D88E9AE4298B073200EB1305 /* VCContactsViewController.swift */,
-				D88E9AE2298B060C00EB1305 /* VCSettingViewController.swift */,
+				D88E9AE2298B060C00EB1305 /* VCTestingViewController.swift */,
+				D88E9AAE298AFE0A00EB1305 /* VCTabBarController.swift */,
 				920C054129C69CD400009395 /* BluetoothManager.swift */,
+				92692B5029D9CE7A001B215D /* CountdownViewController.swift */,
+				92FB894B29E9E4F30050AA4C /* VoiceManager.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -196,6 +225,8 @@
 			dependencies = (
 			);
 			name = VC;
+			packageProductDependencies = (
+			);
 			productName = VC;
 			productReference = D88E9AA7298AFE0A00EB1305 /* VC.app */;
 			productType = "com.apple.product-type.application";
@@ -255,6 +286,7 @@
 					};
 					D88E9AC9298AFE1000EB1305 = {
 						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1430;
 						TestTargetID = D88E9AA6298AFE0A00EB1305;
 					};
 				};
@@ -268,6 +300,8 @@
 				Base,
 			);
 			mainGroup = D88E9A9E298AFE0A00EB1305;
+			packageReferences = (
+			);
 			productRefGroup = D88E9AA8298AFE0A00EB1305 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -285,6 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D88E9ABA298AFE0F00EB1305 /* LaunchScreen.storyboard in Resources */,
+				D8C62FF829F30ABE00C3D02F /* audiomass-output.mp3 in Resources */,
 				D88E9AB7298AFE0F00EB1305 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,6 +328,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8C62FF929F30ABE00C3D02F /* audiomass-output.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +336,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8C62FFA29F30ABE00C3D02F /* audiomass-output.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,7 +347,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D88E9AE3298B060C00EB1305 /* VCSettingViewController.swift in Sources */,
+				92692B5129D9CE7A001B215D /* CountdownViewController.swift in Sources */,
+				D88E9AE3298B060C00EB1305 /* VCTestingViewController.swift in Sources */,
 				D88E9AE5298B073200EB1305 /* VCContactsViewController.swift in Sources */,
 				D88E9AE1298B05FA00EB1305 /* VCHomeViewController.swift in Sources */,
 				D8EEC46A29B013D6006FE065 /* CoreDataStack.swift in Sources */,
@@ -321,6 +359,7 @@
 				D88E9AAF298AFE0A00EB1305 /* VCTabBarController.swift in Sources */,
 				D88E9AAB298AFE0A00EB1305 /* AppDelegate.swift in Sources */,
 				D88E9AAD298AFE0A00EB1305 /* SceneDelegate.swift in Sources */,
+				92FB894C29E9E4F30050AA4C /* VoiceManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,7 +367,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D89378B129F0F80300FF16D1 /* VCHomeControllerViewTests.swift in Sources */,
+				92AFF04829F2140400413A68 /* VoiceManagerTests.swift in Sources */,
+				92A4203B29F21786004463E2 /* VCTabBarControllerTests.swift in Sources */,
 				D88E9AC5298AFE1000EB1305 /* VCTests.swift in Sources */,
+				92AFF04C29F2161300413A68 /* BluetoothManagerTests.swift in Sources */,
+				D89378AD29F0F14500FF16D1 /* VCTestingViewControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,8 +380,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D88E9ACF298AFE1000EB1305 /* VCUITests.swift in Sources */,
-				D88E9AD1298AFE1000EB1305 /* VCUITestsLaunchTests.swift in Sources */,
+				9261FE8029F48588004F1C19 /* VCUITests.swift in Sources */,
+				9261FE8229F485A9004F1C19 /* VCUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,10 +462,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSContactsUsageDescription = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -472,9 +518,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSContactsUsageDescription = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -490,13 +538,18 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5779RYBW52;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VC/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to a peripheral device.";
+				INFOPLIST_KEY_NSContactsUsageDescription = "This app uses contacts to retrieve user's contact information";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses location to notify contacts with current location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses location to notify contacts with current location";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -505,9 +558,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -519,13 +575,18 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5779RYBW52;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VC/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to a peripheral device.";
+				INFOPLIST_KEY_NSContactsUsageDescription = "This app uses contacts to retrieve user's contact information";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app uses location to notify contacts with current location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses location to notify contacts with current location";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -534,9 +595,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -545,12 +609,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				INFOPLIST_KEY_NSContactsUsageDescription = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Temple.VCTests;
+				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -564,12 +631,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				INFOPLIST_KEY_NSContactsUsageDescription = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Temple.VCTests;
+				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -582,13 +652,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSContactsUsageDescription = "";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Temple.VCUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "VCUITests/VCUITests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = VC;
@@ -599,13 +675,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3334VHMS7U;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSContactsUsageDescription = "";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Temple.VCUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = Temple.VC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "VCUITests/VCUITests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = VC;
