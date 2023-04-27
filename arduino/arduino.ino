@@ -10,6 +10,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "BluefruitConfig.h"
+#include "accelerometer.h"
 #include "SparkFun_LIS331.h"
 
 #define FACTORYRESET_ENABLE         1
@@ -40,7 +41,6 @@ Adafruit_BLEGatt gatt(Bluetooth);
  */
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
   
   /* Put the device into idle mode */
@@ -154,8 +154,6 @@ void setup() {
   xl.setPowerMode(LIS331::NORMAL);
   xl.setODR(LIS331::DR_50HZ);
   xl.setFullScale(LIS331::LOW_RANGE);
-
-  //testAccelerometerReading();
 }
 
 /**
@@ -205,7 +203,6 @@ void loop() {
       float maxG = getMaxG();
       int16_t x, y, z;
       xl.readAxes(x, y, z);
-      //Serial.println(String(x) + "\t" + String(y) + "\t" + String(z));
       Serial.println(maxG);
     }
 
@@ -326,31 +323,3 @@ float getMaxG() {
 
   return maxG;
 }
-
-void testAccelerometerReading() {
-  Serial.println("Testing accelerometer reading");
-  int16_t x, y, z;
-  int resultX, resultY, resultZ = 0;
-
-  for (int i = 0; i < 10; i++) {
-    xl.readAxes(x, y, z);
-    if (x) {
-      resultX = 1;
-    }
-    if (y) {
-      resultY = 1;
-    }
-    if (z) {
-      resultZ = 1;
-    }
-  }
-
-
-  if (resultX && resultY && resultZ) {
-    Serial.println("Accelerometer readings passed");
-  } else {
-    Serial.println("Acceleromter reading FAILED");
-  }
-  delay(2000);
-}
-
