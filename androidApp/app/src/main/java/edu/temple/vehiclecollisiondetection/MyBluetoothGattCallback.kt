@@ -92,7 +92,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
                 connectionStatusText.setTextColor(Color.parseColor("red"))
                 connectionStatusText.setText("Not Connected")
                 connectionTipText.setVisibility(View.VISIBLE)
-                Toast.makeText(activeContext, "Device Disconnected!", Toast.LENGTH_LONG).show()
+                Toast.makeText(activeContext, "Device Disconnected!", Toast.LENGTH_SHORT).show()
             })
         } else{
             Log.d("tag3", "Connection Attempt Failed!")

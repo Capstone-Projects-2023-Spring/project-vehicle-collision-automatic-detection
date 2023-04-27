@@ -13,8 +13,8 @@
         app:fontFamily="@font/aldrich"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deleteWarning"
-        app:layout_constraintVertical_bias="0.082" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15" />
 
     <Button
         android:id="@+id/cancel_button"
@@ -42,19 +42,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/contact_name"
         app:layout_constraintVertical_bias="0.003" />
-
-    <TextView
-        android:id="@+id/deleteWarning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter the name of the contact you wish to delete:"
-        app:fontFamily="@font/aldrich"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.064" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
