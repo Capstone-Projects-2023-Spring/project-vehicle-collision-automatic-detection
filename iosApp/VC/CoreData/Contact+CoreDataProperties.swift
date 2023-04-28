@@ -19,7 +19,6 @@ extension Contact {
 
     @NSManaged public var contactName: String?
     @NSManaged public var contactId: String?
-    @NSManaged public var contactPhoneNumber: String?
     @NSManaged public var contactSource: CNContact?
 
 }

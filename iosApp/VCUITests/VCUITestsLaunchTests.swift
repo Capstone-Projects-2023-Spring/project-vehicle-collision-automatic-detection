@@ -2,7 +2,7 @@
 //  VCUITestsLaunchTests.swift
 //  VCUITests
 //
-//  Created by Thanh Nguyen on 4/22/23.
+//  Created by Nathan A on 2/1/23.
 //
 
 import XCTest
@@ -23,6 +23,7 @@ final class VCUITestsLaunchTests: XCTestCase {
 
         // Insert steps here to perform after app launch but before taking a screenshot,
         // such as logging into a test account or navigating somewhere in the app
+
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = "Launch Screen"
         attachment.lifetime = .keepAlways
