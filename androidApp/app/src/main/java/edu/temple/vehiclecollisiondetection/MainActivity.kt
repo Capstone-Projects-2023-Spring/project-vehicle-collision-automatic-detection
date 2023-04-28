@@ -130,6 +130,7 @@ class MainActivity : AppCompatActivity() {
                 val contactNumber = contactDialogView.findViewById<EditText>(R.id.contact_number).text.toString()
                 //adds contact to the list of contactObjects
                 addContact(contactObjects, contactName, contactNumber)
+                Toast.makeText(applicationContext,"Contact Added", Toast.LENGTH_SHORT).show()
 
                 //save contactObjects to shared preferences here
                 saveContactList(contactObjects)
@@ -162,6 +163,7 @@ class MainActivity : AppCompatActivity() {
                 //create new list using for loop, and put in contacts that DO NOT match the given name
                 var newList = arrayListOf<ContactObject>()
                 newList = deleteContact(contactObjects, contactName)
+                Toast.makeText(applicationContext,"Contact Deleted", Toast.LENGTH_SHORT).show()
                 //save new list (w/o deleted contacts)
                 contactObjects = newList
                 //save contactObjects to shared preferences here
