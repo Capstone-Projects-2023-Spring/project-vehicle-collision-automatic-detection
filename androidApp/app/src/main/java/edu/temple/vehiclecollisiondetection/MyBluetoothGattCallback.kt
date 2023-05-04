@@ -41,6 +41,8 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
+import java.util.Properties
+
 private const val SAVE_KEY = "save_key"
 private const val emergencyServiceNum = "+14846391351" //test number (OBV we can't test call 911 whenever we want
 class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity, connectionText: TextView, connectionTipText: TextView) : BluetoothGattCallback(), LocationListener {
@@ -48,8 +50,10 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
     val activeContext = currentContext
     val activeActivity = currentActivity
     val connectionStatusText = connectionText
-    val API_KEY = "AIzaSyAMxe8n3-KtX3cRs-4BKSd7lXovPlTvEZE" //Move later
+    val KEY = BuildConfig.API_KEY
     val connectionTipText = connectionTipText
+
+
 
     //countdown timer object
     private var mCountDownTimer: CountDownTimer? = null
@@ -297,7 +301,7 @@ class MyBluetoothGattCallback(currentContext: Context, currentActivity: Activity
 
     private fun getStreetAddress(latitude: Double, longitude: Double){
         val queue = Volley.newRequestQueue(activeContext)
-        val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}"
+        val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${KEY}"
 
         Log.d("volley", "Starting volley")
         // Request a string response from the provided URL.
